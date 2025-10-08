@@ -73,3 +73,26 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+# 忽略 Unity 自動生成資料夾（位於 My project 子資料夾內）
+My project/Library/
+My project/Temp/
+My project/obj/
+My project/Logs/
+My project/Build/
+My project/Builds/
+My project/UserSettings/
+My project/MemoryCaptures/
+
+# VS、VSCode 設定檔
+.vs/
+.vscode/
+
+# 自動產生的 Unity/IDE 檔案
+*.pidb
+*.user
+*.suo
+*.userprefs
+*.csproj
+*.unityproj
+*.sln
+*.tmp
