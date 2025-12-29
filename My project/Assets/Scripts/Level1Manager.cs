@@ -5,33 +5,52 @@ using System.Collections;
 public class Level1Manager : MonoBehaviour
 {
     [Header("UI 元件")]
-    public TextMeshProUGUI dialogueText; // 拖入你的文字框
+    public TextMeshProUGUI dialogueText; // 拖入你的 TextMeshPro 物件
 
     [Header("劇情設定")]
     [TextArea(5, 10)]
-    public string storyContent; // 貼上你的長篇劇情
-    public float typingSpeed = 0.05f; // 打字速度（秒/字）
+    public string storyContent; // 在 Inspector 貼上你的劇情
+    public float typingSpeed = 0.05f; // 每個字的打字速度
     public float waitBeforeStory = 12.0f; // 等待睜眼動畫播完的時間
+    public float timeBetweenLines = 1.5f; // 每一行顯示完後的停頓時間
 
     void Start()
     {
-        // 遊戲一開始，就啟動「等待並顯示劇情」的排程
-        StartCoroutine(PlayLevel1Flow());
+        // 啟動主流程
+        if (dialogueText != null)
+        {
+            StartCoroutine(PlayLevel1Flow());
+        }
+        else
+        {
+            Debug.LogError("寶貝，你忘記把 DialogueText 拖進 GameManager 的格子裡了！"); // 避免 NullReferenceException
+        }
     }
 
     IEnumerator PlayLevel1Flow()
     {
-        // 1. 先清空文字框，讓畫面乾淨
+        // 1. 一開始先清空文字
         dialogueText.text = "";
 
-        // 2. 等待睜眼動畫播完（例如動畫是3秒，這裡就填3）
+        // 2. 等待睜眼動畫播完
         yield return new WaitForSeconds(waitBeforeStory);
 
-        // 3. 開始打字機效果
-        foreach (char letter in storyContent.ToCharArray())
+        // 3. 處理劇情：按「換行」拆分文字
+        string[] lines = storyContent.Split('\n');
+
+        foreach (string line in lines)
         {
-            dialogueText.text += letter; // 逐字加上去
-            yield return new WaitForSeconds(typingSpeed); // 停頓一下下
+            dialogueText.text = ""; // 每一行開始前清空舊文字
+
+            // 逐字打出當前這一行
+            foreach (char letter in line.ToCharArray())
+            {
+                dialogueText.text += letter;
+                yield return new WaitForSeconds(typingSpeed);
+            }
+
+            // 這行打完了，停一下讓玩家看清楚
+            yield return new WaitForSeconds(timeBetweenLines);
         }
     }
 }
