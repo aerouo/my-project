@@ -1,20 +1,26 @@
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
-using TMPro; //
+using TMPro;
 
 public class ArrowMoveManager : MonoBehaviour
 {
     [Header("角色設定")]
-    public GameObject player; // 這個還是建議手動拖入一次 YOU
+    public GameObject player;
 
     [Header("自動抓取的物件")]
-    public Transform[] slots = new Transform[6];     // 下方灰色格子
-    public Transform[] footPrints = new Transform[6]; // 場景黃色方塊
-    public TextMeshProUGUI failHintText;              // 提示文字
+    public Transform[] slots = new Transform[6];
+    public Transform[] footPrints = new Transform[6];
+    public TextMeshProUGUI failHintText;
+
+    [Header("通關劇情演出設定")]
+    [Tooltip("請把 EndingBackground 拖進來")]
+    public GameObject endingBackground;
+    [Tooltip("請把 銜接劇情文字 拖進來")]
+    public TextMeshProUGUI endingPlotText;
 
     [Header("位置微調")]
-    public float yOffset = 70f; //
+    public float yOffset = 70f;
 
     [Header("正確答案設定")]
     public string[] correctAnswers = { "箭頭 (右)", "箭頭 (右)", "箭頭 (右)", "箭頭 (上)", "箭頭 (右)", "箭頭 (右)" };
@@ -24,29 +30,29 @@ public class ArrowMoveManager : MonoBehaviour
 
     void OnEnable()
     {
-        // --- 自動抓取邏輯：省去手動拖拽的煩惱 ---
+        // --- 自動尋找物件邏輯 ---
         for (int i = 0; i < 6; i++)
         {
-            // 自動尋找名字叫 "虛線方塊 (1)" ~ (6) 的物件
             GameObject slotObj = GameObject.Find("虛線方塊 (" + (i + 1) + ")");
             if (slotObj != null) slots[i] = slotObj.transform;
 
-            // 自動尋找名字叫 "腳丫子 (1)" ~ (5) 與 "終點"
             string fpName = (i < 5) ? "腳丫子 (" + (i + 1) + ")" : "終點";
             GameObject fpObj = GameObject.Find(fpName);
             if (fpObj != null) footPrints[i] = fpObj.transform;
         }
 
-        // 自動抓取文字物件 (如果還沒手動拖入)
+        // 自動找 FailHintText
         if (failHintText == null)
         {
             GameObject hintObj = GameObject.Find("FailHintText");
             if (hintObj != null) failHintText = hintObj.GetComponent<TextMeshProUGUI>();
         }
 
-        // 初始設定
+        // 初始狀態設定：隱藏通關背景與文字
         if (player != null) playerStartPosition = player.transform.position;
         if (failHintText != null) failHintText.gameObject.SetActive(false);
+        if (endingBackground != null) endingBackground.SetActive(false);
+        if (endingPlotText != null) endingPlotText.gameObject.SetActive(false);
     }
 
     public void StartWalking()
@@ -67,8 +73,7 @@ public class ArrowMoveManager : MonoBehaviour
                 Image arrowImage = arrow.GetComponent<Image>();
                 Color originalColor = arrowImage.color;
 
-                // 亮紫色表示正在檢查
-                arrowImage.color = new Color(0.4f, 0.2f, 0.6f);
+                arrowImage.color = new Color(0.4f, 0.2f, 0.6f); // 紫色
 
                 if (arrow.name.Contains(correctAnswers[stepIndex]))
                 {
@@ -91,8 +96,8 @@ public class ArrowMoveManager : MonoBehaviour
                 }
                 else
                 {
-                    // 失敗邏輯
-                    arrowImage.color = Color.white;
+                    // 失敗：變紅演出
+                    arrowImage.color = Color.red;
                     ShowMessage("再試一次吧！", Color.white);
                     yield return new WaitForSeconds(1.5f);
                     failHintText.gameObject.SetActive(false);
@@ -105,17 +110,41 @@ public class ArrowMoveManager : MonoBehaviour
             else break;
         }
 
-        // 檢查是否全部完成
+        // --- 通關演出 ---
         if (stepIndex == footPrints.Length)
         {
-            ShowMessage("恭喜通關！", Color.white);
             Debug.Log("尋找線索完成！");
+
+            // 1. 閃爍「恭喜通關」
+            for (int i = 0; i < 4; i++)
+            {
+                ShowMessage("恭喜通關！", Color.white);
+                yield return new WaitForSeconds(0.25f);
+                failHintText.gameObject.SetActive(false);
+                yield return new WaitForSeconds(0.25f);
+            }
+
+            // 2. 顯示劇情內容
+            ShowEndingPlot();
         }
         else
         {
             ResetPlayer();
         }
         isMoving = false;
+    }
+
+    void ShowEndingPlot()
+    {
+        // 顯示劇情背景圖
+        if (endingBackground != null) endingBackground.SetActive(true);
+
+        // 顯示長對話文字
+        if (endingPlotText != null)
+        {
+            endingPlotText.text = "你晃了晃仍然發麻的雙腿，走向靠牆的一台舊型電腦，\n螢幕上的綠色指示燈閃著微弱光芒，似乎仍保存著最後一絲電力。";
+            endingPlotText.gameObject.SetActive(true);
+        }
     }
 
     void ShowMessage(string msg, Color col)

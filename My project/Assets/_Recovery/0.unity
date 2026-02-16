@@ -1102,8 +1102,8 @@ MonoBehaviour:
   - {fileID: 196714489}
   - {fileID: 1291842563}
   failHintText: {fileID: 1077851061}
-  endingBackground: {fileID: 210605728}
-  endingPlotText: {fileID: 1590189519}
+  endingBackground: {fileID: 0}
+  endingPlotText: {fileID: 0}
   yOffset: 70
   correctAnswers:
   - "\u7BAD\u982D (\u53F3)"
@@ -1143,9 +1143,9 @@ RectTransform:
   - {fileID: 791433936}
   - {fileID: 196714489}
   - {fileID: 869091000}
-  - {fileID: 1077851060}
   - {fileID: 210605729}
   - {fileID: 1590189518}
+  - {fileID: 1077851060}
   m_Father: {fileID: 537748146}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
