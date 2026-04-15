@@ -1,58 +1,60 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using TMPro;
 
 public class ArrowMoveManager : MonoBehaviour
 {
-    [Header("¨¤¦â³]©w")]
+    [Header("è§’è‰²è¨­å®š")]
     public GameObject player;
 
-    [Header("¦Û°Ê§ì¨úªºª«¥ó")]
+    [Header("è‡ªå‹•æŠ“å–çš„ç‰©ä»¶")]
     public Transform[] slots = new Transform[6];
     public Transform[] footPrints = new Transform[6];
     public TextMeshProUGUI failHintText;
 
-    [Header("³qÃö¼@±¡ºt¥X³]©w")]
-    [Tooltip("½Ğ§â EndingBackground ©ì¶i¨Ó")]
+    [Header("é€šé—œåŠ‡æƒ…æ¼”å‡ºè¨­å®š")]
     public GameObject endingBackground;
-    [Tooltip("½Ğ§â »Î±µ¼@±¡¤å¦r ©ì¶i¨Ó")]
     public TextMeshProUGUI endingPlotText;
+    public GameObject continueButton;  // å¦³æ–°å¢çš„ ContinueButton
 
-    [Header("¦ì¸m·L½Õ")]
+    [Header("ä¸‹ä¸€é—œè¨­å®š")]
+    public GameObject nextGameUI;      // æ‹–å…¥ã€ŒéŠæˆ²-printã€ç‰©ä»¶
+
+    [Header("ä½ç½®å¾®èª¿")]
     public float yOffset = 70f;
 
-    [Header("¥¿½Tµª®×³]©w")]
-    public string[] correctAnswers = { "½bÀY (¥k)", "½bÀY (¥k)", "½bÀY (¥k)", "½bÀY (¤W)", "½bÀY (¥k)", "½bÀY (¥k)" };
+    [Header("æ­£ç¢ºç­”æ¡ˆè¨­å®š")]
+    public string[] correctAnswers = { "ç®­é ­ (å³)", "ç®­é ­ (å³)", "ç®­é ­ (å³)", "ç®­é ­ (ä¸Š)", "ç®­é ­ (å³)", "ç®­é ­ (å³)" };
 
     private Vector3 playerStartPosition;
     private bool isMoving = false;
 
     void OnEnable()
     {
-        // --- ¦Û°Ê´M§äª«¥óÅŞ¿è ---
+        // --- è‡ªå‹•å°‹æ‰¾ç‰©ä»¶é‚è¼¯ ---
         for (int i = 0; i < 6; i++)
         {
-            GameObject slotObj = GameObject.Find("µê½u¤è¶ô (" + (i + 1) + ")");
+            GameObject slotObj = GameObject.Find("è™›ç·šæ–¹å¡Š (" + (i + 1) + ")");
             if (slotObj != null) slots[i] = slotObj.transform;
 
-            string fpName = (i < 5) ? "¸}¤X¤l (" + (i + 1) + ")" : "²×ÂI";
+            string fpName = (i < 5) ? "è…³ä¸«å­ (" + (i + 1) + ")" : "çµ‚é»";
             GameObject fpObj = GameObject.Find(fpName);
             if (fpObj != null) footPrints[i] = fpObj.transform;
         }
 
-        // ¦Û°Ê§ä FailHintText
         if (failHintText == null)
         {
             GameObject hintObj = GameObject.Find("FailHintText");
             if (hintObj != null) failHintText = hintObj.GetComponent<TextMeshProUGUI>();
         }
 
-        // ªì©lª¬ºA³]©w¡GÁôÂÃ³qÃö­I´º»P¤å¦r
+        // åˆå§‹éš±è—æ‰€æœ‰é€šé—œå¾Œçš„ UI
         if (player != null) playerStartPosition = player.transform.position;
         if (failHintText != null) failHintText.gameObject.SetActive(false);
         if (endingBackground != null) endingBackground.SetActive(false);
         if (endingPlotText != null) endingPlotText.gameObject.SetActive(false);
+        if (continueButton != null) continueButton.SetActive(false);
     }
 
     public void StartWalking()
@@ -72,12 +74,10 @@ public class ArrowMoveManager : MonoBehaviour
                 GameObject arrow = slot.GetChild(0).gameObject;
                 Image arrowImage = arrow.GetComponent<Image>();
                 Color originalColor = arrowImage.color;
-
-                arrowImage.color = new Color(0.4f, 0.2f, 0.6f); // µµ¦â
+                arrowImage.color = new Color(0.4f, 0.2f, 0.6f);
 
                 if (arrow.name.Contains(correctAnswers[stepIndex]))
                 {
-                    // µª¹ï²¾°Ê
                     Vector3 targetPos = footPrints[stepIndex].position;
                     targetPos.y += yOffset;
 
@@ -96,9 +96,8 @@ public class ArrowMoveManager : MonoBehaviour
                 }
                 else
                 {
-                    // ¥¢±Ñ¡GÅÜ¬õºt¥X
                     arrowImage.color = Color.red;
-                    ShowMessage("¦A¸Õ¤@¦¸§a¡I", Color.white);
+                    ShowMessage("å†è©¦ä¸€æ¬¡å§ï¼", Color.white);
                     yield return new WaitForSeconds(1.5f);
                     failHintText.gameObject.SetActive(false);
                     arrowImage.color = originalColor;
@@ -110,21 +109,16 @@ public class ArrowMoveManager : MonoBehaviour
             else break;
         }
 
-        // --- ³qÃöºt¥X ---
         if (stepIndex == footPrints.Length)
         {
-            Debug.Log("´M§ä½u¯Á§¹¦¨¡I");
-
-            // 1. °{Ã{¡u®¥³ß³qÃö¡v
+            // é€šé—œæ¼”å‡ºï¼šé–ƒçˆå¾Œæ›å¹•
             for (int i = 0; i < 4; i++)
             {
-                ShowMessage("®¥³ß³qÃö¡I", Color.white);
+                ShowMessage("æ­å–œé€šé—œï¼", Color.white);
                 yield return new WaitForSeconds(0.25f);
                 failHintText.gameObject.SetActive(false);
                 yield return new WaitForSeconds(0.25f);
             }
-
-            // 2. Åã¥Ü¼@±¡¤º®e
             ShowEndingPlot();
         }
         else
@@ -136,15 +130,25 @@ public class ArrowMoveManager : MonoBehaviour
 
     void ShowEndingPlot()
     {
-        // Åã¥Ü¼@±¡­I´º¹Ï
         if (endingBackground != null) endingBackground.SetActive(true);
-
-        // Åã¥Üªø¹ï¸Ü¤å¦r
         if (endingPlotText != null)
         {
-            endingPlotText.text = "§A®Ì¤F®Ì¤´µMµo³ÂªºÂù»L¡A¨«¦V¾aÀğªº¤@¥xÂÂ«¬¹q¸£¡A\n¿Ã¹õ¤Wªººñ¦â«ü¥Ü¿O°{µÛ·L®z¥ú¨~¡A¦ü¥G¤´«O¦sµÛ³Ì«á¤@µ·¹q¤O¡C";
+            endingPlotText.text = "ä½ æ™ƒäº†æ™ƒä»ç„¶ç™¼éº»çš„é›™è…¿ï¼Œèµ°å‘é ç‰†çš„ä¸€å°èˆŠå‹é›»è…¦ï¼Œ\nè¢å¹•ä¸Šçš„ç¶ è‰²æŒ‡ç¤ºç‡ˆé–ƒè‘—å¾®å¼±å…‰èŠ’ï¼Œä¼¼ä¹ä»ä¿å­˜è‘—æœ€å¾Œä¸€çµ²é›»åŠ›ã€‚";
             endingPlotText.gameObject.SetActive(true);
         }
+
+        // é¡¯ç¤ºç¹¼çºŒæŒ‰éˆ•ï¼Œè®“ç©å®¶å¯ä»¥æ‰‹å‹•é»æ“Š
+        if (continueButton != null) continueButton.SetActive(true);
+    }
+
+    // ğŸ’¡ é»æ“Šã€Œç¹¼çºŒã€æŒ‰éˆ•æ™‚æœƒåŸ·è¡Œçš„å‡½æ•¸
+    public void OnClickContinue()
+    {
+        // 1. æ‰“é–‹ä¸‹ä¸€å€‹éŠæˆ²ä»‹é¢ã€ŒéŠæˆ²-printã€
+        if (nextGameUI != null) nextGameUI.SetActive(true);
+
+        // 2. é—œé–‰ç›®å‰çš„ã€Œå°éŠæˆ²-å°‹æ‰¾ç·šç´¢ã€æ•´é«”
+        this.gameObject.SetActive(false);
     }
 
     void ShowMessage(string msg, Color col)
