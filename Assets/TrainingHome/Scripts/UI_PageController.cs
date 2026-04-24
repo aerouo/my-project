@@ -9,15 +9,20 @@ public class UI_PageController : MonoBehaviour
     public GameObject Panel_LearningList;
     public GameObject Panel_AdvancedList;
     public GameObject Panel_LessonHome;
+    public GameObject Panel_Quiz;
 
     [Header("Lesson UI")]
     public TMP_Text Txt_LessonTitle;
     public TMP_Text Txt_VideoTitle;
     public TMP_Text Txt_QuizTitle;
 
+    [Header("Quiz UI")]
+    public TMP_Text Txt_QuizPageTitle;
+
     [Header("Popups")]
     public GameObject Popup_Video;
-    public GameObject Popup_Quiz;
+
+    private string currentLessonName = "";
 
     void HideAllPages()
     {
@@ -26,15 +31,15 @@ public class UI_PageController : MonoBehaviour
         Panel_LearningList.SetActive(false);
         Panel_AdvancedList.SetActive(false);
         Panel_LessonHome.SetActive(false);
+
+        if (Panel_Quiz != null)
+            Panel_Quiz.SetActive(false);
     }
 
     void HideAllPopups()
     {
         if (Popup_Video != null)
             Popup_Video.SetActive(false);
-
-        if (Popup_Quiz != null)
-            Popup_Quiz.SetActive(false);
     }
 
     public void OpenLobby()
@@ -74,8 +79,16 @@ public class UI_PageController : MonoBehaviour
 
     public void OpenLessonByName(string lessonName)
     {
+        currentLessonName = lessonName;
+
         switch (lessonName)
         {
+            case "基礎架構":
+                Txt_LessonTitle.text = "基礎架構";
+                Txt_VideoTitle.text = "基礎架構 教學影片";
+                Txt_QuizTitle.text = "基礎架構 基礎測驗";
+                break;
+
             case "printf":
                 Txt_LessonTitle.text = "printf";
                 Txt_VideoTitle.text = "printf 教學影片";
@@ -94,10 +107,16 @@ public class UI_PageController : MonoBehaviour
                 Txt_QuizTitle.text = "if else 基礎測驗";
                 break;
 
+            case "switch case":
+                Txt_LessonTitle.text = "switch case";
+                Txt_VideoTitle.text = "switch case 教學影片";
+                Txt_QuizTitle.text = "switch case 基礎測驗";
+                break;
+
             default:
                 Txt_LessonTitle.text = lessonName;
-                Txt_VideoTitle.text = "教學影片";
-                Txt_QuizTitle.text = "基礎測驗";
+                Txt_VideoTitle.text = lessonName + " 教學影片";
+                Txt_QuizTitle.text = lessonName + " 基礎測驗";
                 break;
         }
 
@@ -106,6 +125,8 @@ public class UI_PageController : MonoBehaviour
 
     public void OpenVideoPopup()
     {
+        HideAllPopups();
+
         if (Popup_Video != null)
             Popup_Video.SetActive(true);
     }
@@ -116,25 +137,25 @@ public class UI_PageController : MonoBehaviour
             Popup_Video.SetActive(false);
     }
 
-    public void OpenQuizPopup()
+    public void OpenQuizPanel()
     {
-        if (Popup_Quiz != null)
-            Popup_Quiz.SetActive(true);
+        HideAllPages();
+        HideAllPopups();
+
+        if (Txt_QuizPageTitle != null)
+            Txt_QuizPageTitle.text = currentLessonName + " 基礎測驗";
+
+        if (Panel_Quiz != null)
+            Panel_Quiz.SetActive(true);
     }
 
-    public void CloseQuizPopup()
+    public void BackToLessonHome()
     {
-        if (Popup_Quiz != null)
-            Popup_Quiz.SetActive(false);
+        OpenLessonHome();
     }
 
     void Start()
     {
         OpenLobby();
-        HideAllPopups();
-    }
-
-    void Update()
-    {
     }
 }
