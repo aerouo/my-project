@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UI_PageController : MonoBehaviour
 {
@@ -15,6 +16,14 @@ public class UI_PageController : MonoBehaviour
     public TMP_Text Txt_LessonTitle;
     public TMP_Text Txt_VideoTitle;
     public TMP_Text Txt_QuizTitle;
+
+    [Header("Lesson Title Icon")]
+    public Image Img_LessonTitle;
+    public Sprite Icon_Basic;
+    public Sprite Icon_Printf;
+    public Sprite Icon_For;
+    public Sprite Icon_IfElse;
+    public Sprite Icon_SwitchCase;
 
     [Header("Quiz UI")]
     public TMP_Text Txt_QuizPageTitle;
@@ -40,6 +49,29 @@ public class UI_PageController : MonoBehaviour
     {
         if (Popup_Video != null)
             Popup_Video.SetActive(false);
+    }
+
+    void SetLessonTitleIcon(Sprite icon)
+    {
+        if (Img_LessonTitle == null)
+            return;
+
+        if (icon != null)
+        {
+            Img_LessonTitle.sprite = icon;
+            Img_LessonTitle.gameObject.SetActive(true);
+            Img_LessonTitle.SetNativeSize();
+
+            if (Txt_LessonTitle != null)
+                Txt_LessonTitle.gameObject.SetActive(false);
+        }
+        else
+        {
+            Img_LessonTitle.gameObject.SetActive(false);
+
+            if (Txt_LessonTitle != null)
+                Txt_LessonTitle.gameObject.SetActive(true);
+        }
     }
 
     public void OpenLobby()
@@ -81,45 +113,54 @@ public class UI_PageController : MonoBehaviour
     {
         currentLessonName = lessonName;
 
+        Sprite lessonIcon = null;
+
         switch (lessonName)
         {
             case "基礎架構":
                 Txt_LessonTitle.text = "基礎架構";
                 Txt_VideoTitle.text = "基礎架構 教學影片";
                 Txt_QuizTitle.text = "基礎架構 基礎測驗";
+                lessonIcon = Icon_Basic;
                 break;
 
-            case "printf":
-                Txt_LessonTitle.text = "printf";
-                Txt_VideoTitle.text = "printf 教學影片";
-                Txt_QuizTitle.text = "printf 基礎測驗";
+            case "print":
+                Txt_LessonTitle.text = "print";
+                Txt_VideoTitle.text = "print 教學影片";
+                Txt_QuizTitle.text = "print 基礎測驗";
+                lessonIcon = Icon_Printf;
                 break;
 
             case "for":
                 Txt_LessonTitle.text = "for";
                 Txt_VideoTitle.text = "for 教學影片";
                 Txt_QuizTitle.text = "for 基礎測驗";
+                lessonIcon = Icon_For;
                 break;
 
             case "if else":
                 Txt_LessonTitle.text = "if else";
                 Txt_VideoTitle.text = "if else 教學影片";
                 Txt_QuizTitle.text = "if else 基礎測驗";
+                lessonIcon = Icon_IfElse;
                 break;
 
             case "switch case":
                 Txt_LessonTitle.text = "switch case";
                 Txt_VideoTitle.text = "switch case 教學影片";
                 Txt_QuizTitle.text = "switch case 基礎測驗";
+                lessonIcon = Icon_SwitchCase;
                 break;
 
             default:
                 Txt_LessonTitle.text = lessonName;
                 Txt_VideoTitle.text = lessonName + " 教學影片";
                 Txt_QuizTitle.text = lessonName + " 基礎測驗";
+                lessonIcon = null;
                 break;
         }
 
+        SetLessonTitleIcon(lessonIcon);
         OpenLessonHome();
     }
 
