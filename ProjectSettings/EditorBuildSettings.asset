@@ -8,5 +8,14 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/TrainingHome/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/TrainingHome/Scenes/QuizScene_01.unity
+    guid: cff1bbb38555f804d9508b922ca1a16a
+  - enabled: 1
+    path: Assets/TrainingHome/Scenes/QuizScene_02.unity
+    guid: ef6db88870f812e4e83750627c2cc3dc
+  - enabled: 1
+    path: Assets/TrainingHome/Scenes/QuizScene_03.unity
+    guid: 75b4caa36a8ed704cbf3d9cc3f139f25
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
