@@ -43,7 +43,7 @@ public class SlotHandler : MonoBehaviour, IDropHandler
 
     void CheckResult(string itemName, string slot)
     {
-        PanelSwitcher manager = FindFirstObjectByType<PanelSwitcher>();
+        PanelSwitcher manager = FindAnyObjectByType<PanelSwitcher>();
 
         // 找出兩個格子物件
         GameObject slotTrue = GameObject.Find("Slot_Hat");      // 請確認你 Hierarchy 的名稱

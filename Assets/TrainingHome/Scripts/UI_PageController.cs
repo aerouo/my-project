@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Video;
 using UnityEngine.SceneManagement;
 
 public class UI_PageController : MonoBehaviour
@@ -24,6 +25,14 @@ public class UI_PageController : MonoBehaviour
     public Sprite Icon_IfElse;
     public Sprite Icon_For;
     public Sprite Icon_SwitchCase;
+
+    [Header("Video")]
+    public VideoPlayer videoPlayer;
+    public VideoClip video_Basic;
+    public VideoClip video_Print;
+    public VideoClip video_IfElse;
+    public VideoClip video_For;
+    public VideoClip video_SwitchCase;
 
     [Header("Quiz UI")]
     public TMP_Text Txt_QuizPageTitle;
@@ -161,17 +170,60 @@ public class UI_PageController : MonoBehaviour
     }
 
     public void OpenVideoPopup()
-    { // 打開影片彈窗
+    {
         HideAllPopups();
 
         if (Popup_Video != null)
             Popup_Video.SetActive(true);
+
+        if (videoPlayer == null) return;
+
+        switch (currentLessonName)
+        {
+            case "基礎架構":
+                videoPlayer.clip = video_Basic;
+                break;
+
+            case "print":
+                videoPlayer.clip = video_Print;
+                break;
+
+            case "if else":
+                videoPlayer.clip = video_IfElse;
+                break;
+
+            case "for":
+                videoPlayer.clip = video_For;
+                break;
+
+            case "switch case":
+                videoPlayer.clip = video_SwitchCase;
+                break;
+        }
+
+        videoPlayer.Stop();
+        videoPlayer.Play();
     }
 
     public void CloseVideoPopup()
-    { // 關閉影片彈窗
+    {
+        if (videoPlayer != null)
+            videoPlayer.Stop();
+
         if (Popup_Video != null)
             Popup_Video.SetActive(false);
+    }
+
+    public TMP_Text pauseText;
+
+    public void ToggleVideoPause()
+    {
+        if (videoPlayer == null) return;
+
+        if (videoPlayer.isPlaying)
+            videoPlayer.Pause();
+        else
+            videoPlayer.Play();
     }
 
     public void OpenQuizPanel()
@@ -193,6 +245,10 @@ public class UI_PageController : MonoBehaviour
 
             case "for":
                 SceneManager.LoadScene("QuizScene_04");
+                break;
+
+            case "switch case":
+                SceneManager.LoadScene("QuizScene_05");
                 break;
 
             default:

@@ -17,5 +17,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/TrainingHome/Scenes/QuizScene_03.unity
     guid: 75b4caa36a8ed704cbf3d9cc3f139f25
+  - enabled: 1
+    path: Assets/TrainingHome/Scenes/QuizScene_04.unity
+    guid: c9b649789dea31743ba73f744368cc87
+  - enabled: 1
+    path: Assets/TrainingHome/Scenes/QuizScene_05.unity
+    guid: e038cc0691fa8a549ab1a9379ee6b654
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
