@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "313387828781",
+    "project_id": "javagame-ab997",
+    "storage_bucket": "javagame-ab997.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:313387828781:android:8798417209491cf3159aa4",
+        "android_client_info": {
+          "package_name": "com.myprojectjavagame.trainingroom"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "313387828781-p472ln2u59uqp19mm62f5kiquue2vjvc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACc85MPXRM-MQ9U_gHhSZA6G4yTyBvTJ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "313387828781-p472ln2u59uqp19mm62f5kiquue2vjvc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
