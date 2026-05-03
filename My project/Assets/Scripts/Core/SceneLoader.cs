@@ -8,7 +8,7 @@ public class SceneLoader : MonoBehaviour
 
     [Header("Loading Settings")]
     // 預設的 Loading 場景名稱，請確保 Unity 裡有一個場景叫 "Loading"
-    public string loadingSceneName = "Loading";
+    public string loadingSceneName = "LoadingScreen";
 
     void Awake()
     {
