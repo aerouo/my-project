@@ -13,6 +13,12 @@ public class UI_PageController : MonoBehaviour
     public GameObject Panel_AdvancedList;
     public GameObject Panel_LessonHome;
 
+    public GameObject Panel_Clue;
+    public GameObject Panel_Puzzle;
+    public GameObject Panel_Forest;
+    public GameObject Panel_Makeboat;
+    public GameObject Panel_Boating;
+
     [Header("Lesson UI")]
     public TMP_Text Txt_LessonTitle;
     public TMP_Text Txt_VideoTitle;
@@ -49,6 +55,11 @@ public class UI_PageController : MonoBehaviour
         Panel_LearningList.SetActive(false);
         Panel_AdvancedList.SetActive(false);
         Panel_LessonHome.SetActive(false);
+        Panel_Clue.SetActive(false);
+        Panel_Puzzle.SetActive(false);
+        Panel_Forest.SetActive(false);
+        Panel_Makeboat.SetActive(false);
+        Panel_Boating.SetActive(false);
     }
 
     void HideAllPopups()
@@ -113,6 +124,41 @@ public class UI_PageController : MonoBehaviour
         HideAllPages();
         HideAllPopups();
         Panel_LessonHome.SetActive(true);
+    }
+
+    public void OpenClue()
+    { // 打開線索頁面
+        HideAllPages();
+        HideAllPopups();
+        Panel_Clue.SetActive(true);
+    }
+
+    public void OpenPuzzle()
+    { // 打開謎題頁面
+        HideAllPages();
+        HideAllPopups();
+        Panel_Puzzle.SetActive(true);
+    }
+
+    public void OpenForest()
+    { // 打開森林頁面
+        HideAllPages();
+        HideAllPopups();
+        Panel_Forest.SetActive(true);
+    }
+
+    public void OpenMakeboat()
+    { // 打開造船頁面
+        HideAllPages();
+        HideAllPopups();
+        Panel_Makeboat.SetActive(true);
+    }
+
+    public void OpenBoating()
+    { // 打開划船頁面
+        HideAllPages();
+        HideAllPopups();
+        Panel_Boating.SetActive(true);
     }
 
     public void OpenLessonByName(string lessonName)
