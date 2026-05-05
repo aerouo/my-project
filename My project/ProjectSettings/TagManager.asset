@@ -3,15 +3,17 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Green
+  - Pink
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Circle
   - Water
   - UI
-  - 
+  - Judge
   - 
   - 
   - 
