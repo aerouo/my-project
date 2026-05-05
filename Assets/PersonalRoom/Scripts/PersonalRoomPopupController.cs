@@ -3,6 +3,9 @@ using UnityEngine.UI;
 
 public class PersonalRoomPopupController : MonoBehaviour
 {
+    [Header("Root Panel")]
+    public GameObject personalRoomRoot; // 整個小屋UI（最外層）
+
     [Header("Panels")]
     public GameObject panelAchievement;
     public GameObject panelCloset;
@@ -21,8 +24,29 @@ public class PersonalRoomPopupController : MonoBehaviour
 
     void Start()
     {
-        ShowAchievement(); // 預設頁面
+        // 一開始先關掉整個小屋（如果你希望一開始不顯示）
+        if (personalRoomRoot != null)
+            personalRoomRoot.SetActive(false);
     }
+
+    // ====== 外部控制（你新增的按鈕用這兩個） ======
+
+    public void OpenRoom()
+    {
+        if (personalRoomRoot != null)
+            personalRoomRoot.SetActive(true);
+
+        // 打開時預設顯示成就頁
+        ShowAchievement();
+    }
+
+    public void CloseRoom()
+    {
+        if (personalRoomRoot != null)
+            personalRoomRoot.SetActive(false);
+    }
+
+    // ====== 內部頁面切換（你原本的） ======
 
     public void ShowAchievement()
     {
