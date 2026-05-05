@@ -1,18 +1,24 @@
 using UnityEngine;
 
-public class CircleMove: MonoBehaviour
+public class CircleMove : MonoBehaviour
 {
     public float speed = 3f;
+    private Rowing_Lvl1 rowingScript;
+
+    void Start()
+    {
+        var judgeZone = GameObject.Find("JudgeZone");
+        if (judgeZone != null)
+            rowingScript = judgeZone.GetComponent<Rowing_Lvl1>();
+    }
 
     void Update()
     {
-        // 往左移動
-        transform.Translate(Vector2.left * speed * Time.deltaTime);
+        // 暫停時圓圈停止移動
+        if (rowingScript != null && rowingScript.gamePaused) return;
 
-        // 超出畫面左邊就刪掉
-        if (transform.position.x < -12f)
-        {
+        transform.Translate(Vector2.left * speed * Time.deltaTime);
+        if (transform.position.x < -20f)
             Destroy(gameObject);
-        }
     }
 }

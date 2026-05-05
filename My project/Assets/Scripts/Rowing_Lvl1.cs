@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Rowing_Lvl1 : MonoBehaviour
 {
@@ -13,46 +14,212 @@ public class Rowing_Lvl1 : MonoBehaviour
     public Sprite rightHandRow;
     public TMP_Text missText;
 
-    private GameObject circleInZone = null;
+    [Header("UI")]
+    public TMP_Text txtScore;
+    public TMP_Text txtTimer;
+    public GameObject resultPanel;
+    public TMP_Text txtResult;
+    public GameObject backButton;
+
+    [Header("提示畫面")]
+    public GameObject hintPanel;
+    public TMP_Text txtCountdown;
+
+    [Header("判定設定")]
+    public float hitRange = 5f;
+    public float missX = -18.5f;
+    public float gameDuration = 180f;
+
+    public int score = 0;
+    public bool gameOver = false;
+    private float timeLeft;
+    public bool gamePaused = false;
+    private bool isFirstStart = true; // 是否第一次開始
+
+    private List<GameObject> activeCircles = new List<GameObject>();
+
+    void Start()
+    {
+        timeLeft = gameDuration;
+        resultPanel.SetActive(false);
+        hintPanel.SetActive(true);
+        gameOver = true;
+        txtScore.gameObject.SetActive(false);
+        txtTimer.gameObject.SetActive(false);
+        UpdateScoreUI();
+    }
 
     void Update()
     {
-        // 如果手邊沒球，什麼都不做
-        if (circleInZone == null) return;
+        if (gameOver || gamePaused) return;
 
-        // 【左鍵測試】
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        timeLeft -= Time.deltaTime;
+        UpdateTimerUI();
+
+        if (timeLeft <= 0)
         {
-            if (circleInZone.CompareTag("Green"))
-            {
-                HitSuccess(leftHandRenderer, leftHandNormal, leftHandRow);
-            }
-            else
-            {
-                StartCoroutine(ShowMiss());
-            }
+            timeLeft = 0;
+            EndGame();
+            return;
         }
 
-        // 【右鍵測試】
+        activeCircles.RemoveAll(c => c == null);
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            StartCoroutine(PlayRowAnim(leftHandRenderer, leftHandNormal, leftHandRow));
+            HandleInput("Green");
+        }
+
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (circleInZone.CompareTag("Pink"))
+            StartCoroutine(PlayRowAnim(rightHandRenderer, rightHandNormal, rightHandRow));
+            HandleInput("Pink");
+        }
+
+        for (int i = activeCircles.Count - 1; i >= 0; i--)
+        {
+            if (activeCircles[i] == null) continue;
+            if (activeCircles[i].transform.position.x < missX)
             {
-                HitSuccess(rightHandRenderer, rightHandNormal, rightHandRow);
-            }
-            else
-            {
+                Destroy(activeCircles[i]);
+                activeCircles.RemoveAt(i);
+                AddScore(-5);
                 StartCoroutine(ShowMiss());
             }
         }
     }
 
-    void HitSuccess(SpriteRenderer hand, Sprite normal, Sprite row)
+    // 第一次進場確認
+    public void OnClickHintConfirm()
     {
-        Debug.Log("<color=green>成功擊中！</color>");
-        Destroy(circleInZone); // 只有這裡可以 Destroy！
-        circleInZone = null;
-        StartCoroutine(PlayRowAnim(hand, normal, row));
+        hintPanel.SetActive(false);
+        StartCoroutine(CountdownStart());
+    }
+
+    // hint 按鈕（中途暫停）
+    public void OnClickHint()
+    {
+        gamePaused = true;
+        hintPanel.SetActive(true);
+        txtScore.gameObject.SetActive(false);
+        txtTimer.gameObject.SetActive(false);
+    }
+
+    IEnumerator CountdownStart()
+    {
+        if (txtCountdown != null)
+        {
+            txtCountdown.gameObject.SetActive(true);
+            txtCountdown.text = "3";
+            yield return new WaitForSeconds(1f);
+            txtCountdown.text = "2";
+            yield return new WaitForSeconds(1f);
+            txtCountdown.text = "1";
+            yield return new WaitForSeconds(1f);
+            txtCountdown.gameObject.SetActive(false);
+        }
+        txtScore.gameObject.SetActive(true);
+        txtTimer.gameObject.SetActive(true);
+        gamePaused = false;
+        gameOver = false;
+    }
+
+    void HandleInput(string correctTag)
+    {
+        GameObject nearest = null;
+        float minDist = float.MaxValue;
+
+        foreach (var c in activeCircles)
+        {
+            if (c == null) continue;
+            float dist = Mathf.Abs(c.transform.position.x - transform.position.x);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = c;
+            }
+        }
+
+        if (nearest == null || minDist > hitRange) return;
+
+        activeCircles.Remove(nearest);
+
+        if (nearest.CompareTag(correctTag))
+        {
+            Destroy(nearest);
+            AddScore(10);
+        }
+        else
+        {
+            Destroy(nearest);
+            AddScore(-2);
+            StartCoroutine(ShowMiss());
+        }
+    }
+
+    void AddScore(int amount)
+    {
+        score += amount;
+        if (score < 0) score = 0;
+        UpdateScoreUI();
+    }
+
+    void UpdateScoreUI()
+    {
+        if (txtScore != null)
+            txtScore.text = "分數：" + score;
+    }
+
+    void UpdateTimerUI()
+    {
+        if (txtTimer != null)
+        {
+            int minutes = Mathf.FloorToInt(timeLeft / 60);
+            int seconds = Mathf.FloorToInt(timeLeft % 60);
+            txtTimer.text = string.Format("{0:00}:{1:00}", minutes, seconds);
+        }
+    }
+
+    void EndGame()
+    {
+        gameOver = true;
+
+        var spawner = FindFirstObjectByType<CircleSpawner>();
+        if (spawner != null) spawner.enabled = false;
+
+        foreach (var c in activeCircles)
+            if (c != null) Destroy(c);
+        activeCircles.Clear();
+
+        resultPanel.SetActive(true);
+        if (txtResult != null)
+            txtResult.text = "最終分數：" + score;
+
+        SaveScore();
+    }
+
+    void SaveScore()
+    {
+        PlayerPrefs.SetInt("RowingLvl1_Score", score);
+        PlayerPrefs.SetString("RowingLvl1_Date", System.DateTime.Now.ToString("yyyy/MM/dd"));
+        PlayerPrefs.Save();
+        Debug.Log("分數已暫存：" + score);
+    }
+
+    public void OnClickBack()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("TrainingRoom");
+    }
+
+    public void OnClickConfirm()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("TrainingRoom");
+    }
+
+    public void RegisterCircle(GameObject circle)
+    {
+        activeCircles.Add(circle);
     }
 
     IEnumerator PlayRowAnim(SpriteRenderer hand, Sprite normal, Sprite row)
@@ -67,7 +234,6 @@ public class Rowing_Lvl1 : MonoBehaviour
 
     IEnumerator ShowMiss()
     {
-        Debug.Log("<color=red>按錯了！顯示 MISS</color>");
         if (missText != null)
         {
             missText.gameObject.SetActive(true);
@@ -76,22 +242,6 @@ public class Rowing_Lvl1 : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        // 當球進來時，只記錄，絕對不刪除
-        if (other.CompareTag("Green") || other.CompareTag("Pink"))
-        {
-            circleInZone = other.gameObject;
-            Debug.Log("球進來了：" + other.tag);
-        }
-    }
-
-    void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.gameObject == circleInZone)
-        {
-            Debug.Log("球飛走了，沒按到");
-            circleInZone = null;
-        }
-    }
+    void OnTriggerEnter2D(Collider2D other) { }
+    void OnTriggerExit2D(Collider2D other) { }
 }
