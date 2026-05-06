@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\a0903\\my-project\\My project\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|c:\\users\\a0903\\my-project\\my project\\assets\\scripts\\dragblock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\dragblock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|c:\\users\\a0903\\my-project\\my project\\assets\\scripts\\computerinteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\computerinteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -37,11 +41,28 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "DragBlock.cs",
+              "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DragBlock.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\DragBlock.cs",
+              "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DragBlock.cs",
+              "RelativeToolTip": "Assets\\Scripts\\DragBlock.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAqwC4AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-05T15:51:13.486Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "VisualFakeFill.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\VisualFakeFill.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\VisualFakeFill.cs",
@@ -49,25 +70,24 @@
               "RelativeToolTip": "Assets\\Scripts\\VisualFakeFill.cs",
               "ViewState": "AQIAAEwAAAAAAAAAAAAUwFIAAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-11T14:22:10.103Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-11T14:22:10.103Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "ComputerInteraction.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\ComputerInteraction.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ComputerInteraction.cs",
               "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\ComputerInteraction.cs",
               "RelativeToolTip": "Assets\\Scripts\\ComputerInteraction.cs",
-              "ViewState": "AQIAABEAAAAAAAAAAAAowBsAAABTAAAA",
+              "ViewState": "AgIAABEAAAAAAAAAAAA8wBsAAABTAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-04-09T16:00:49.878Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "ArrowMoveManager.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\ArrowMoveManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ArrowMoveManager.cs",
@@ -79,7 +99,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "Level1Manager.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\Level1Manager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Level1Manager.cs",
@@ -91,7 +111,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "DragArrow.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DragArrow.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DragArrow.cs",
@@ -99,12 +119,11 @@
               "RelativeToolTip": "Assets\\Scripts\\DragArrow.cs",
               "ViewState": "AQIAAEkAAAAAAAAAAAAUwFgAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-30T16:27:19.859Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-12-30T16:27:19.859Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "NewEmptyCSharpScript.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\NewEmptyCSharpScript.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\NewEmptyCSharpScript.cs",
@@ -115,7 +134,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Test.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\My project\\Assets\\Scripts\\Systems\\Test.cs",
               "RelativeDocumentMoniker": "..\\..\\My project\\Assets\\Scripts\\Systems\\Test.cs",
