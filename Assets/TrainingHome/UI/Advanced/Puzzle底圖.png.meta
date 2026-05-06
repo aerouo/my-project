@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 434e05ad4c20a86488c68286e83ed021
+guid: de0f10a426ee05649ab65ddd1d449806
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -1317664136613695636
-    second: 7A71EC61-7E05-4F95-8801-C1E1044C02D8_0
+      213: 3412752647572656836
+    second: "Puzzle\u5E95\u5716_0"
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: 7A71EC61-7E05-4F95-8801-C1E1044C02D8_0
+      name: "Puzzle\u5E95\u5716_0"
       rect:
         serializedVersion: 2
         x: 0
-        y: 6
-        width: 637
-        height: 808
+        y: 0
+        width: 1920
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c6f6ed3f277b6bde0800000000000000
-      internalID: -1317664136613695636
+      spriteID: 4c297d093788c5f20800000000000000
+      internalID: 3412752647572656836
       vertices: []
       indices: 
       edges: []
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      7A71EC61-7E05-4F95-8801-C1E1044C02D8_0: -1317664136613695636
+      "Puzzle\u5E95\u5716_0": 3412752647572656836
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
