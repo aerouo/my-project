@@ -7,10 +7,7 @@ using System;
 public class FirestoreManager : MonoBehaviour
 {
     private static FirestoreManager _instance;
-    public static FirestoreManager Instance
-    {
-        get { return _instance; }
-    }
+    public static FirestoreManager Instance { get { return _instance; } }
 
     private FirebaseFirestore db;
     private string userID;
@@ -34,67 +31,145 @@ public class FirestoreManager : MonoBehaviour
         userID = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
     }
 
-    // 存闖關碼頭關卡資料
+    // ===== 闖關碼頭 =====
     public void SaveQuestLevel(string levelID, float timeSeconds)
     {
-        if (string.IsNullOrEmpty(userID)) return;
-
+        if (!CheckReady()) return;
         string date = DateTime.Now.ToString("yyyy/MM/dd");
-
-        var data = new Dictionary<string, object>
-        {
-            { "completed", true },
-            { "time", timeSeconds },
-            { "date", date }
-        };
 
         db.Collection("users").Document(userID)
           .Collection("questLevels").Document(levelID)
-          .SetAsync(data);
+          .SetAsync(new Dictionary<string, object>
+          {
+              { "completed", true },
+              { "time", timeSeconds },
+              { "date", date }
+          });
     }
 
-    // 存練功坊小遊戲資料
+    // ===== 練功坊小遊戲 =====
     public void SaveMinigame(string gameID, string level, float timeSeconds)
     {
-        if (string.IsNullOrEmpty(userID)) return;
-
+        if (!CheckReady()) return;
         string date = DateTime.Now.ToString("yyyy/MM/dd");
 
-        var record = new Dictionary<string, object>
+        var docRef = db.Collection("users").Document(userID)
+                       .Collection("minigames").Document(gameID);
+
+        // 讀取目前資料，更新 history
+        docRef.GetSnapshotAsync().ContinueWith(task =>
         {
-            { "time", timeSeconds },
-            { "date", date }
-        };
+            var updates = new Dictionary<string, object>
+            {
+                { level + "_lastTime", timeSeconds },
+                { level + "_lastDate", date }
+            };
 
-        // 存最新紀錄
-        db.Collection("users").Document(userID)
-          .Collection("minigames").Document(gameID)
-          .Collection(level).Document("latest")
-          .SetAsync(record);
+            // 取得舊 history
+            List<object> history = new List<object>();
+            if (task.IsCompleted && task.Result.Exists)
+            {
+                if (task.Result.TryGetValue(level + "_history", out object h))
+                    history = h as List<object> ?? new List<object>();
+            }
 
-        // 存到 history（新增一筆）
-        db.Collection("users").Document(userID)
-          .Collection("minigames").Document(gameID)
-          .Collection(level).Document("history")
-          .Collection("records").AddAsync(record);
+            // 加入新紀錄，最多保留5筆
+            history.Add(new Dictionary<string, object>
+            {
+                { "time", timeSeconds },
+                { "date", date }
+            });
+            if (history.Count > 5)
+                history.RemoveAt(0);
+
+            updates[level + "_history"] = history;
+
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                docRef.SetAsync(updates, SetOptions.MergeAll));
+        });
     }
 
-    // 加金幣
+    // ===== 學習影片 =====
+    public void SaveVideoWatched(string videoID)
+    {
+        if (!CheckReady()) return;
+        string date = DateTime.Now.ToString("yyyy/MM/dd");
+
+        db.Collection("users").Document(userID)
+          .Collection("learning").Document("videos")
+          .SetAsync(new Dictionary<string, object>
+          {
+              { videoID + "_watched", true },
+              { videoID + "_date", date }
+          }, SetOptions.MergeAll);
+    }
+
+    // ===== 學習測驗 =====
+    public void SaveQuizDone(string quizID)
+    {
+        if (!CheckReady()) return;
+        string date = DateTime.Now.ToString("yyyy/MM/dd");
+
+        db.Collection("users").Document(userID)
+          .Collection("learning").Document("quizzes")
+          .SetAsync(new Dictionary<string, object>
+          {
+              { quizID + "_done", true },
+              { quizID + "_date", date }
+          }, SetOptions.MergeAll);
+    }
+
+    // ===== 金幣 =====
     public void AddCoins(int amount)
     {
-        if (string.IsNullOrEmpty(userID)) return;
+        if (!CheckReady()) return;
 
         var userRef = db.Collection("users").Document(userID);
         userRef.GetSnapshotAsync().ContinueWith(task =>
         {
-            if (task.IsCompleted)
-            {
-                long currentCoins = 0;
+            long current = 0;
+            if (task.IsCompleted && task.Result.Exists)
                 if (task.Result.TryGetValue("coins", out object val))
-                    currentCoins = (long)val;
+                    current = (long)val;
 
-                userRef.UpdateAsync("coins", currentCoins + amount);
-            }
+            UnityMainThreadDispatcher.Instance.Enqueue(() =>
+                userRef.UpdateAsync("coins", current + amount));
         });
+    }
+
+    // ===== 衣櫃 =====
+    public void SaveWardrobeItem(string itemID, bool owned)
+    {
+        if (!CheckReady()) return;
+
+        db.Collection("users").Document(userID)
+          .Collection("wardrobe").Document("items")
+          .SetAsync(new Dictionary<string, object>
+          {
+              { itemID + "_owned", owned }
+          }, SetOptions.MergeAll);
+    }
+
+    // ===== 初始化新使用者 =====
+    public void InitNewUser(string username)
+    {
+        if (!CheckReady()) return;
+
+        db.Collection("users").Document(userID)
+          .SetAsync(new Dictionary<string, object>
+          {
+              { "username", username },
+              { "coins", 0 }
+          });
+    }
+
+    private bool CheckReady()
+    {
+        if (db == null || string.IsNullOrEmpty(userID))
+        {
+            Debug.LogWarning("FirestoreManager 還沒準備好！");
+            return false;
+        }
+        return true;
     }
 }
