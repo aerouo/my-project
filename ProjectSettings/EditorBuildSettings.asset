@@ -23,5 +23,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/TrainingHome/Scenes/QuizScene_05.unity
     guid: e038cc0691fa8a549ab1a9379ee6b654
+  - enabled: 1
+    path: Assets/TrainingHome/Scenes/Rowing_Lvl1.unity
+    guid: 08bad4aa3cc554e4ba2e704952b04c66
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

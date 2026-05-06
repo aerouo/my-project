@@ -19,6 +19,7 @@ public class UI_PageController : MonoBehaviour
     public GameObject Panel_Makeboat;
     public GameObject Panel_Boating;
 
+
     [Header("Lesson UI")]
     public TMP_Text Txt_LessonTitle;
     public TMP_Text Txt_VideoTitle;
@@ -159,6 +160,11 @@ public class UI_PageController : MonoBehaviour
         HideAllPages();
         HideAllPopups();
         Panel_Boating.SetActive(true);
+    }
+
+    public void GoToRowingLevel1()
+    {
+        SceneManager.LoadScene("Rowing_Lvl1");
     }
 
     public void OpenLessonByName(string lessonName)
@@ -313,6 +319,17 @@ public class UI_PageController : MonoBehaviour
         HideAllPopups();
 
         string openPanel = PlayerPrefs.GetString("OpenPanelAfterLoad", "");
+        string returnPanel = PlayerPrefs.GetString("ReturnPanel", "");
+
+        if (returnPanel == "Panel_Boating")
+        {
+            PlayerPrefs.DeleteKey("ReturnPanel");
+
+            HideAllPages();
+            Panel_Boating.SetActive(true);
+
+            return; // 如果是從划船頁面返回，直接打開訓練首頁和划船頁面
+        }
 
         if (openPanel == "LessonHome")
         {
@@ -320,6 +337,7 @@ public class UI_PageController : MonoBehaviour
 
             PlayerPrefs.DeleteKey("OpenPanelAfterLoad");
             PlayerPrefs.DeleteKey("ReturnLessonName");
+
 
             if (lessonName != "")
             {
