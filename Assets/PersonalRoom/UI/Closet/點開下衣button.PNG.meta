@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: e7ecfb87fff2eb744abfc6b22457519f
+guid: b9a5116a0cf45744e972c98ae92330b1
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 1
+  spriteMode: 2
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
@@ -95,12 +95,34 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites: []
+    sprites:
+    - serializedVersion: 2
+      name: "\u9EDE\u958B\u4E0B\u8863button_0"
+      rect:
+        serializedVersion: 2
+        x: 2745
+        y: 1735
+        width: 450
+        height: 300
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 63c944cfdf32f784aa0d6cd49f29563d
+      internalID: 1940294800
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 3cd01f5ea88afea4399e07db02c91358
     internalID: 0
     vertices: []
     indices: 
@@ -109,7 +131,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      "\u9EDE\u958B\u4E0B\u8863button_0": 1940294800
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

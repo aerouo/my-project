@@ -1,8 +1,31 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ClosetCategoryController : MonoBehaviour
 {
-    [Header("Item Cards")]
+    [Header("Buttons")]
+    public Image btnTop;
+    public Image btnBottom;
+    public Image btnHair;
+    public Image btnAccessory;
+
+    [Header("Top Sprites")]
+    public Sprite topNormal;
+    public Sprite topSelected;
+
+    [Header("Bottom Sprites")]
+    public Sprite bottomNormal;
+    public Sprite bottomSelected;
+
+    [Header("Hair Sprites")]
+    public Sprite hairNormal;
+    public Sprite hairSelected;
+
+    [Header("Accessory Sprites")]
+    public Sprite accessoryNormal;
+    public Sprite accessorySelected;
+
+    [Header("Items")]
     public GameObject[] topItems;
     public GameObject[] bottomItems;
     public GameObject[] hairItems;
@@ -13,50 +36,67 @@ public class ClosetCategoryController : MonoBehaviour
         ShowTop();
     }
 
+    void ResetButtons()
+    {
+        btnTop.sprite = topNormal;
+        btnBottom.sprite = bottomNormal;
+        btnHair.sprite = hairNormal;
+        btnAccessory.sprite = accessoryNormal;
+    }
+
     void HideAllItems()
     {
-        foreach (GameObject item in topItems)
-            item.SetActive(false);
+        SetItemsActive(topItems, false);
+        SetItemsActive(bottomItems, false);
+        SetItemsActive(hairItems, false);
+        SetItemsActive(accessoryItems, false);
+    }
 
-        foreach (GameObject item in bottomItems)
-            item.SetActive(false);
+    void SetItemsActive(GameObject[] items, bool active)
+    {
+        if (items == null)
+            return;
 
-        foreach (GameObject item in hairItems)
-            item.SetActive(false);
-
-        foreach (GameObject item in accessoryItems)
-            item.SetActive(false);
+        foreach (GameObject item in items)
+        {
+            if (item != null)
+                item.SetActive(active);
+        }
     }
 
     public void ShowTop()
     {
+        ResetButtons();
         HideAllItems();
 
-        foreach (GameObject item in topItems)
-            item.SetActive(true);
+        btnTop.sprite = topSelected;
+        SetItemsActive(topItems, true);
     }
 
     public void ShowBottom()
     {
+        ResetButtons();
         HideAllItems();
 
-        foreach (GameObject item in bottomItems)
-            item.SetActive(true);
+        btnBottom.sprite = bottomSelected;
+        SetItemsActive(bottomItems, true);
     }
 
     public void ShowHair()
     {
+        ResetButtons();
         HideAllItems();
 
-        foreach (GameObject item in hairItems)
-            item.SetActive(true);
+        btnHair.sprite = hairSelected;
+        SetItemsActive(hairItems, true);
     }
 
     public void ShowAccessory()
     {
+        ResetButtons();
         HideAllItems();
 
-        foreach (GameObject item in accessoryItems)
-            item.SetActive(true);
+        btnAccessory.sprite = accessorySelected;
+        SetItemsActive(accessoryItems, true);
     }
 }
