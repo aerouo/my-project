@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,24 +22,55 @@ public class ClosetPreviewManager : MonoBehaviour
     [Header("配件物品")]
     public ClosetPreviewItem[] accessoryItems;
 
-    private Sprite savedHair;
-    private Sprite savedTop;
-    private Sprite savedBottom;
-    private Sprite savedAccessory;
+    [Header("紙鶴金額")]
+    public int money = 9999999;
+    public TMP_Text txtMoney;
 
-    private Vector2 savedHairSize;
-    private Vector2 savedTopSize;
-    private Vector2 savedBottomSize;
-    private Vector2 savedAccessorySize;
+    [Header("購買確認視窗")]
+    public GameObject panelBuyConfirm;
+    public TMP_Text txtBuyMessage;
+    public Button btnBuyYes;
+    public Button btnBuyNo;
 
-    private Vector2 savedHairPosition;
-    private Vector2 savedTopPosition;
-    private Vector2 savedBottomPosition;
-    private Vector2 savedAccessoryPosition;
+    private ClosetPreviewItem selectedItem;
+
+    private OutfitState savedHair;
+    private OutfitState savedTop;
+    private OutfitState savedBottom;
+    private OutfitState savedAccessory;
+
+    [System.Serializable]
+    private class OutfitState
+    {
+        public Sprite sprite;
+        public Color color;
+        public Vector2 anchoredPosition;
+        public Vector2 sizeDelta;
+        public Vector3 localScale;
+        public Quaternion localRotation;
+    }
 
     void Start()
     {
         SaveCurrentOutfit();
+        UpdateMoneyUI();
+
+        if (panelBuyConfirm != null)
+            panelBuyConfirm.SetActive(false);
+
+        if (btnBuyYes != null)
+        {
+            btnBuyYes.onClick.RemoveListener(ConfirmBuy);
+            btnBuyYes.onClick.AddListener(ConfirmBuy);
+        }
+
+        if (btnBuyNo != null)
+        {
+            btnBuyNo.onClick.RemoveListener(CancelBuy);
+            btnBuyNo.onClick.AddListener(CancelBuy);
+        }
+
+        RefreshAllPriceText();
         UpdateAllStatus();
     }
 
@@ -47,9 +79,67 @@ public class ClosetPreviewManager : MonoBehaviour
         CancelPreview();
     }
 
-    public void PreviewItem(ClosetPreviewItem item)
+    public void ClickItem(ClosetPreviewItem item)
     {
         if (item == null || item.itemSprite == null)
+            return;
+
+        if (!item.isOwned)
+        {
+            OpenBuyConfirm(item);
+            return;
+        }
+
+        PreviewItem(item);
+    }
+
+    void OpenBuyConfirm(ClosetPreviewItem item)
+    {
+        selectedItem = item;
+
+        if (txtBuyMessage != null)
+            txtBuyMessage.text = "是否花費 " + item.price + "\n紙鶴購買？";
+
+        if (panelBuyConfirm != null)
+            panelBuyConfirm.SetActive(true);
+    }
+
+    void ConfirmBuy()
+    {
+        if (selectedItem == null)
+            return;
+
+        if (money < selectedItem.price)
+        {
+            if (txtBuyMessage != null)
+                txtBuyMessage.text = "紙鶴不足\n無法購買";
+            return;
+        }
+
+        money -= selectedItem.price;
+        selectedItem.SetOwned(true);
+
+        UpdateMoneyUI();
+
+        if (panelBuyConfirm != null)
+            panelBuyConfirm.SetActive(false);
+
+        PreviewItem(selectedItem);
+
+        selectedItem = null;
+    }
+
+    void CancelBuy()
+    {
+        selectedItem = null;
+
+        if (panelBuyConfirm != null)
+            panelBuyConfirm.SetActive(false);
+    }
+
+    public void PreviewItem(ClosetPreviewItem item)
+    {
+        if (item == null)
             return;
 
         Image target = GetTargetImage(item.part);
@@ -66,68 +156,153 @@ public class ClosetPreviewManager : MonoBehaviour
             target.sprite = item.itemSprite;
             target.color = new Color(1, 1, 1, 1);
 
-            target.rectTransform.sizeDelta = item.equippedSize;
-            target.rectTransform.anchoredPosition = item.equippedPosition;
+            ApplyItemTransform(target, item);
         }
 
         UpdateAllStatus();
+    }
+
+    void ApplyItemTransform(Image target, ClosetPreviewItem item)
+    {
+        RectTransform targetRect = target.GetComponent<RectTransform>();
+
+        if (targetRect == null)
+            return;
+
+        targetRect.anchoredPosition = item.wearAnchoredPosition;
+        targetRect.sizeDelta = item.wearSizeDelta;
+        targetRect.localScale = item.wearScale;
+        targetRect.localEulerAngles = item.wearRotation;
     }
 
     public void ApplyOutfit()
     {
         SaveCurrentOutfit();
         UpdateAllStatus();
-        Debug.Log("已套用目前穿搭");
     }
 
     public void CancelPreview()
     {
-        RestoreImage(equippedHair, savedHair, savedHairSize, savedHairPosition);
-        RestoreImage(equippedTop, savedTop, savedTopSize, savedTopPosition);
-        RestoreImage(equippedBottom, savedBottom, savedBottomSize, savedBottomPosition);
-        RestoreImage(equippedAccessory, savedAccessory, savedAccessorySize, savedAccessoryPosition);
-
+        RestoreSavedOutfit();
         UpdateAllStatus();
-        Debug.Log("已取消預覽");
     }
 
     void SaveCurrentOutfit()
     {
-        savedHair = equippedHair != null ? equippedHair.sprite : null;
-        savedTop = equippedTop != null ? equippedTop.sprite : null;
-        savedBottom = equippedBottom != null ? equippedBottom.sprite : null;
-        savedAccessory = equippedAccessory != null ? equippedAccessory.sprite : null;
-
-        savedHairSize = GetSize(equippedHair);
-        savedTopSize = GetSize(equippedTop);
-        savedBottomSize = GetSize(equippedBottom);
-        savedAccessorySize = GetSize(equippedAccessory);
-
-        savedHairPosition = GetPosition(equippedHair);
-        savedTopPosition = GetPosition(equippedTop);
-        savedBottomPosition = GetPosition(equippedBottom);
-        savedAccessoryPosition = GetPosition(equippedAccessory);
+        savedHair = SaveOutfitState(equippedHair);
+        savedTop = SaveOutfitState(equippedTop);
+        savedBottom = SaveOutfitState(equippedBottom);
+        savedAccessory = SaveOutfitState(equippedAccessory);
     }
 
-    Vector2 GetSize(Image image)
+    OutfitState SaveOutfitState(Image image)
     {
-        return image != null ? image.rectTransform.sizeDelta : Vector2.zero;
+        if (image == null)
+            return null;
+
+        RectTransform rect = image.GetComponent<RectTransform>();
+
+        OutfitState state = new OutfitState();
+        state.sprite = image.sprite;
+        state.color = image.color;
+
+        if (rect != null)
+        {
+            state.anchoredPosition = rect.anchoredPosition;
+            state.sizeDelta = rect.sizeDelta;
+            state.localScale = rect.localScale;
+            state.localRotation = rect.localRotation;
+        }
+
+        return state;
     }
 
-    Vector2 GetPosition(Image image)
+    void RestoreSavedOutfit()
     {
-        return image != null ? image.rectTransform.anchoredPosition : Vector2.zero;
+        RestoreOutfitState(equippedHair, savedHair);
+        RestoreOutfitState(equippedTop, savedTop);
+        RestoreOutfitState(equippedBottom, savedBottom);
+        RestoreOutfitState(equippedAccessory, savedAccessory);
+    }
+
+    void RestoreOutfitState(Image image, OutfitState state)
+    {
+        if (image == null || state == null)
+            return;
+
+        image.sprite = state.sprite;
+        image.color = state.color;
+
+        RectTransform rect = image.GetComponent<RectTransform>();
+
+        if (rect != null)
+        {
+            rect.anchoredPosition = state.anchoredPosition;
+            rect.sizeDelta = state.sizeDelta;
+            rect.localScale = state.localScale;
+            rect.localRotation = state.localRotation;
+        }
+
+        if (image.sprite == null)
+            image.color = new Color(1, 1, 1, 0);
+    }
+
+    Image GetTargetImage(ClosetPart part)
+    {
+        switch (part)
+        {
+            case ClosetPart.Top:
+                return equippedTop;
+
+            case ClosetPart.Bottom:
+                return equippedBottom;
+
+            case ClosetPart.Hair:
+                return equippedHair;
+
+            case ClosetPart.Accessory:
+                return equippedAccessory;
+
+            default:
+                return null;
+        }
+    }
+
+    void UpdateMoneyUI()
+    {
+        if (txtMoney != null)
+            txtMoney.text = money.ToString();
+    }
+
+    void RefreshAllPriceText()
+    {
+        RefreshGroupPriceText(topItems);
+        RefreshGroupPriceText(bottomItems);
+        RefreshGroupPriceText(hairItems);
+        RefreshGroupPriceText(accessoryItems);
+    }
+
+    void RefreshGroupPriceText(ClosetPreviewItem[] items)
+    {
+        if (items == null)
+            return;
+
+        foreach (ClosetPreviewItem item in items)
+        {
+            if (item != null)
+                item.RefreshPriceText();
+        }
     }
 
     void UpdateAllStatus()
     {
-        UpdateStatusGroup(topItems);
-        UpdateStatusGroup(bottomItems);
-        UpdateStatusGroup(hairItems);
-        UpdateStatusGroup(accessoryItems);
+        UpdateItemGroupStatus(topItems);
+        UpdateItemGroupStatus(bottomItems);
+        UpdateItemGroupStatus(hairItems);
+        UpdateItemGroupStatus(accessoryItems);
     }
 
-    void UpdateStatusGroup(ClosetPreviewItem[] items)
+    void UpdateItemGroupStatus(ClosetPreviewItem[] items)
     {
         if (items == null)
             return;
@@ -138,56 +313,9 @@ public class ClosetPreviewManager : MonoBehaviour
                 continue;
 
             Image target = GetTargetImage(item.part);
+            bool isEquipped = target != null && target.sprite == item.itemSprite;
 
-            bool isEquipped =
-                target != null &&
-                item.itemSprite != null &&
-                target.sprite == item.itemSprite;
-
-            item.SetStatus(isEquipped);
+            item.UpdateStatus(isEquipped);
         }
-    }
-
-    Image GetTargetImage(ClosetPart part)
-    {
-        switch (part)
-        {
-            case ClosetPart.Hair:
-                return equippedHair;
-
-            case ClosetPart.Top:
-                return equippedTop;
-
-            case ClosetPart.Bottom:
-                return equippedBottom;
-
-            case ClosetPart.Accessory:
-                return equippedAccessory;
-
-            default:
-                return null;
-        }
-    }
-
-    void RestoreImage(Image image, Sprite sprite, Vector2 size, Vector2 position)
-    {
-        if (image == null)
-            return;
-
-        image.sprite = sprite;
-        image.rectTransform.sizeDelta = size;
-        image.rectTransform.anchoredPosition = position;
-
-        SetImageVisible(image);
-    }
-
-    void SetImageVisible(Image image)
-    {
-        if (image == null)
-            return;
-
-        image.color = image.sprite == null
-            ? new Color(1, 1, 1, 0)
-            : new Color(1, 1, 1, 1);
     }
 }

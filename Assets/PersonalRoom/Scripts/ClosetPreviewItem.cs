@@ -1,12 +1,12 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public enum ClosetPart
 {
-    Hair,
     Top,
     Bottom,
+    Hair,
     Accessory
 }
 
@@ -15,32 +15,77 @@ public class ClosetPreviewItem : MonoBehaviour
     [Header("物品資料")]
     public ClosetPart part;
     public Sprite itemSprite;
+    public int price = 500;
+    public bool isOwned = false;
 
-    [Header("穿戴到角色上的設定")]
-    public Vector2 equippedSize = new Vector2(150, 150);
-    public Vector2 equippedPosition = Vector2.zero;
+    [Header("UI")]
+    public Image imgIcon;
 
-    [Header("狀態顯示")]
+    [Header("穿戴狀態")]
     public GameObject imgStatus;
     public TMP_Text txtStatus;
 
-    [Header("管理器")]
-    public ClosetPreviewManager manager;
+    [Header("價格顯示")]
+    public GameObject imgPrice;
+    public TMP_Text txtPrice;
 
-    public void PreviewItem()
+    [Header("穿戴位置與大小")]
+    public Vector2 wearAnchoredPosition;
+    public Vector2 wearSizeDelta = new Vector2(100, 100);
+    public Vector3 wearScale = Vector3.one;
+    public Vector3 wearRotation;
+
+    private ClosetPreviewManager manager;
+
+    void Start()
     {
-        if (manager != null)
-        {
-            manager.PreviewItem(this);
-        }
+        manager = FindAnyObjectByType<ClosetPreviewManager>();
+
+        RefreshPriceText();
+        UpdateStatus(false);
     }
 
-    public void SetStatus(bool isEquipped)
+    public void OnClickItem()
     {
-        if (imgStatus != null)
-            imgStatus.SetActive(isEquipped);
+        if (manager != null)
+            manager.ClickItem(this);
+    }
 
-        if (txtStatus != null)
-            txtStatus.text = isEquipped ? "已穿戴" : "";
+    public void SetOwned(bool owned)
+    {
+        isOwned = owned;
+    }
+
+    public void RefreshPriceText()
+    {
+        if (txtPrice != null)
+            txtPrice.text = price.ToString();
+    }
+
+    public void UpdateStatus(bool isEquipped)
+    {
+        RefreshPriceText();
+
+        if (!isOwned)
+        {
+            // 未購買：顯示紙鶴 + 價格
+            if (imgPrice != null) imgPrice.SetActive(true);
+            if (imgStatus != null) imgStatus.SetActive(false);
+        }
+        else if (isEquipped)
+        {
+            // 已穿戴：顯示已穿戴
+            if (imgPrice != null) imgPrice.SetActive(false);
+            if (imgStatus != null) imgStatus.SetActive(true);
+
+            if (txtStatus != null)
+                txtStatus.text = "已穿戴";
+        }
+        else
+        {
+            // 已購買但未穿戴：價格和狀態都隱藏
+            if (imgPrice != null) imgPrice.SetActive(false);
+            if (imgStatus != null) imgStatus.SetActive(false);
+        }
     }
 }
