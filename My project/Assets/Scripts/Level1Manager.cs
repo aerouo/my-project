@@ -87,6 +87,14 @@ public class Level1Manager : MonoBehaviour
         if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
         if (miniGameBackground != null) miniGameBackground.SetActive(true);
     }
+    public void SkipStory()
+    {
+        StopAllCoroutines();
+        dialogueText.text = "";
+
+        if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
+        if (miniGameBackground != null) miniGameBackground.SetActive(true);
+    }
 
     // 小遊戲過關後呼叫的函數
     public void StartStory()
