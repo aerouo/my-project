@@ -7,8 +7,9 @@ public class DragBlock : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     private Canvas canvas;
     private Vector2 originalPosition;
     private Transform originalParent;
+    private CanvasGroup canvasGroup;
 
-    public string blockID; // 這個方塊的ID，例如 "print", "class", "main"
+    public string blockID;
 
     void Awake()
     {
@@ -16,12 +17,17 @@ public class DragBlock : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
         canvas = GetComponentInParent<Canvas>();
         originalPosition = rectTransform.anchoredPosition;
         originalParent = transform.parent;
+
+        canvasGroup = GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+            canvasGroup = gameObject.AddComponent<CanvasGroup>();
     }
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        transform.SetParent(canvas.transform); // 拖曳時移到最上層
+        transform.SetParent(canvas.transform);
         transform.SetAsLastSibling();
+        canvasGroup.blocksRaycasts = false; // 拖曳時不擋住 Raycast
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -31,7 +37,8 @@ public class DragBlock : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        // 如果沒有放到槽裡，回到原位
+        canvasGroup.blocksRaycasts = true; // 放開後恢復
+
         if (transform.parent == canvas.transform)
         {
             transform.SetParent(originalParent);
@@ -43,5 +50,7 @@ public class DragBlock : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDra
     {
         transform.SetParent(originalParent);
         rectTransform.anchoredPosition = originalPosition;
+        GetComponent<UnityEngine.UI.Image>().enabled = true;
+        canvasGroup.blocksRaycasts = true;
     }
 }
