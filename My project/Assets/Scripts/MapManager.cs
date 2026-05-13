@@ -1,19 +1,21 @@
 using UnityEngine;
-using TMPro; // 記得加這個才能控制文字
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class MapManager : MonoBehaviour
 {
     [Header("UI 面板連結")]
-    public GameObject levelInfoPanel; // 把你的 LevelInfoPanel 拖進來
+    public GameObject levelInfoPanel;
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI descText;
 
-    // 點擊地圖上的關卡按鈕呼叫這個
+    private int currentSelectedLevel = 1;
+
     public void OnClickLevel(int levelNum)
     {
-        levelInfoPanel.SetActive(true); // 顯示面板
+        currentSelectedLevel = levelNum;
+        levelInfoPanel.SetActive(true);
 
-        
         if (levelNum == 1)
         {
             titleText.text = "第一關";
@@ -39,22 +41,20 @@ public class MapManager : MonoBehaviour
             titleText.text = "第五關";
             descText.text = "天氣晴朗，你的心情和天氣一樣好，未知的旅程混雜著不安，你還是勇敢踏出了這一步...";
         }
-
     }
+
     public void OnClickStart()
     {
         SceneManager.LoadScene("Level" + currentSelectedLevel);
-
     }
+
     public void OnClickReturn()
     {
-        // 回大廳
-        UnityEngine.SceneManagement.SceneManager.LoadScene("home");
+        SceneManager.LoadScene("home");
     }
+
     public void OnClickback()
     {
-        //取消進入關卡
         levelInfoPanel.SetActive(false);
     }
-    
 }
