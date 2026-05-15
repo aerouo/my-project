@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15c2fa86bb9656e4b90a23433bb8a8ba, type: 3}
+  m_Name: MakeBoat_ItemPool 3
+  m_EditorClassIdentifier: Assembly-CSharp::MakeBoat_ItemData
+  itemName: "\u5168\u90FD\u4E0D\u8981"
+  sprite: {fileID: 21300000, guid: e7af1f0fe5619014f900fc31118c3e07, type: 3}
+  scoreValue: 0
