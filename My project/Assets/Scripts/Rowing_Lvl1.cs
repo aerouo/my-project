@@ -18,7 +18,10 @@ public class Rowing_Lvl1 : MonoBehaviour
     public TMP_Text txtScore;
     public TMP_Text txtTimer;
     public GameObject resultPanel;
-    public TMP_Text txtResult;
+    public TMP_Text txtResult;    // txtscore
+    public TMP_Text titleText;    // title（通關/未通關）
+    public TMP_Text txtMoney;     // txtmoney（金幣獎勵）
+    public TMP_Text txtTime;      // txttime（花費時間，選用）
     public GameObject backButton;
 
     [Header("提示畫面")]
@@ -26,20 +29,33 @@ public class Rowing_Lvl1 : MonoBehaviour
     public TMP_Text txtCountdown;
 
     [Header("離開確認（backPanel）")]
-    public GameObject backPanel;      // 拖入 backPanel
-    public UnityEngine.UI.Button btnBackConfirm;  // 確認按鈕
-    public UnityEngine.UI.Button btnBackCancel;   // 取消按鈕
+    public GameObject backPanel;
+    public UnityEngine.UI.Button btnBackConfirm;
+    public UnityEngine.UI.Button btnBackCancel;
 
     [Header("判定設定")]
     public float hitRange = 5f;
     public float missX = -18.5f;
     public float gameDuration = 180f;
 
+    [Header("結算設定")]
+    public int scoreThreshold = 60;   // 過關門檻
+    public int coinPass = 50;   // 過關金幣
+    public int coinRecord = 150;  // 破紀錄金幣
+
+    private const string KEY_COINS = "TotalCoins";
+    private const string KEY_HIGHSCORE = "RowingLvl1_HighScore";
+    private const string KEY_PLAYED = "RowingLvl1_HasPlayed";
+
     public int score = 0;
     public bool gameOver = false;
     private float timeLeft;
     public bool gamePaused = false;
     private bool isFirstStart = true;
+
+    private int savedCoins = 0;
+    private int savedHighScore = 0;
+    private bool hasPlayedBefore = false;
 
     private List<GameObject> activeCircles = new List<GameObject>();
 
@@ -56,6 +72,25 @@ public class Rowing_Lvl1 : MonoBehaviour
 
         btnBackConfirm?.onClick.AddListener(OnBackConfirm);
         btnBackCancel?.onClick.AddListener(OnBackCancel);
+
+        LoadData();
+    }
+
+    void LoadData()
+    {
+        // TODO: Firebase
+        savedCoins = PlayerPrefs.GetInt(KEY_COINS, 0);
+        savedHighScore = PlayerPrefs.GetInt(KEY_HIGHSCORE, 0);
+        hasPlayedBefore = PlayerPrefs.GetInt(KEY_PLAYED, 0) == 1;
+    }
+
+    void SaveData(int newCoins, int newHighScore)
+    {
+        // TODO: Firebase
+        PlayerPrefs.SetInt(KEY_COINS, newCoins);
+        PlayerPrefs.SetInt(KEY_HIGHSCORE, newHighScore);
+        PlayerPrefs.SetInt(KEY_PLAYED, 1);
+        PlayerPrefs.Save();
     }
 
     void Update()
@@ -115,7 +150,7 @@ public class Rowing_Lvl1 : MonoBehaviour
         txtTimer.gameObject.SetActive(false);
     }
 
-    // ── back 按鈕：顯示離開確認，暫停遊戲 ───────
+    // ── back 按鈕 ────────────────────────────────
     public void OnClickBack()
     {
         if (gameOver) return;
@@ -123,13 +158,11 @@ public class Rowing_Lvl1 : MonoBehaviour
         backPanel?.SetActive(true);
     }
 
-    // ── backPanel 確認：真的離開 ─────────────────
     public void OnBackConfirm()
     {
         UnityEngine.SceneManagement.SceneManager.LoadScene("TrainingRoom");
     }
 
-    // ── backPanel 取消：繼續遊戲 ─────────────────
     public void OnBackCancel()
     {
         gamePaused = false;
@@ -173,28 +206,14 @@ public class Rowing_Lvl1 : MonoBehaviour
         {
             if (c == null) continue;
             float dist = Mathf.Abs(c.transform.position.x - transform.position.x);
-            if (dist < minDist)
-            {
-                minDist = dist;
-                nearest = c;
-            }
+            if (dist < minDist) { minDist = dist; nearest = c; }
         }
 
         if (nearest == null || minDist > hitRange) return;
-
         activeCircles.Remove(nearest);
 
-        if (nearest.CompareTag(correctTag))
-        {
-            Destroy(nearest);
-            AddScore(10);
-        }
-        else
-        {
-            Destroy(nearest);
-            AddScore(-2);
-            StartCoroutine(ShowMiss());
-        }
+        if (nearest.CompareTag(correctTag)) { Destroy(nearest); AddScore(10); }
+        else { Destroy(nearest); AddScore(-2); StartCoroutine(ShowMiss()); }
     }
 
     void AddScore(int amount)
@@ -206,8 +225,7 @@ public class Rowing_Lvl1 : MonoBehaviour
 
     void UpdateScoreUI()
     {
-        if (txtScore != null)
-            txtScore.text = "分數：" + score;
+        if (txtScore != null) txtScore.text = "分數：" + score;
     }
 
     void UpdateTimerUI()
@@ -231,25 +249,53 @@ public class Rowing_Lvl1 : MonoBehaviour
             if (c != null) Destroy(c);
         activeCircles.Clear();
 
+        // ── 結算邏輯 ──────────────────────────────
+        bool isPass = score >= scoreThreshold;
+        bool isNewRecord = isPass && hasPlayedBefore && score > savedHighScore;
+
+        int coinEarned = 0;
+        if (isPass) coinEarned += coinPass;
+        if (isNewRecord) coinEarned += coinRecord;
+
+        int newTotalCoins = savedCoins + coinEarned;
+        int newHighScore = (isPass && score > savedHighScore) ? score : savedHighScore;
+
+        SaveData(newTotalCoins, newHighScore);
+
+        // ── 顯示結算畫面 ──────────────────────────
         resultPanel.SetActive(true);
-        if (txtResult != null)
+
+        if (titleText)
+            titleText.text = isPass ? "恭喜通關！" : "未通關";
+
+        if (txtResult)
             txtResult.text = "最終分數：" + score;
 
-        SaveScore();
+        if (txtMoney)
+        {
+            string rewardMsg = "";
+            if (isPass)
+            {
+                rewardMsg += "金幣 +" + coinPass;
+                if (isNewRecord) rewardMsg += "\n🏆 破紀錄！+" + coinRecord;
+            }
+            else
+            {
+                rewardMsg = "金幣 +0";
+            }
+            txtMoney.text = rewardMsg;
+        }
+
+        if (txtTime)
+        {
+            int elapsed = (int)(gameDuration - timeLeft);
+            int min = elapsed / 60;
+            int sec = elapsed % 60;
+            txtTime.text = string.Format("{0:00}:{1:00}", min, sec);
+        }
     }
 
-    void SaveScore()
-    {
-        PlayerPrefs.SetInt("RowingLvl1_Score", score);
-        PlayerPrefs.SetString("RowingLvl1_Date", System.DateTime.Now.ToString("yyyy/MM/dd"));
-        PlayerPrefs.Save();
-        Debug.Log("分數已暫存：" + score);
-    }
-
-    public void RegisterCircle(GameObject circle)
-    {
-        activeCircles.Add(circle);
-    }
+    public void RegisterCircle(GameObject circle) { activeCircles.Add(circle); }
 
     IEnumerator PlayRowAnim(SpriteRenderer hand, Sprite normal, Sprite row)
     {
