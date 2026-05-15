@@ -52,13 +52,25 @@ public class UI_PageController : MonoBehaviour
         string openPanel = PlayerPrefs.GetString("OpenPanelAfterLoad", "");
         string returnPanel = PlayerPrefs.GetString("ReturnPanel", "");
 
+        // ===== 返回 Boating =====
         if (returnPanel == "Panel_Boating")
         {
             PlayerPrefs.DeleteKey("ReturnPanel");
+
             OpenBoating();
             return;
         }
 
+        // ===== 返回 MakeBoat =====
+        if (returnPanel == "Panel_MakeBoat")
+        {
+            PlayerPrefs.DeleteKey("ReturnPanel");
+
+            OpenMakeboat();
+            return;
+        }
+
+        // ===== 返回 Lesson =====
         if (openPanel == "LessonHome")
         {
             string lessonName = PlayerPrefs.GetString("ReturnLessonName", "");
@@ -173,6 +185,11 @@ public class UI_PageController : MonoBehaviour
     public void GoToRowingLevel1()
     {
         SceneManager.LoadScene("Rowing_Lvl1");
+    }
+
+    public void GoToMakeBoatLevel1()
+    {
+        SceneManager.LoadScene("MakeBoat_Lvl1");
     }
 
     public void OpenLessonByName(string lessonName)
