@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/PersonalRoom/Scene/PersonalRoom.unity
     guid: 64315b65d27b1e544a0ef0080634d5a8
   - enabled: 1
+    path: Assets/questmap/Scenes/quest-map.unity
+    guid: f1df613b7f7479d4d9cb26e7b5adfb1d
+  - enabled: 1
     path: Assets/TrainingHome/Scenes/SampleScene.unity
     guid: 425074f9926030344988b1abb74536b3
   - enabled: 1
