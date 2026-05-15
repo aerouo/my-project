@@ -25,6 +25,11 @@ public class Rowing_Lvl1 : MonoBehaviour
     public GameObject hintPanel;
     public TMP_Text txtCountdown;
 
+    [Header("離開確認（backPanel）")]
+    public GameObject backPanel;      // 拖入 backPanel
+    public UnityEngine.UI.Button btnBackConfirm;  // 確認按鈕
+    public UnityEngine.UI.Button btnBackCancel;   // 取消按鈕
+
     [Header("判定設定")]
     public float hitRange = 5f;
     public float missX = -18.5f;
@@ -34,7 +39,7 @@ public class Rowing_Lvl1 : MonoBehaviour
     public bool gameOver = false;
     private float timeLeft;
     public bool gamePaused = false;
-    private bool isFirstStart = true; // 是否第一次開始
+    private bool isFirstStart = true;
 
     private List<GameObject> activeCircles = new List<GameObject>();
 
@@ -43,10 +48,14 @@ public class Rowing_Lvl1 : MonoBehaviour
         timeLeft = gameDuration;
         resultPanel.SetActive(false);
         hintPanel.SetActive(true);
+        backPanel?.SetActive(false);
         gameOver = true;
         txtScore.gameObject.SetActive(false);
         txtTimer.gameObject.SetActive(false);
         UpdateScoreUI();
+
+        btnBackConfirm?.onClick.AddListener(OnBackConfirm);
+        btnBackCancel?.onClick.AddListener(OnBackCancel);
     }
 
     void Update()
@@ -90,20 +99,50 @@ public class Rowing_Lvl1 : MonoBehaviour
         }
     }
 
-    // 第一次進場確認
+    // ── 第一次進場確認 ────────────────────────────
     public void OnClickHintConfirm()
     {
         hintPanel.SetActive(false);
         StartCoroutine(CountdownStart());
     }
 
-    // hint 按鈕（中途暫停）
+    // ── hint 按鈕（中途暫停）────────────────────
     public void OnClickHint()
     {
         gamePaused = true;
         hintPanel.SetActive(true);
         txtScore.gameObject.SetActive(false);
         txtTimer.gameObject.SetActive(false);
+    }
+
+    // ── back 按鈕：顯示離開確認，暫停遊戲 ───────
+    public void OnClickBack()
+    {
+        if (gameOver) return;
+        gamePaused = true;
+        backPanel?.SetActive(true);
+    }
+
+    // ── backPanel 確認：真的離開 ─────────────────
+    public void OnBackConfirm()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("TrainingRoom");
+    }
+
+    // ── backPanel 取消：繼續遊戲 ─────────────────
+    public void OnBackCancel()
+    {
+        gamePaused = false;
+        backPanel?.SetActive(false);
+    }
+
+    // ── hint 確認（中途繼續）────────────────────
+    public void OnClickConfirm()
+    {
+        gamePaused = false;
+        hintPanel.SetActive(false);
+        txtScore.gameObject.SetActive(true);
+        txtTimer.gameObject.SetActive(true);
     }
 
     IEnumerator CountdownStart()
@@ -205,16 +244,6 @@ public class Rowing_Lvl1 : MonoBehaviour
         PlayerPrefs.SetString("RowingLvl1_Date", System.DateTime.Now.ToString("yyyy/MM/dd"));
         PlayerPrefs.Save();
         Debug.Log("分數已暫存：" + score);
-    }
-
-    public void OnClickBack()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("TrainingRoom");
-    }
-
-    public void OnClickConfirm()
-    {
-        UnityEngine.SceneManagement.SceneManager.LoadScene("TrainingRoom");
     }
 
     public void RegisterCircle(GameObject circle)
