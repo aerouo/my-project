@@ -32,6 +32,11 @@ public class ClosetPreviewManager : MonoBehaviour
     public Button btnBuyYes;
     public Button btnBuyNo;
 
+    [Header("連身衣設定")]
+    public ClosetPreviewItem top01OnePiece;
+    public ClosetPreviewItem top02OnePiece;
+    public ClosetPreviewItem defaultTopItem; // 拖 Top06
+
     private ClosetPreviewItem selectedItem;
 
     private OutfitState savedHair;
@@ -124,22 +129,24 @@ public class ClosetPreviewManager : MonoBehaviour
         if (panelBuyConfirm != null)
             panelBuyConfirm.SetActive(false);
 
-        PreviewItem(selectedItem);
+        EquipItem(selectedItem);
 
         selectedItem = null;
     }
 
-    void CancelBuy()
+    void EquipItem(ClosetPreviewItem item)
     {
-        selectedItem = null;
+        if (item == null || item.itemSprite == null)
+            return;
 
-        if (panelBuyConfirm != null)
-            panelBuyConfirm.SetActive(false);
+        ForceEquipItem(item);
+        HandleSpecialOutfitRule(item);
+        UpdateAllStatus();
     }
 
     public void PreviewItem(ClosetPreviewItem item)
     {
-        if (item == null)
+        if (item == null || item.itemSprite == null)
             return;
 
         Image target = GetTargetImage(item.part);
@@ -153,13 +160,82 @@ public class ClosetPreviewManager : MonoBehaviour
         }
         else
         {
-            target.sprite = item.itemSprite;
-            target.color = new Color(1, 1, 1, 1);
-
-            ApplyItemTransform(target, item);
+            ForceEquipItem(item);
+            HandleSpecialOutfitRule(item);
         }
 
         UpdateAllStatus();
+    }
+
+    void ForceEquipItem(ClosetPreviewItem item)
+    {
+        if (item == null || item.itemSprite == null)
+            return;
+
+        Image target = GetTargetImage(item.part);
+        if (target == null)
+            return;
+
+        target.sprite = item.itemSprite;
+        target.color = new Color(1, 1, 1, 1);
+
+        ApplyItemTransform(target, item);
+    }
+
+    void HandleSpecialOutfitRule(ClosetPreviewItem item)
+    {
+        // 穿 Top01 / Top02 連身衣時，自動取消下衣
+        if (item.part == ClosetPart.Top && IsOnePieceTop(item))
+        {
+            ClearEquippedImage(equippedBottom);
+            return;
+        }
+
+        // 穿下衣時，如果目前上衣是連身衣，就換回 Top06
+        if (item.part == ClosetPart.Bottom && IsCurrentTopOnePiece())
+        {
+            if (defaultTopItem != null)
+                ForceEquipItem(defaultTopItem);
+        }
+    }
+
+    bool IsOnePieceTop(ClosetPreviewItem item)
+    {
+        return item == top01OnePiece || item == top02OnePiece;
+    }
+
+    bool IsCurrentTopOnePiece()
+    {
+        if (equippedTop == null)
+            return false;
+
+        return IsSpriteMatch(equippedTop, top01OnePiece) ||
+               IsSpriteMatch(equippedTop, top02OnePiece);
+    }
+
+    bool IsSpriteMatch(Image image, ClosetPreviewItem item)
+    {
+        return image != null &&
+               item != null &&
+               image.sprite != null &&
+               image.sprite == item.itemSprite;
+    }
+
+    void ClearEquippedImage(Image image)
+    {
+        if (image == null)
+            return;
+
+        image.sprite = null;
+        image.color = new Color(1, 1, 1, 0);
+    }
+
+    void CancelBuy()
+    {
+        selectedItem = null;
+
+        if (panelBuyConfirm != null)
+            panelBuyConfirm.SetActive(false);
     }
 
     void ApplyItemTransform(Image target, ClosetPreviewItem item)

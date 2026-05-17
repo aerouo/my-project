@@ -47,6 +47,9 @@ public class ClosetPreviewItem : MonoBehaviour
 
     public void OnClickItem()
     {
+        if (manager == null)
+            manager = FindAnyObjectByType<ClosetPreviewManager>();
+
         if (manager != null)
             manager.ClickItem(this);
     }
@@ -66,26 +69,37 @@ public class ClosetPreviewItem : MonoBehaviour
     {
         RefreshPriceText();
 
+        // 未購買
         if (!isOwned)
         {
-            // 未購買：顯示紙鶴 + 價格
-            if (imgPrice != null) imgPrice.SetActive(true);
-            if (imgStatus != null) imgStatus.SetActive(false);
+            if (imgPrice != null)
+                imgPrice.SetActive(true);
+
+            if (imgStatus != null)
+                imgStatus.SetActive(false);
         }
+
+        // 已穿戴
         else if (isEquipped)
         {
-            // 已穿戴：顯示已穿戴
-            if (imgPrice != null) imgPrice.SetActive(false);
-            if (imgStatus != null) imgStatus.SetActive(true);
+            if (imgPrice != null)
+                imgPrice.SetActive(false);
+
+            if (imgStatus != null)
+                imgStatus.SetActive(true);
 
             if (txtStatus != null)
                 txtStatus.text = "已穿戴";
         }
+
+        // 已購買但未穿戴
         else
         {
-            // 已購買但未穿戴：價格和狀態都隱藏
-            if (imgPrice != null) imgPrice.SetActive(false);
-            if (imgStatus != null) imgStatus.SetActive(false);
+            if (imgPrice != null)
+                imgPrice.SetActive(false);
+
+            if (imgStatus != null)
+                imgStatus.SetActive(false);
         }
     }
 }
