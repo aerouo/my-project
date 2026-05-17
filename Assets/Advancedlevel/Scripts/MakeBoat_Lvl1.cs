@@ -232,9 +232,8 @@ public class MakeBoat_Lvl1 : MonoBehaviour
 
     public void OnQuitConfirm()
     {
-        PlayerPrefs.SetString("ReturnPanel", "Panel_MakeBoat");
+        PlayerPrefs.SetString("ReturnPanel", "Panel_Makeboat");
         UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene");
-        
     }
 
     public void OnQuitCancel()

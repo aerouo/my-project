@@ -161,10 +161,7 @@ public class Rowing_Lvl1 : MonoBehaviour
 
     public void OnBackConfirm()
     {
-        // 告訴下一個 Scene 要開哪個 Panel
         PlayerPrefs.SetString("ReturnPanel", "Panel_Boating");
-
-        // 載入 TrainingHome Scene
         SceneManager.LoadScene("SampleScene");
     }
 

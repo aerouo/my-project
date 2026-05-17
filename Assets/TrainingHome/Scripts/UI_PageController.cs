@@ -62,11 +62,38 @@ public class UI_PageController : MonoBehaviour
         }
 
         // ===== 返回 MakeBoat =====
-        if (returnPanel == "Panel_MakeBoat")
+        if (returnPanel == "Panel_Makeboat")
         {
             PlayerPrefs.DeleteKey("ReturnPanel");
 
             OpenMakeboat();
+            return;
+        }
+
+        // ===== 返回 Puzzle =====
+        if (returnPanel == "Panel_Puzzle")
+        {
+            PlayerPrefs.DeleteKey("ReturnPanel");
+
+            OpenPuzzle();
+            return;
+        }
+
+        // ===== 返回 Clue =====
+        if (returnPanel == "Panel_Clue")
+        {
+            PlayerPrefs.DeleteKey("ReturnPanel");
+
+            OpenClue();
+            return;
+        }
+
+        // ===== 返回 Forest =====
+        if (returnPanel == "Panel_Forest")
+        {
+            PlayerPrefs.DeleteKey("ReturnPanel");
+
+            OpenForest();
             return;
         }
 
@@ -190,6 +217,11 @@ public class UI_PageController : MonoBehaviour
     public void GoToMakeBoatLevel1()
     {
         SceneManager.LoadScene("MakeBoat_Lvl1");
+    }
+
+    public void GoToPuzzleLevel1()
+    {
+        SceneManager.LoadScene("Puzzle_Lvl1");
     }
 
     public void OpenLessonByName(string lessonName)
