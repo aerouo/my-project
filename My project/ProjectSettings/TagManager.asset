@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Green
   - Pink
+  - Slot
   layers:
   - Default
   - TransparentFX

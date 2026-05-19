@@ -58,8 +58,7 @@ public class FindClues_lvl1 : MonoBehaviour
     private string[] correctAnswers = new string[6];
 
     private static readonly Vector2Int[] DIRS = { new Vector2Int(-1, 0), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(0, 1) };
-    private static readonly string[] DIR_NAMES = { "箭頭 (上)", "箭頭 (下)", "箭頭 (左)", "箭頭 (右)" };
-
+    private static readonly string[] DIR_NAMES = { "arrow up", "arrow down", "arrow left", "arrow right" };
     // ── 狀態 ─────────────────────────────────────
     private Vector3 playerStartWorldPos;
     private bool isMoving = false;
@@ -284,7 +283,7 @@ public class FindClues_lvl1 : MonoBehaviour
         {
             if (slots[i] == null || slots[i].childCount == 0)
             {
-                ShowMessage("請填完所有箭頭！", Color.yellow);
+                ShowMessage("請填完所有箭頭！", Color.black);
                 yield return new WaitForSeconds(1.5f);
                 failHintText?.gameObject.SetActive(false);
                 ResetPlayer();
