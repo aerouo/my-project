@@ -224,6 +224,16 @@ public class UI_PageController : MonoBehaviour
         SceneManager.LoadScene("Puzzle_Lvl1");
     }
 
+    public void GoToForestLevel1()
+    {
+        SceneManager.LoadScene("ForestExploration_Lvl1");
+    }
+
+    public void GoToClueLevel1()
+    {
+        SceneManager.LoadScene("Clue_Lvl1");
+    }
+
     public void OpenLessonByName(string lessonName)
     {
         currentLessonName = lessonName;

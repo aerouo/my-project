@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -76,6 +77,16 @@ public class ClosetPreviewManager : MonoBehaviour
         }
 
         RefreshAllPriceText();
+        HideEmptyEquippedImages();
+
+        StartCoroutine(DelayUpdateStatus());
+    }
+
+    IEnumerator DelayUpdateStatus()
+    {
+        yield return null;
+
+        HideEmptyEquippedImages();
         UpdateAllStatus();
     }
 
@@ -141,6 +152,7 @@ public class ClosetPreviewManager : MonoBehaviour
 
         ForceEquipItem(item);
         HandleSpecialOutfitRule(item);
+        HideEmptyEquippedImages();
         UpdateAllStatus();
     }
 
@@ -164,6 +176,7 @@ public class ClosetPreviewManager : MonoBehaviour
             HandleSpecialOutfitRule(item);
         }
 
+        HideEmptyEquippedImages();
         UpdateAllStatus();
     }
 
@@ -206,9 +219,6 @@ public class ClosetPreviewManager : MonoBehaviour
 
     bool IsCurrentTopOnePiece()
     {
-        if (equippedTop == null)
-            return false;
-
         return IsSpriteMatch(equippedTop, top01OnePiece) ||
                IsSpriteMatch(equippedTop, top02OnePiece);
     }
@@ -228,6 +238,23 @@ public class ClosetPreviewManager : MonoBehaviour
 
         image.sprite = null;
         image.color = new Color(1, 1, 1, 0);
+    }
+
+    void HideEmptyEquippedImages()
+    {
+        HideIfEmpty(equippedHair);
+        HideIfEmpty(equippedTop);
+        HideIfEmpty(equippedBottom);
+        HideIfEmpty(equippedAccessory);
+    }
+
+    void HideIfEmpty(Image image)
+    {
+        if (image == null)
+            return;
+
+        if (image.sprite == null)
+            image.color = new Color(1, 1, 1, 0);
     }
 
     void CancelBuy()
@@ -260,6 +287,7 @@ public class ClosetPreviewManager : MonoBehaviour
     public void CancelPreview()
     {
         RestoreSavedOutfit();
+        HideEmptyEquippedImages();
         UpdateAllStatus();
     }
 
@@ -389,7 +417,7 @@ public class ClosetPreviewManager : MonoBehaviour
                 continue;
 
             Image target = GetTargetImage(item.part);
-            bool isEquipped = target != null && target.sprite == item.itemSprite;
+            bool isEquipped = item.isOwned && target != null && target.sprite == item.itemSprite;
 
             item.UpdateStatus(isEquipped);
         }

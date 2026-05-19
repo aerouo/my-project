@@ -39,6 +39,9 @@ EditorBuildSettings:
     path: Assets/Advancedlevel/Scenes/02_Puzzle/Puzzle_Lvl1.unity
     guid: 4d4da6f3891dfca4094f9fee3aa12ed1
   - enabled: 1
+    path: Assets/Advancedlevel/Scenes/03_ForestExploration/ForestExploration_Lvl1.unity
+    guid: 1345de562df5aef45a29506ac5ff9627
+  - enabled: 1
     path: Assets/Advancedlevel/Scenes/04_MakeBoat/MakeBoat_Lvl1.unity
     guid: 2a987e9896e28ef4e94325ac78f2cc06
   - enabled: 1

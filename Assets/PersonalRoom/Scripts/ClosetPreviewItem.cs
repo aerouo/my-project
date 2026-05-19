@@ -40,9 +40,7 @@ public class ClosetPreviewItem : MonoBehaviour
     void Start()
     {
         manager = FindAnyObjectByType<ClosetPreviewManager>();
-
         RefreshPriceText();
-        UpdateStatus(false);
     }
 
     public void OnClickItem()
@@ -69,37 +67,23 @@ public class ClosetPreviewItem : MonoBehaviour
     {
         RefreshPriceText();
 
-        // 未購買
         if (!isOwned)
         {
-            if (imgPrice != null)
-                imgPrice.SetActive(true);
-
-            if (imgStatus != null)
-                imgStatus.SetActive(false);
+            if (imgPrice != null) imgPrice.SetActive(true);
+            if (imgStatus != null) imgStatus.SetActive(false);
         }
-
-        // 已穿戴
         else if (isEquipped)
         {
-            if (imgPrice != null)
-                imgPrice.SetActive(false);
-
-            if (imgStatus != null)
-                imgStatus.SetActive(true);
+            if (imgPrice != null) imgPrice.SetActive(false);
+            if (imgStatus != null) imgStatus.SetActive(true);
 
             if (txtStatus != null)
                 txtStatus.text = "已穿戴";
         }
-
-        // 已購買但未穿戴
         else
         {
-            if (imgPrice != null)
-                imgPrice.SetActive(false);
-
-            if (imgStatus != null)
-                imgStatus.SetActive(false);
+            if (imgPrice != null) imgPrice.SetActive(false);
+            if (imgStatus != null) imgStatus.SetActive(false);
         }
     }
 }
