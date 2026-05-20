@@ -10,10 +10,23 @@ public enum ClosetPart
     Accessory
 }
 
+public enum AccessoryType
+{
+    None,
+    Glasses,
+    Gloves,
+    Shoes,
+    HandItem
+}
+
 public class ClosetPreviewItem : MonoBehaviour
 {
     [Header("物品資料")]
     public ClosetPart part;
+
+    [Header("配件類型")]
+    public AccessoryType accessoryType = AccessoryType.None;
+
     public Sprite itemSprite;
     public int price = 500;
     public bool isOwned = false;

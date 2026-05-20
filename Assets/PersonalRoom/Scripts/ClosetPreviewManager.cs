@@ -10,7 +10,12 @@ public class ClosetPreviewManager : MonoBehaviour
     public Image equippedHair;
     public Image equippedTop;
     public Image equippedBottom;
-    public Image equippedAccessory;
+
+    [Header("配件穿戴部位")]
+    public Image equippedGlasses;
+    public Image equippedGloves;
+    public Image equippedShoes;
+    public Image equippedHandItem;
 
     [Header("上衣物品")]
     public ClosetPreviewItem[] topItems;
@@ -49,7 +54,11 @@ public class ClosetPreviewManager : MonoBehaviour
     private OutfitState savedHair;
     private OutfitState savedTop;
     private OutfitState savedBottom;
-    private OutfitState savedAccessory;
+
+    private OutfitState savedGlasses;
+    private OutfitState savedGloves;
+    private OutfitState savedShoes;
+    private OutfitState savedHandItem;
 
     private Coroutine loadCoroutine;
     private bool firebaseLoaded = false;
@@ -146,6 +155,7 @@ public class ClosetPreviewManager : MonoBehaviour
 
         ResetAllItemsOwned();
         LoadOwnedItems(itemsDict);
+        EnsureDefaultItemsOwned();
 
         ClearAllEquippedImages();
         LoadEquippedItems(equippedDict);
@@ -274,7 +284,7 @@ public class ClosetPreviewManager : MonoBehaviour
         if (item == null || item.itemSprite == null)
             return;
 
-        Image target = GetTargetImage(item.part);
+        Image target = GetTargetImage(item);
 
         if (target == null)
             return;
@@ -299,7 +309,7 @@ public class ClosetPreviewManager : MonoBehaviour
         if (item == null || item.itemSprite == null)
             return;
 
-        Image target = GetTargetImage(item.part);
+        Image target = GetTargetImage(item);
 
         if (target == null)
             return;
@@ -310,34 +320,34 @@ public class ClosetPreviewManager : MonoBehaviour
         ApplyItemTransform(target, item);
     }
 
-    void HandleSpecialOutfitRule(ClosetPreviewItem item)
+void HandleSpecialOutfitRule(ClosetPreviewItem item)
+{
+    if (item == null)
+        return;
+
+    // 換上連身衣：清掉下衣，避免疊穿
+    if (item.part == ClosetPart.Top && IsOnePieceTop(item))
     {
-        if (item == null)
-            return;
-
-        // 換上連身衣：清掉下衣，避免疊穿
-        if (item.part == ClosetPart.Top && IsOnePieceTop(item))
-        {
-            ClearEquippedImage(equippedBottom);
-            return;
-        }
-
-        // 從連身衣換成一般上衣：補回預設下衣
-        if (item.part == ClosetPart.Top && !IsOnePieceTop(item))
-        {
-            if (equippedBottom != null && equippedBottom.sprite == null && defaultBottomItem != null)
-                ForceEquipItem(defaultBottomItem);
-
-            return;
-        }
-
-        // 穿下衣時，如果目前上衣是連身衣：改回預設上衣
-        if (item.part == ClosetPart.Bottom && IsCurrentTopOnePiece())
-        {
-            if (defaultTopItem != null)
-                ForceEquipItem(defaultTopItem);
-        }
+        ClearEquippedImage(equippedBottom);
+        return;
     }
+
+    // 從連身衣換成一般上衣：補回預設下衣
+    if (item.part == ClosetPart.Top && !IsOnePieceTop(item))
+    {
+        if (equippedBottom != null && equippedBottom.sprite == null && defaultBottomItem != null)
+            ForceEquipItem(defaultBottomItem);
+
+        return;
+    }
+
+    // 穿下衣時，如果目前上衣是連身衣：改回預設上衣
+    if (item.part == ClosetPart.Bottom && IsCurrentTopOnePiece())
+    {
+        if (defaultTopItem != null)
+            ForceEquipItem(defaultTopItem);
+    }
+}
 
     bool IsOnePieceTop(ClosetPreviewItem item)
     {
@@ -393,7 +403,11 @@ public class ClosetPreviewManager : MonoBehaviour
         SaveEquippedPart("top", equippedTop);
         SaveEquippedPart("bottom", equippedBottom);
         SaveEquippedPart("hair", equippedHair);
-        SaveEquippedPart("accessory", equippedAccessory);
+
+        SaveEquippedPart("glasses", equippedGlasses);
+        SaveEquippedPart("gloves", equippedGloves);
+        SaveEquippedPart("shoes", equippedShoes);
+        SaveEquippedPart("handItem", equippedHandItem);
 
         FirestoreManager.Instance.SaveCoins(coins);
     }
@@ -475,16 +489,25 @@ public class ClosetPreviewManager : MonoBehaviour
 
     void LoadEquippedItems(Dictionary<string, object> equippedDict)
     {
-        if (equippedDict == null || equippedDict.Count == 0)
-        {
-            Debug.LogWarning("Firebase equipped 是空的，不套用穿戴");
-            return;
-        }
+        if (equippedDict == null)
+            equippedDict = new Dictionary<string, object>();
 
         LoadEquippedPart("top", equippedDict, topItems);
         LoadEquippedPart("bottom", equippedDict, bottomItems);
         LoadEquippedPart("hair", equippedDict, hairItems);
-        LoadEquippedPart("accessory", equippedDict, accessoryItems);
+
+        LoadEquippedPart("glasses", equippedDict, accessoryItems);
+        LoadEquippedPart("gloves", equippedDict, accessoryItems);
+        LoadEquippedPart("shoes", equippedDict, accessoryItems);
+        LoadEquippedPart("handItem", equippedDict, accessoryItems);
+
+        // 如果沒有穿上衣，自動套預設上衣
+        if (equippedTop != null && equippedTop.sprite == null && defaultTopItem != null)
+            ForceEquipItem(defaultTopItem);
+
+        // 如果沒有穿下衣，自動套預設下衣
+        if (equippedBottom != null && equippedBottom.sprite == null && defaultBottomItem != null)
+            ForceEquipItem(defaultBottomItem);
     }
 
     void LoadEquippedPart(string part, Dictionary<string, object> equippedDict, ClosetPreviewItem[] items)
@@ -507,7 +530,12 @@ public class ClosetPreviewManager : MonoBehaviour
 
             if (item.itemID == itemID)
             {
-                item.SetOwned(true);
+                if (!item.isOwned && !IsDefaultItem(item))
+                {
+                    Debug.LogWarning("Firebase 穿戴的衣服尚未購買，略過：" + part + " = " + itemID);
+                    return;
+                }
+
                 ForceEquipItem(item);
                 HandleSpecialOutfitRule(item);
 
@@ -517,6 +545,20 @@ public class ClosetPreviewManager : MonoBehaviour
         }
 
         Debug.LogWarning("Firebase 有穿戴資料，但 Unity 找不到 itemID：" + part + " = " + itemID);
+    }
+
+    bool IsDefaultItem(ClosetPreviewItem item)
+    {
+        return item == defaultTopItem || item == defaultBottomItem;
+    }
+
+    void EnsureDefaultItemsOwned()
+    {
+        if (defaultTopItem != null)
+            defaultTopItem.SetOwned(true);
+
+        if (defaultBottomItem != null)
+            defaultBottomItem.SetOwned(true);
     }
 
     void ResetAllItemsOwned()
@@ -577,7 +619,11 @@ public class ClosetPreviewManager : MonoBehaviour
         savedHair = SaveOutfitState(equippedHair);
         savedTop = SaveOutfitState(equippedTop);
         savedBottom = SaveOutfitState(equippedBottom);
-        savedAccessory = SaveOutfitState(equippedAccessory);
+
+        savedGlasses = SaveOutfitState(equippedGlasses);
+        savedGloves = SaveOutfitState(equippedGloves);
+        savedShoes = SaveOutfitState(equippedShoes);
+        savedHandItem = SaveOutfitState(equippedHandItem);
     }
 
     OutfitState SaveOutfitState(Image image)
@@ -607,7 +653,11 @@ public class ClosetPreviewManager : MonoBehaviour
         RestoreOutfitState(equippedHair, savedHair);
         RestoreOutfitState(equippedTop, savedTop);
         RestoreOutfitState(equippedBottom, savedBottom);
-        RestoreOutfitState(equippedAccessory, savedAccessory);
+
+        RestoreOutfitState(equippedGlasses, savedGlasses);
+        RestoreOutfitState(equippedGloves, savedGloves);
+        RestoreOutfitState(equippedShoes, savedShoes);
+        RestoreOutfitState(equippedHandItem, savedHandItem);
     }
 
     void RestoreOutfitState(Image image, OutfitState state)
@@ -631,21 +681,43 @@ public class ClosetPreviewManager : MonoBehaviour
         HideIfEmpty(image);
     }
 
-    Image GetTargetImage(ClosetPart part)
+    Image GetTargetImage(ClosetPreviewItem item)
     {
-        switch (part)
+        if (item == null)
+            return null;
+
+        switch (item.part)
         {
-            case ClosetPart.Top:
-                return equippedTop;
-            case ClosetPart.Bottom:
-                return equippedBottom;
             case ClosetPart.Hair:
                 return equippedHair;
+
+            case ClosetPart.Top:
+                return equippedTop;
+
+            case ClosetPart.Bottom:
+                return equippedBottom;
+
             case ClosetPart.Accessory:
-                return equippedAccessory;
-            default:
-                return null;
+
+                switch (item.accessoryType)
+                {
+                    case AccessoryType.Glasses:
+                        return equippedGlasses;
+
+                    case AccessoryType.Gloves:
+                        return equippedGloves;
+
+                    case AccessoryType.Shoes:
+                        return equippedShoes;
+
+                    case AccessoryType.HandItem:
+                        return equippedHandItem;
+                }
+
+                break;
         }
+
+        return null;
     }
 
     void ClearAllEquippedImages()
@@ -653,7 +725,11 @@ public class ClosetPreviewManager : MonoBehaviour
         ClearEquippedImage(equippedTop);
         ClearEquippedImage(equippedBottom);
         ClearEquippedImage(equippedHair);
-        ClearEquippedImage(equippedAccessory);
+
+        ClearEquippedImage(equippedGlasses);
+        ClearEquippedImage(equippedGloves);
+        ClearEquippedImage(equippedShoes);
+        ClearEquippedImage(equippedHandItem);
     }
 
     void ClearEquippedImage(Image image)
@@ -670,7 +746,11 @@ public class ClosetPreviewManager : MonoBehaviour
         HideIfEmpty(equippedHair);
         HideIfEmpty(equippedTop);
         HideIfEmpty(equippedBottom);
-        HideIfEmpty(equippedAccessory);
+
+        HideIfEmpty(equippedGlasses);
+        HideIfEmpty(equippedGloves);
+        HideIfEmpty(equippedShoes);
+        HideIfEmpty(equippedHandItem);
     }
 
     void HideIfEmpty(Image image)
@@ -726,7 +806,7 @@ public class ClosetPreviewManager : MonoBehaviour
             if (item == null)
                 continue;
 
-            Image target = GetTargetImage(item.part);
+            Image target = GetTargetImage(item);
             bool isEquipped = item.isOwned && target != null && target.sprite == item.itemSprite;
 
             item.UpdateStatus(isEquipped);
