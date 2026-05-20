@@ -251,6 +251,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -719,6 +720,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1056,9 +1058,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FindClues_lvl1, Assembly-CSharp
-        m_MethodName: OnQuitConfirm
+      - m_Target: {fileID: 417180720}
+        m_TargetAssemblyTypeName: FindClues_lvl2, Assembly-CSharp
+        m_MethodName: OnClickConfirm
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1244,26 +1246,26 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   confirmButton: {fileID: 0}
-  player: {fileID: 0}
+  player: {fileID: 806759293}
   yOffset: 70
   moveSpeed: 0.4
-  spriteStart: {fileID: 0}
-  spritePath: {fileID: 0}
-  spriteEnd: {fileID: 0}
-  spriteNormal: {fileID: 0}
-  failHintText: {fileID: 0}
+  spriteStart: {fileID: 21300000, guid: 2ce8abf96ee2cdf4fa9994146ada9e81, type: 3}
+  spritePath: {fileID: 21300000, guid: fa07e5fb064f1124ebd2b0a66ae35fa3, type: 3}
+  spriteEnd: {fileID: 21300000, guid: dadbfa1f7651f0a4f82c79f080522963, type: 3}
+  spriteNormal: {fileID: 21300000, guid: 9df96745fd448014fb776a83333c6acd, type: 3}
+  failHintText: {fileID: 1538630884}
   resultText: {fileID: 0}
-  txtTimer: {fileID: 0}
-  hintPanel: {fileID: 0}
-  javaHintPanel: {fileID: 0}
-  quitConfirmPanel: {fileID: 0}
-  btnQuitConfirm: {fileID: 0}
-  btnQuitCancel: {fileID: 0}
-  endScreen: {fileID: 0}
-  titleText: {fileID: 0}
-  finalTimeText: {fileID: 0}
-  coinRewardText: {fileID: 0}
-  btnEndConfirm: {fileID: 0}
+  txtTimer: {fileID: 1503534105}
+  hintPanel: {fileID: 736933593}
+  javaHintPanel: {fileID: 1571729934}
+  quitConfirmPanel: {fileID: 1223023463}
+  btnQuitConfirm: {fileID: 608013823}
+  btnQuitCancel: {fileID: 1859758566}
+  endScreen: {fileID: 6087773}
+  titleText: {fileID: 1126602148}
+  finalTimeText: {fileID: 1902883349}
+  coinRewardText: {fileID: 476020678}
+  btnEndConfirm: {fileID: 398896018}
   coinComplete: 50
   coinRecord: 150
 --- !u!1 &428734960
@@ -1361,6 +1363,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1572,6 +1575,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1708,6 +1712,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1900,8 +1905,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FindClues_lvl1, Assembly-CSharp
+      - m_Target: {fileID: 417180720}
+        m_TargetAssemblyTypeName: FindClues_lvl2, Assembly-CSharp
         m_MethodName: OnClickHint
         m_Mode: 1
         m_Arguments:
@@ -2127,8 +2132,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FindClues_lvl1, Assembly-CSharp
+      - m_Target: {fileID: 417180720}
+        m_TargetAssemblyTypeName: FindClues_lvl2, Assembly-CSharp
         m_MethodName: OnQuitConfirm
         m_Mode: 1
         m_Arguments:
@@ -2318,6 +2323,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -3022,6 +3028,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -3052,14 +3059,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1078194971}
   m_Enabled: 1
-  serializedVersion: 11
+  serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize: 10
+  m_CookieSize2D: {x: 10, y: 10}
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -3104,7 +3111,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShadowRadius: 0
+  m_ShapeRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1
@@ -3294,6 +3301,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3580,6 +3588,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4035,6 +4044,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4259,6 +4269,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4478,6 +4489,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4524,7 +4536,7 @@ GameObject:
   - component: {fileID: 1571729937}
   - component: {fileID: 1571729936}
   m_Layer: 6
-  m_Name: javahint
+  m_Name: javahintPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4593,9 +4605,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FindClues_lvl1, Assembly-CSharp
-        m_MethodName: OnClickHint
+      - m_Target: {fileID: 417180720}
+        m_TargetAssemblyTypeName: FindClues_lvl2, Assembly-CSharp
+        m_MethodName: OnClickJavaHint
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5061,8 +5073,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FindClues_lvl1, Assembly-CSharp
+      - m_Target: {fileID: 417180720}
+        m_TargetAssemblyTypeName: FindClues_lvl2, Assembly-CSharp
         m_MethodName: OnQuitCancel
         m_Mode: 1
         m_Arguments:
@@ -5194,8 +5206,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FindClues_lvl1, Assembly-CSharp
+      - m_Target: {fileID: 417180720}
+        m_TargetAssemblyTypeName: FindClues_lvl2, Assembly-CSharp
         m_MethodName: OnClickConfirm
         m_Mode: 1
         m_Arguments:
@@ -5339,6 +5351,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -5719,6 +5732,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
+  m_UseReflectionProbes: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
@@ -5787,8 +5801,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: FindClues_lvl1, Assembly-CSharp
+      - m_Target: {fileID: 417180720}
+        m_TargetAssemblyTypeName: FindClues_lvl2, Assembly-CSharp
         m_MethodName: OnClickBack
         m_Mode: 1
         m_Arguments:
