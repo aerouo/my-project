@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -24,7 +25,8 @@ public class ClosetPreviewManager : MonoBehaviour
     public ClosetPreviewItem[] accessoryItems;
 
     [Header("紙鶴金額")]
-    public int money = 9999999;
+    public int defaultCoins = 10000;
+    public int coins = 10000;
     public TMP_Text txtMoney;
 
     [Header("購買確認視窗")]
@@ -36,7 +38,11 @@ public class ClosetPreviewManager : MonoBehaviour
     [Header("連身衣設定")]
     public ClosetPreviewItem top01OnePiece;
     public ClosetPreviewItem top02OnePiece;
-    public ClosetPreviewItem defaultTopItem; // 拖 Top06
+    public ClosetPreviewItem defaultTopItem;
+    public ClosetPreviewItem defaultBottomItem;
+
+    [Header("讀取狀態")]
+    public GameObject loadingPanel;
 
     private ClosetPreviewItem selectedItem;
 
@@ -44,6 +50,9 @@ public class ClosetPreviewManager : MonoBehaviour
     private OutfitState savedTop;
     private OutfitState savedBottom;
     private OutfitState savedAccessory;
+
+    private Coroutine loadCoroutine;
+    private bool firebaseLoaded = false;
 
     [System.Serializable]
     private class OutfitState
@@ -58,12 +67,114 @@ public class ClosetPreviewManager : MonoBehaviour
 
     void Start()
     {
-        SaveCurrentOutfit();
-        UpdateMoneyUI();
+        SetupButtons();
 
         if (panelBuyConfirm != null)
             panelBuyConfirm.SetActive(false);
 
+        if (loadingPanel != null)
+            loadingPanel.SetActive(true);
+
+        ClearAllEquippedImages();
+        UpdateCoinsUI();
+        RefreshAllPriceText();
+    }
+
+    void OnEnable()
+    {
+        firebaseLoaded = false;
+
+        if (loadingPanel != null)
+            loadingPanel.SetActive(true);
+
+        if (loadCoroutine != null)
+            StopCoroutine(loadCoroutine);
+
+        loadCoroutine = StartCoroutine(InitClosetFromFirebase());
+    }
+
+    void OnDisable()
+    {
+        CancelBuy();
+    }
+
+    IEnumerator InitClosetFromFirebase()
+    {
+        yield return null;
+
+        float timer = 0f;
+
+        while (FirestoreManager.Instance == null && timer < 5f)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (FirestoreManager.Instance == null)
+        {
+            Debug.LogWarning("找不到 FirestoreManager，使用本地預設衣櫃");
+            LoadDefaultCloset();
+            firebaseLoaded = true;
+
+            if (loadingPanel != null)
+                loadingPanel.SetActive(false);
+
+            yield break;
+        }
+
+        Debug.Log("開始讀取 Firebase 衣櫃資料");
+
+        FirestoreManager.Instance.LoadCloset((dataDict, itemsDict, equippedDict) =>
+        {
+            Debug.Log("Firebase 衣櫃資料讀取成功，開始套用到 Unity");
+
+            ApplyFirebaseCloset(dataDict, itemsDict, equippedDict);
+
+            firebaseLoaded = true;
+
+            if (loadingPanel != null)
+                loadingPanel.SetActive(false);
+        });
+    }
+
+    void ApplyFirebaseCloset(
+        Dictionary<string, object> dataDict,
+        Dictionary<string, object> itemsDict,
+        Dictionary<string, object> equippedDict)
+    {
+        LoadCoins(dataDict);
+
+        ResetAllItemsOwned();
+        LoadOwnedItems(itemsDict);
+
+        ClearAllEquippedImages();
+        LoadEquippedItems(equippedDict);
+
+        HideEmptyEquippedImages();
+        UpdateCoinsUI();
+        UpdateAllStatus();
+        RefreshAllPriceText();
+        SaveCurrentOutfit();
+
+        Debug.Log("衣櫃 Firebase 資料已完整套用");
+    }
+
+    void LoadDefaultCloset()
+    {
+        coins = defaultCoins;
+
+        ResetAllItemsOwned();
+        ClearAllEquippedImages();
+
+        HideEmptyEquippedImages();
+        UpdateCoinsUI();
+        UpdateAllStatus();
+        RefreshAllPriceText();
+        SaveCurrentOutfit();
+    }
+
+    void SetupButtons()
+    {
         if (btnBuyYes != null)
         {
             btnBuyYes.onClick.RemoveListener(ConfirmBuy);
@@ -75,28 +186,16 @@ public class ClosetPreviewManager : MonoBehaviour
             btnBuyNo.onClick.RemoveListener(CancelBuy);
             btnBuyNo.onClick.AddListener(CancelBuy);
         }
-
-        RefreshAllPriceText();
-        HideEmptyEquippedImages();
-
-        StartCoroutine(DelayUpdateStatus());
-    }
-
-    IEnumerator DelayUpdateStatus()
-    {
-        yield return null;
-
-        HideEmptyEquippedImages();
-        UpdateAllStatus();
-    }
-
-    void OnDisable()
-    {
-        CancelPreview();
     }
 
     public void ClickItem(ClosetPreviewItem item)
     {
+        if (!firebaseLoaded)
+        {
+            Debug.LogWarning("衣櫃資料尚未讀取完成，暫時不能操作");
+            return;
+        }
+
         if (item == null || item.itemSprite == null)
             return;
 
@@ -125,31 +224,45 @@ public class ClosetPreviewManager : MonoBehaviour
         if (selectedItem == null)
             return;
 
-        if (money < selectedItem.price)
+        if (coins < selectedItem.price)
         {
             if (txtBuyMessage != null)
                 txtBuyMessage.text = "紙鶴不足\n無法購買";
             return;
         }
 
-        money -= selectedItem.price;
+        coins -= selectedItem.price;
         selectedItem.SetOwned(true);
 
-        UpdateMoneyUI();
+        if (FirestoreManager.Instance != null)
+        {
+            FirestoreManager.Instance.SaveWardrobeItem(selectedItem.itemID, true);
+            FirestoreManager.Instance.SaveCoins(coins);
+        }
 
         if (panelBuyConfirm != null)
             panelBuyConfirm.SetActive(false);
 
         EquipItem(selectedItem);
+        ApplyOutfit();
+
+        UpdateCoinsUI();
+        UpdateAllStatus();
+        RefreshAllPriceText();
 
         selectedItem = null;
     }
 
+    void CancelBuy()
+    {
+        selectedItem = null;
+
+        if (panelBuyConfirm != null)
+            panelBuyConfirm.SetActive(false);
+    }
+
     void EquipItem(ClosetPreviewItem item)
     {
-        if (item == null || item.itemSprite == null)
-            return;
-
         ForceEquipItem(item);
         HandleSpecialOutfitRule(item);
         HideEmptyEquippedImages();
@@ -162,6 +275,7 @@ public class ClosetPreviewManager : MonoBehaviour
             return;
 
         Image target = GetTargetImage(item.part);
+
         if (target == null)
             return;
 
@@ -186,25 +300,38 @@ public class ClosetPreviewManager : MonoBehaviour
             return;
 
         Image target = GetTargetImage(item.part);
+
         if (target == null)
             return;
 
         target.sprite = item.itemSprite;
-        target.color = new Color(1, 1, 1, 1);
+        target.color = Color.white;
 
         ApplyItemTransform(target, item);
     }
 
     void HandleSpecialOutfitRule(ClosetPreviewItem item)
     {
-        // 穿 Top01 / Top02 連身衣時，自動取消下衣
+        if (item == null)
+            return;
+
+        // 換上連身衣：清掉下衣，避免疊穿
         if (item.part == ClosetPart.Top && IsOnePieceTop(item))
         {
             ClearEquippedImage(equippedBottom);
             return;
         }
 
-        // 穿下衣時，如果目前上衣是連身衣，就換回 Top06
+        // 從連身衣換成一般上衣：補回預設下衣
+        if (item.part == ClosetPart.Top && !IsOnePieceTop(item))
+        {
+            if (equippedBottom != null && equippedBottom.sprite == null && defaultBottomItem != null)
+                ForceEquipItem(defaultBottomItem);
+
+            return;
+        }
+
+        // 穿下衣時，如果目前上衣是連身衣：改回預設上衣
         if (item.part == ClosetPart.Bottom && IsCurrentTopOnePiece())
         {
             if (defaultTopItem != null)
@@ -231,57 +358,24 @@ public class ClosetPreviewManager : MonoBehaviour
                image.sprite == item.itemSprite;
     }
 
-    void ClearEquippedImage(Image image)
-    {
-        if (image == null)
-            return;
-
-        image.sprite = null;
-        image.color = new Color(1, 1, 1, 0);
-    }
-
-    void HideEmptyEquippedImages()
-    {
-        HideIfEmpty(equippedHair);
-        HideIfEmpty(equippedTop);
-        HideIfEmpty(equippedBottom);
-        HideIfEmpty(equippedAccessory);
-    }
-
-    void HideIfEmpty(Image image)
-    {
-        if (image == null)
-            return;
-
-        if (image.sprite == null)
-            image.color = new Color(1, 1, 1, 0);
-    }
-
-    void CancelBuy()
-    {
-        selectedItem = null;
-
-        if (panelBuyConfirm != null)
-            panelBuyConfirm.SetActive(false);
-    }
-
     void ApplyItemTransform(Image target, ClosetPreviewItem item)
     {
-        RectTransform targetRect = target.GetComponent<RectTransform>();
+        RectTransform rect = target.GetComponent<RectTransform>();
 
-        if (targetRect == null)
+        if (rect == null)
             return;
 
-        targetRect.anchoredPosition = item.wearAnchoredPosition;
-        targetRect.sizeDelta = item.wearSizeDelta;
-        targetRect.localScale = item.wearScale;
-        targetRect.localEulerAngles = item.wearRotation;
+        rect.anchoredPosition = item.wearAnchoredPosition;
+        rect.sizeDelta = item.wearSizeDelta;
+        rect.localScale = item.wearScale;
+        rect.localEulerAngles = item.wearRotation;
     }
 
     public void ApplyOutfit()
     {
         SaveCurrentOutfit();
         UpdateAllStatus();
+        SaveEquippedToFirebase();
     }
 
     public void CancelPreview()
@@ -289,6 +383,193 @@ public class ClosetPreviewManager : MonoBehaviour
         RestoreSavedOutfit();
         HideEmptyEquippedImages();
         UpdateAllStatus();
+    }
+
+    void SaveEquippedToFirebase()
+    {
+        if (FirestoreManager.Instance == null)
+            return;
+
+        SaveEquippedPart("top", equippedTop);
+        SaveEquippedPart("bottom", equippedBottom);
+        SaveEquippedPart("hair", equippedHair);
+        SaveEquippedPart("accessory", equippedAccessory);
+
+        FirestoreManager.Instance.SaveCoins(coins);
+    }
+
+    void SaveEquippedPart(string part, Image equippedImage)
+    {
+        if (FirestoreManager.Instance == null)
+            return;
+
+        if (equippedImage == null || equippedImage.sprite == null)
+        {
+            FirestoreManager.Instance.SaveClosetEquip(part, "");
+            return;
+        }
+
+        ClosetPreviewItem item = FindItemBySprite(equippedImage.sprite);
+
+        if (item != null)
+            FirestoreManager.Instance.SaveClosetEquip(part, item.itemID);
+        else
+            FirestoreManager.Instance.SaveClosetEquip(part, "");
+    }
+
+    void LoadCoins(Dictionary<string, object> dataDict)
+    {
+        coins = defaultCoins;
+
+        if (dataDict == null || dataDict.Count == 0)
+        {
+            Debug.LogWarning("Firebase user data 是空的，使用預設紙鶴：" + defaultCoins);
+            return;
+        }
+
+        if (dataDict.TryGetValue("coins", out object coinsObj))
+        {
+            coins = int.Parse(coinsObj.ToString());
+            Debug.Log("Firebase 載入 coins：" + coins);
+            return;
+        }
+
+        Debug.LogWarning("Firebase 找不到 coins，使用預設紙鶴：" + defaultCoins);
+    }
+
+    void LoadOwnedItems(Dictionary<string, object> itemsDict)
+    {
+        LoadOwnedGroup(topItems, itemsDict);
+        LoadOwnedGroup(bottomItems, itemsDict);
+        LoadOwnedGroup(hairItems, itemsDict);
+        LoadOwnedGroup(accessoryItems, itemsDict);
+    }
+
+    void LoadOwnedGroup(ClosetPreviewItem[] items, Dictionary<string, object> data)
+    {
+        if (items == null)
+            return;
+
+        foreach (ClosetPreviewItem item in items)
+        {
+            if (item == null)
+                continue;
+
+            if (string.IsNullOrEmpty(item.itemID))
+            {
+                Debug.LogWarning("衣服沒有填 itemID：" + item.name);
+                item.SetOwned(false);
+                continue;
+            }
+
+            bool owned = false;
+
+            if (data != null && data.TryGetValue(item.itemID, out object ownedObj))
+                owned = bool.Parse(ownedObj.ToString());
+
+            item.SetOwned(owned);
+
+            Debug.Log("套用購買狀態：" + item.itemID + " = " + owned);
+        }
+    }
+
+    void LoadEquippedItems(Dictionary<string, object> equippedDict)
+    {
+        if (equippedDict == null || equippedDict.Count == 0)
+        {
+            Debug.LogWarning("Firebase equipped 是空的，不套用穿戴");
+            return;
+        }
+
+        LoadEquippedPart("top", equippedDict, topItems);
+        LoadEquippedPart("bottom", equippedDict, bottomItems);
+        LoadEquippedPart("hair", equippedDict, hairItems);
+        LoadEquippedPart("accessory", equippedDict, accessoryItems);
+    }
+
+    void LoadEquippedPart(string part, Dictionary<string, object> equippedDict, ClosetPreviewItem[] items)
+    {
+        if (items == null)
+            return;
+
+        if (!equippedDict.TryGetValue(part, out object itemIDObj))
+            return;
+
+        string itemID = itemIDObj.ToString();
+
+        if (string.IsNullOrEmpty(itemID))
+            return;
+
+        foreach (ClosetPreviewItem item in items)
+        {
+            if (item == null)
+                continue;
+
+            if (item.itemID == itemID)
+            {
+                item.SetOwned(true);
+                ForceEquipItem(item);
+                HandleSpecialOutfitRule(item);
+
+                Debug.Log("套用穿戴成功：" + part + " = " + itemID);
+                return;
+            }
+        }
+
+        Debug.LogWarning("Firebase 有穿戴資料，但 Unity 找不到 itemID：" + part + " = " + itemID);
+    }
+
+    void ResetAllItemsOwned()
+    {
+        ResetOwnedGroup(topItems);
+        ResetOwnedGroup(bottomItems);
+        ResetOwnedGroup(hairItems);
+        ResetOwnedGroup(accessoryItems);
+    }
+
+    void ResetOwnedGroup(ClosetPreviewItem[] items)
+    {
+        if (items == null)
+            return;
+
+        foreach (ClosetPreviewItem item in items)
+        {
+            if (item != null)
+                item.SetOwned(false);
+        }
+    }
+
+    ClosetPreviewItem FindItemBySprite(Sprite sprite)
+    {
+        ClosetPreviewItem item;
+
+        item = FindItemInGroup(topItems, sprite);
+        if (item != null) return item;
+
+        item = FindItemInGroup(bottomItems, sprite);
+        if (item != null) return item;
+
+        item = FindItemInGroup(hairItems, sprite);
+        if (item != null) return item;
+
+        item = FindItemInGroup(accessoryItems, sprite);
+        if (item != null) return item;
+
+        return null;
+    }
+
+    ClosetPreviewItem FindItemInGroup(ClosetPreviewItem[] items, Sprite sprite)
+    {
+        if (items == null || sprite == null)
+            return null;
+
+        foreach (ClosetPreviewItem item in items)
+        {
+            if (item != null && item.itemSprite == sprite)
+                return item;
+        }
+
+        return null;
     }
 
     void SaveCurrentOutfit()
@@ -347,8 +628,7 @@ public class ClosetPreviewManager : MonoBehaviour
             rect.localRotation = state.localRotation;
         }
 
-        if (image.sprite == null)
-            image.color = new Color(1, 1, 1, 0);
+        HideIfEmpty(image);
     }
 
     Image GetTargetImage(ClosetPart part)
@@ -357,25 +637,55 @@ public class ClosetPreviewManager : MonoBehaviour
         {
             case ClosetPart.Top:
                 return equippedTop;
-
             case ClosetPart.Bottom:
                 return equippedBottom;
-
             case ClosetPart.Hair:
                 return equippedHair;
-
             case ClosetPart.Accessory:
                 return equippedAccessory;
-
             default:
                 return null;
         }
     }
 
-    void UpdateMoneyUI()
+    void ClearAllEquippedImages()
+    {
+        ClearEquippedImage(equippedTop);
+        ClearEquippedImage(equippedBottom);
+        ClearEquippedImage(equippedHair);
+        ClearEquippedImage(equippedAccessory);
+    }
+
+    void ClearEquippedImage(Image image)
+    {
+        if (image == null)
+            return;
+
+        image.sprite = null;
+        image.color = new Color(1, 1, 1, 0);
+    }
+
+    void HideEmptyEquippedImages()
+    {
+        HideIfEmpty(equippedHair);
+        HideIfEmpty(equippedTop);
+        HideIfEmpty(equippedBottom);
+        HideIfEmpty(equippedAccessory);
+    }
+
+    void HideIfEmpty(Image image)
+    {
+        if (image == null)
+            return;
+
+        if (image.sprite == null)
+            image.color = new Color(1, 1, 1, 0);
+    }
+
+    void UpdateCoinsUI()
     {
         if (txtMoney != null)
-            txtMoney.text = money.ToString();
+            txtMoney.text = coins.ToString();
     }
 
     void RefreshAllPriceText()

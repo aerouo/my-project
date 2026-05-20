@@ -35,6 +35,9 @@ public class ClosetPreviewItem : MonoBehaviour
     public Vector3 wearScale = Vector3.one;
     public Vector3 wearRotation;
 
+    [Header("Firebase ID")]
+    public string itemID;
+
     private ClosetPreviewManager manager;
 
     void Start()
