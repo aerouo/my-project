@@ -328,6 +328,7 @@ public class UI_PageController : MonoBehaviour
         }
 
         videoPlayer.Stop();
+        videoPlayer.time = 0;
         videoPlayer.Play();
     }
 

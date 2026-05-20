@@ -20,14 +20,46 @@ public class Quiz01_SceneController : MonoBehaviour
     public GameObject option2C;
     public GameObject option2D;
 
+    // =========================
+    // 完成測驗返回
+    // =========================
     public void BackToLessonHome()
     {
-        PlayerPrefs.SetString("OpenPanelAfterLoad", "LessonHome");
-        PlayerPrefs.SetString("ReturnLessonName", "基礎架構");
-        SceneManager.LoadScene("SampleScene");
+        if (FirestoreManager.Instance != null)
+        {
+            // 儲存測驗完成
+            FirestoreManager.Instance.SaveQuizDone("basic_01", () =>
+            {
+                // 檢查是否達成成就
+                FirestoreManager.Instance.CheckBasicAchievement(1, (completed) =>
+                {
+                    if (completed)
+                    {
+                        PlayerPrefs.SetInt("ShowAchievementToast", 1);
+                        PlayerPrefs.SetString("ToastTitle", "成就達成！");
+                        PlayerPrefs.SetString("ToastDesc", "新手上路");
+                    }
+
+                    // 返回 LessonHome
+                    PlayerPrefs.SetString("OpenPanelAfterLoad", "LessonHome");
+                    PlayerPrefs.SetString("ReturnLessonName", "基礎架構");
+
+                    SceneManager.LoadScene("SampleScene");
+                });
+            });
+        }
+        else
+        {
+            PlayerPrefs.SetString("OpenPanelAfterLoad", "LessonHome");
+            PlayerPrefs.SetString("ReturnLessonName", "基礎架構");
+
+            SceneManager.LoadScene("SampleScene");
+        }
     }
 
+    // =========================
     // 教學頁面跳到第一關
+    // =========================
     public void GoToGame()
     {
         if (tutorialPanel != null) tutorialPanel.SetActive(false);
@@ -39,21 +71,27 @@ public class Quiz01_SceneController : MonoBehaviour
         ShowLevel2Options(true);
     }
 
+    // =========================
     // 第一關顯示答案
+    // =========================
     public void ShowAnswer(GameObject targetAnswerPanel)
     {
         ShowAnswerPanel(targetAnswerPanel);
         ShowLevel1Options(false);
     }
 
+    // =========================
     // 第一關返回題目
+    // =========================
     public void BackToGame(GameObject currentAnswerPanel)
     {
         CloseAnswerPanel(currentAnswerPanel);
         ShowLevel1Options(true);
     }
 
+    // =========================
     // 第一關 NEXT 到第二關
+    // =========================
     public void GoToNextLevel(GameObject currentAnswerPanel)
     {
         CloseAnswerPanel(currentAnswerPanel);
@@ -65,14 +103,18 @@ public class Quiz01_SceneController : MonoBehaviour
         if (gamePanel2 != null) gamePanel2.SetActive(true);
     }
 
+    // =========================
     // 第二關顯示答案
+    // =========================
     public void ShowAnswerLevel2(GameObject targetAnswerPanel)
     {
         ShowAnswerPanel(targetAnswerPanel);
         ShowLevel2Options(false);
     }
 
+    // =========================
     // 第二關返回題目
+    // =========================
     public void BackToGame2(GameObject currentAnswerPanel)
     {
         CloseAnswerPanel(currentAnswerPanel);

@@ -39,8 +39,12 @@ public class PersonalRoomPopupController : MonoBehaviour
     {
         OpenOnly(panelAchievement);
         SelectButton(btnAchievement);
-
         ResetAchievementView();
+
+        if (AchievementManager.Instance != null)
+        {
+            AchievementManager.Instance.RefreshAchievements();
+        }
     }
 
     public void ShowCloset()

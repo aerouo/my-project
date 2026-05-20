@@ -2,6 +2,13 @@ using UnityEngine;
 
 public class HomeUI : MonoBehaviour
 {
+    void Start()
+    {
+        if (FirestoreManager.Instance != null)
+        {
+            FirestoreManager.Instance.LoadAchievementCache();
+        }
+    }
     public void OnClickTraining()
     {   
         SceneLoader.Instance.GoToWithLoading(SceneName.Training);

@@ -22,7 +22,7 @@ public class PlayerNameManager : MonoBehaviour
             txtPlayerName.text = "User";
         }
 
-        // 限制最多 10 字
+        // 限制最多 8 字
         if (inputFieldName != null)
         {
             inputFieldName.characterLimit = maxNameLength;
@@ -32,6 +32,8 @@ public class PlayerNameManager : MonoBehaviour
         if (panelEditName != null)
         {
             panelEditName.SetActive(false);
+
+            LoadPlayerName();
         }
     }
 
@@ -61,13 +63,19 @@ public class PlayerNameManager : MonoBehaviour
         if (string.IsNullOrEmpty(newName))
             return;
 
-        // 保險：超過 10 字就裁掉
+        // 保險：超過 8 字就裁掉
         if (newName.Length > maxNameLength)
         {
             newName = newName.Substring(0, maxNameLength);
         }
 
         txtPlayerName.text = newName;
+
+        // 儲存名字到 Firebase
+        if (FirestoreManager.Instance != null)
+        {
+            FirestoreManager.Instance.SaveUsername(newName);
+        }
 
         if (panelEditName != null)
         {
@@ -81,5 +89,24 @@ public class PlayerNameManager : MonoBehaviour
         {
             panelEditName.SetActive(false);
         }
+    }
+    public void LoadPlayerName()
+    {
+        if (txtPlayerName == null)
+            return;
+
+        if (FirestoreManager.Instance == null)
+        {
+            txtPlayerName.text = "user";
+            return;
+        }
+
+        FirestoreManager.Instance.LoadUsername((username) =>
+        {
+            txtPlayerName.text = username;
+
+            if (inputFieldName != null)
+                inputFieldName.text = username;
+        });
     }
 }
