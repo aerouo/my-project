@@ -482,12 +482,8 @@ public class FirestoreManager : MonoBehaviour
         if (!CheckReady()) return;
 
         string levelID = "basic_" + levelNumber.ToString("00");
-
-        string achievementID =
-            "achievement_basic_" + levelNumber.ToString("00");
-
-        string nextAchievementID =
-            "achievement_basic_" + (levelNumber + 1).ToString("00");
+        string achievementID = "achievement_basic_" + levelNumber.ToString("00");
+        string nextAchievementID = "achievement_basic_" + (levelNumber + 1).ToString("00");
 
         var videoRef = db.Collection("users").Document(userID)
                          .Collection("learning").Document("videos");
@@ -495,45 +491,60 @@ public class FirestoreManager : MonoBehaviour
         var quizRef = db.Collection("users").Document(userID)
                         .Collection("learning").Document("quizzes");
 
+        var achievementRef = db.Collection("users").Document(userID)
+                               .Collection("achievements").Document("data");
+
         Task<DocumentSnapshot> videoTask = videoRef.GetSnapshotAsync();
         Task<DocumentSnapshot> quizTask = quizRef.GetSnapshotAsync();
+        Task<DocumentSnapshot> achievementTask = achievementRef.GetSnapshotAsync();
 
-        Task.WhenAll(videoTask, quizTask).ContinueWithOnMainThread(task =>
+        Task.WhenAll(videoTask, quizTask, achievementTask).ContinueWithOnMainThread(task =>
         {
             if (task.IsFaulted || task.IsCanceled)
             {
                 Debug.LogWarning("檢查成就失敗：" + task.Exception);
-
                 onCompleted?.Invoke(false);
                 return;
             }
 
             bool videoDone =
                 videoTask.Result.Exists &&
-                videoTask.Result.ContainsField(levelID + "_watched");
+                videoTask.Result.ContainsField(levelID + "_watched") &&
+                (bool)videoTask.Result.GetValue<bool>(levelID + "_watched");
 
             bool quizDone =
                 quizTask.Result.Exists &&
-                quizTask.Result.ContainsField(levelID + "_done");
+                quizTask.Result.ContainsField(levelID + "_done") &&
+                (bool)quizTask.Result.GetValue<bool>(levelID + "_done");
+
+            bool alreadyCompleted =
+                achievementTask.Result.Exists &&
+                achievementTask.Result.ContainsField(achievementID + "_completed") &&
+                achievementTask.Result.GetValue<bool>(achievementID + "_completed");
 
             Debug.Log(levelID + " 影片完成：" + videoDone);
             Debug.Log(levelID + " 測驗完成：" + quizDone);
+            Debug.Log(achievementID + " 是否已完成過：" + alreadyCompleted);
+
+            if (alreadyCompleted)
+            {
+                Debug.Log("成就已完成過，不再跳 Toast：" + achievementID);
+                onCompleted?.Invoke(false);
+                return;
+            }
 
             if (videoDone && quizDone)
             {
                 SaveAchievementCompleted(achievementID);
 
-                // 最後一關不要解鎖下一關
                 if (levelNumber < 5)
                 {
                     SaveAchievementUnlocked(nextAchievementID);
                 }
 
-                // 更新快取
                 LoadAchievementCache(() =>
                 {
-                    Debug.Log("成就完成：" + achievementID);
-
+                    Debug.Log("第一次完成成就：" + achievementID);
                     onCompleted?.Invoke(true);
                 });
             }

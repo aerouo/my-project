@@ -58,9 +58,7 @@ public class Puzzle_Lvl1 : MonoBehaviour
         hintPanel?.SetActive(true);   // 進場先顯示提示
         if (txtTimer) txtTimer.gameObject.SetActive(false);
 
-        btnQuitConfirm?.onClick.AddListener(OnQuitConfirm);
         btnQuitCancel?.onClick.AddListener(OnQuitCancel);
-        btnEndConfirm?.onClick.AddListener(OnQuitConfirm);
 
         LoadData();
     }
@@ -132,12 +130,6 @@ public class Puzzle_Lvl1 : MonoBehaviour
     {
         gamePaused = true;
         quitConfirmPanel?.SetActive(true);
-    }
-
-    public void OnQuitConfirm()
-    {
-        PlayerPrefs.SetString("ReturnPanel", "Panel_Puzzle");
-        SceneManager.LoadScene("SampleScene");
     }
 
     public void OnQuitCancel()

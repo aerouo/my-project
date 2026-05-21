@@ -90,9 +90,9 @@ public class Forestexploration_lvl1 : MonoBehaviour
         hintPanel?.SetActive(true);
         if (txtTimer) txtTimer.gameObject.SetActive(false);
 
-        btnQuitConfirm?.onClick.AddListener(OnQuitConfirm);
+
         btnQuitCancel?.onClick.AddListener(OnQuitCancel);
-        btnEndConfirm?.onClick.AddListener(OnQuitConfirm);
+;
 
         goLeft.onClick.AddListener(() => OnGoClick(0));
         goMid.onClick.AddListener(() => OnGoClick(1));
@@ -166,11 +166,6 @@ public class Forestexploration_lvl1 : MonoBehaviour
         quitConfirmPanel?.SetActive(true);
     }
 
-    public void OnQuitConfirm()
-    {
-        PlayerPrefs.SetString("ReturnPanel", "Panel_Forest");
-        SceneManager.LoadScene("SampleScene");
-    }
 
     public void OnQuitCancel()
     {

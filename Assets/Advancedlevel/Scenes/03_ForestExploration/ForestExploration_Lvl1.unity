@@ -134,7 +134,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6087774
 Transform:
   m_ObjectHideFlags: 0
@@ -774,6 +774,7 @@ GameObject:
   - component: {fileID: 398896020}
   - component: {fileID: 398896019}
   - component: {fileID: 398896018}
+  - component: {fileID: 398896021}
   m_Layer: 5
   m_Name: BtnConfirm
   m_TagString: Untagged
@@ -845,9 +846,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 417180720}
-        m_TargetAssemblyTypeName: Forestexploration_lvl1, Assembly-CSharp
-        m_MethodName: OnQuitCancel
+      - m_Target: {fileID: 398896021}
+        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
+        m_MethodName: BackToTraining
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -895,6 +896,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 398896016}
   m_CullTransparentMesh: 1
+--- !u!114 &398896021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398896016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d266fa428f15f24daaf663d6738690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
+  returnPanelName: Panel_Forest
 --- !u!1 &417180718
 GameObject:
   m_ObjectHideFlags: 0
@@ -1169,7 +1183,7 @@ MonoBehaviour:
   m_text: "\u7372\u5F97\u7D19\u9DB4+100"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1235,7 +1249,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &476020679
@@ -1647,6 +1661,7 @@ GameObject:
   - component: {fileID: 608013825}
   - component: {fileID: 608013824}
   - component: {fileID: 608013823}
+  - component: {fileID: 608013826}
   m_Layer: 5
   m_Name: BtnConfirm
   m_TagString: Untagged
@@ -1718,9 +1733,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 417180720}
-        m_TargetAssemblyTypeName: Forestexploration_lvl1, Assembly-CSharp
-        m_MethodName: OnQuitConfirm
+      - m_Target: {fileID: 608013826}
+        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
+        m_MethodName: BackToTraining
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1768,6 +1783,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 608013821}
   m_CullTransparentMesh: 1
+--- !u!114 &608013826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608013821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d266fa428f15f24daaf663d6738690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
+  returnPanelName: Panel_Forest
 --- !u!1 &658235325
 GameObject:
   m_ObjectHideFlags: 0
@@ -2363,7 +2391,7 @@ MonoBehaviour:
   m_text: "\u78BA\u8A8D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2429,7 +2457,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1085096339
@@ -2549,7 +2577,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: 300}
+  m_AnchoredPosition: {x: 0, y: 300}
   m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1126602148
@@ -2575,7 +2603,7 @@ MonoBehaviour:
   m_text: "\u606D\u559C\u901A\u95DC"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2641,7 +2669,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1126602149
@@ -2911,7 +2939,7 @@ MonoBehaviour:
   m_text: "\u7372\u5F97\u7E3D\u5206\uFF1A"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2977,7 +3005,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1390113264
@@ -3934,7 +3962,7 @@ MonoBehaviour:
   m_text: "\u8017\u6642\uFF1A"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4000,7 +4028,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1902883350

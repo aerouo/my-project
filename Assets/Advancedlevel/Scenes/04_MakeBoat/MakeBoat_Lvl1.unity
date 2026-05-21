@@ -549,6 +549,7 @@ GameObject:
   - component: {fileID: 398896020}
   - component: {fileID: 398896019}
   - component: {fileID: 398896018}
+  - component: {fileID: 398896021}
   m_Layer: 5
   m_Name: BtnConfirm
   m_TagString: Untagged
@@ -620,9 +621,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 417180720}
-        m_TargetAssemblyTypeName: MakeBoat_Lvl1, Assembly-CSharp
-        m_MethodName: OnClickConfirm
+      - m_Target: {fileID: 398896021}
+        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
+        m_MethodName: BackToTraining
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -670,6 +671,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 398896016}
   m_CullTransparentMesh: 1
+--- !u!114 &398896021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 398896016}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d266fa428f15f24daaf663d6738690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
+  returnPanelName: Panel_Makeboat
 --- !u!1 &417180718
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,10 +737,10 @@ MonoBehaviour:
   crawlDuration: 1
   frameSwitchInterval: 0.15
   itemPool:
-  - {fileID: 11400000, guid: 5988250bb76c6ac4d92f8d25951bd50c, type: 2}
-  - {fileID: 11400000, guid: 90c213ccde7d3bd43831af12feec07ab, type: 2}
-  - {fileID: 11400000, guid: fd266ffc36ab9344ab408a03cbf57d12, type: 2}
-  - {fileID: 11400000, guid: eb44aa23a7158a349bc92e62e5a299c1, type: 2}
+  - {fileID: 11400000, guid: c7113cd1f13f2ab43b9db637ebb8d62b, type: 2}
+  - {fileID: 11400000, guid: cd56f02f065dceb459babda3a26b1dc4, type: 2}
+  - {fileID: 11400000, guid: 8f276e5d3922df740a671e6c6230bbb6, type: 2}
+  - {fileID: 11400000, guid: b99a22fa3c3a7a64482120f7ee2642c7, type: 2}
   buttons:
   - {fileID: 1365727547}
   - {fileID: 2050564617}
@@ -1302,6 +1316,7 @@ GameObject:
   - component: {fileID: 608013825}
   - component: {fileID: 608013824}
   - component: {fileID: 608013823}
+  - component: {fileID: 608013826}
   m_Layer: 5
   m_Name: BtnConfirm
   m_TagString: Untagged
@@ -1373,9 +1388,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 417180720}
-        m_TargetAssemblyTypeName: MakeBoat_Lvl1, Assembly-CSharp
-        m_MethodName: OnQuitConfirm
+      - m_Target: {fileID: 608013826}
+        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
+        m_MethodName: BackToTraining
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1423,6 +1438,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 608013821}
   m_CullTransparentMesh: 1
+--- !u!114 &608013826
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 608013821}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d266fa428f15f24daaf663d6738690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
+  returnPanelName: Panel_Makeboat
 --- !u!1 &615392231
 GameObject:
   m_ObjectHideFlags: 0
@@ -2168,7 +2196,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50, y: 300}
+  m_AnchoredPosition: {x: 0, y: 300}
   m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1126602148
@@ -3048,7 +3076,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -400}
-  m_SizeDelta: {x: 250, y: 50}
+  m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1668879732
 MonoBehaviour:

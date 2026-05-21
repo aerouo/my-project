@@ -71,7 +71,6 @@ public class Rowing_Lvl1 : MonoBehaviour
         txtTimer.gameObject.SetActive(false);
         UpdateScoreUI();
 
-        btnBackConfirm?.onClick.AddListener(OnBackConfirm);
         btnBackCancel?.onClick.AddListener(OnBackCancel);
 
         LoadData();
@@ -159,11 +158,6 @@ public class Rowing_Lvl1 : MonoBehaviour
         backPanel?.SetActive(true);
     }
 
-    public void OnBackConfirm()
-    {
-        PlayerPrefs.SetString("ReturnPanel", "Panel_Boating");
-        SceneManager.LoadScene("SampleScene");
-    }
 
     public void OnBackCancel()
     {

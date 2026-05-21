@@ -231,7 +231,7 @@ public class UI_PageController : MonoBehaviour
 
     public void GoToClueLevel1()
     {
-        SceneManager.LoadScene("Clue_Lvl1");
+        SceneManager.LoadScene("FindClues_Lvl1");
     }
 
     public void OpenLessonByName(string lessonName)

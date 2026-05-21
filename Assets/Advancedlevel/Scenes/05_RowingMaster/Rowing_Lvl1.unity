@@ -707,6 +707,7 @@ GameObject:
   - component: {fileID: 383690069}
   - component: {fileID: 383690068}
   - component: {fileID: 383690067}
+  - component: {fileID: 383690070}
   m_Layer: 5
   m_Name: BtnConfirm
   m_TagString: Untagged
@@ -778,9 +779,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: MakeBoat_Lvl1, Assembly-CSharp
-        m_MethodName: OnClickConfirm
+      - m_Target: {fileID: 383690070}
+        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
+        m_MethodName: BackToTraining
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -828,6 +829,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 383690065}
   m_CullTransparentMesh: 1
+--- !u!114 &383690070
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 383690065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d266fa428f15f24daaf663d6738690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
+  returnPanelName: Panel_Boating
 --- !u!1 &534175131
 GameObject:
   m_ObjectHideFlags: 0
@@ -3044,6 +3058,7 @@ GameObject:
   - component: {fileID: 1599179092}
   - component: {fileID: 1599179091}
   - component: {fileID: 1599179093}
+  - component: {fileID: 1599179094}
   m_Layer: 5
   m_Name: BtnConfirm
   m_TagString: Untagged
@@ -3153,9 +3168,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Rowing_Lvl1, Assembly-CSharp
-        m_MethodName: OnClickConfirm
+      - m_Target: {fileID: 1599179094}
+        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
+        m_MethodName: BackToTraining
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3165,6 +3180,19 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1599179094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1599179089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d266fa428f15f24daaf663d6738690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
+  returnPanelName: Panel_Boating
 --- !u!1 &1635675968
 GameObject:
   m_ObjectHideFlags: 0
@@ -3763,7 +3791,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
@@ -3830,7 +3858,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
+  m_hasFontAssetChanged: 1
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!222 &1919192382
@@ -3895,7 +3923,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 300}
-  m_SizeDelta: {x: 400, y: 100}
+  m_SizeDelta: {x: 500, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1943867244
 CanvasRenderer:

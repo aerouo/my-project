@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MakeBoat_Lvl1 : MonoBehaviour
 {
@@ -76,9 +77,9 @@ public class MakeBoat_Lvl1 : MonoBehaviour
         if (scoreText) scoreText.gameObject.SetActive(false);
         if (txtTimer) txtTimer.gameObject.SetActive(false);
 
-        btnQuitConfirm?.onClick.AddListener(OnQuitConfirm);
+
         btnQuitCancel?.onClick.AddListener(OnQuitCancel);
-        btnEndConfirm?.onClick.AddListener(OnQuitConfirm);
+
 
         LoadData();
         // 不自動開始，等玩家按確認
@@ -230,11 +231,6 @@ public class MakeBoat_Lvl1 : MonoBehaviour
         quitConfirmPanel?.SetActive(true);
     }
 
-    public void OnQuitConfirm()
-    {
-        PlayerPrefs.SetString("ReturnPanel", "Panel_Makeboat");
-        UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene");
-    }
 
     public void OnQuitCancel()
     {
