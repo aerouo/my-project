@@ -19,7 +19,7 @@ public class PrintGameManager : MonoBehaviour
     public float typingSpeed = 0.08f;
 
     [Header("放置槽（依順序拉入 kuang1~5）")]
-    public DropSlot[] slots;
+    public Lvl1DropSlot[] slots;
 
     [Header("結果展示方塊")]
     public Image[] blockImages;
@@ -79,7 +79,7 @@ public class PrintGameManager : MonoBehaviour
         }
     }
 
-    IEnumerator ExecuteBlocks(DropSlot[] slots)
+    IEnumerator ExecuteBlocks(Lvl1DropSlot[] slots)
     {
         if (printGroupPanel != null) printGroupPanel.SetActive(false);
         if (computerPanel != null) computerPanel.SetActive(true);
@@ -128,12 +128,12 @@ public class PrintGameManager : MonoBehaviour
         ShowResult(Time.time - startTime);
     }
 
-    IEnumerator ShowWrongHint(DropSlot[] slots)
+    IEnumerator ShowWrongHint(Lvl1DropSlot[] slots)
     {
         foreach (Image img in blockImages)
             if (img != null) img.gameObject.SetActive(false);
 
-        foreach (DropSlot slot in slots)
+        foreach (Lvl1DropSlot slot in slots)
             slot.ResetSlot();
 
         if (computerPanel != null) computerPanel.SetActive(false);
@@ -165,7 +165,7 @@ public class PrintGameManager : MonoBehaviour
         {
             int minutes = (int)(elapsed / 60);
             int seconds = (int)(elapsed % 60);
-            resultText.text = $"通關！\n耗時：{minutes:00}:{seconds:00}";
+            resultText.text = $"恭喜通關\n耗時：{minutes:00}:{seconds:00}";
         }
     }
 }

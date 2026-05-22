@@ -806,8 +806,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 398896021}
-        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
-        m_MethodName: BackToTraining
+        m_TargetAssemblyTypeName: SceneBackController, Assembly-CSharp
+        m_MethodName: BackToTrainingPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -868,6 +868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
   returnPanelName: Panel_Puzzle
+  questMapSceneName: quest-map
 --- !u!1 &417180718
 GameObject:
   m_ObjectHideFlags: 0
@@ -1645,8 +1646,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 608013826}
-        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
-        m_MethodName: BackToTraining
+        m_TargetAssemblyTypeName: SceneBackController, Assembly-CSharp
+        m_MethodName: BackToTrainingPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1707,6 +1708,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
   returnPanelName: Panel_Puzzle
+  questMapSceneName: quest-map
 --- !u!1 &612526637
 GameObject:
   m_ObjectHideFlags: 0
@@ -4996,6 +4998,7 @@ GameObject:
   - component: {fileID: 2147098326}
   - component: {fileID: 2147098325}
   - component: {fileID: 2147098324}
+  - component: {fileID: 2147098328}
   m_Layer: 6
   m_Name: back
   m_TagString: Untagged
@@ -5047,9 +5050,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 417180720}
-        m_TargetAssemblyTypeName: Puzzle_Lvl1, Assembly-CSharp
-        m_MethodName: OnClickBack
+      - m_Target: {fileID: 2147098328}
+        m_TargetAssemblyTypeName: SceneBackController, Assembly-CSharp
+        m_MethodName: BackToTrainingPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5116,6 +5119,20 @@ RectTransform:
   m_AnchoredPosition: {x: 850, y: 420}
   m_SizeDelta: {x: 150, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2147098328
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2147098323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d266fa428f15f24daaf663d6738690f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneBackController
+  returnPanelName: Panel_Puzzle
+  questMapSceneName: quest-map
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1060,8 +1060,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 398896021}
-        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
-        m_MethodName: BackToTraining
+        m_TargetAssemblyTypeName: SceneBackController, Assembly-CSharp
+        m_MethodName: BackToTrainingPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1122,6 +1122,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
   returnPanelName: Panel_Clue
+  questMapSceneName: 
 --- !u!1 &417180718
 GameObject:
   m_ObjectHideFlags: 0
@@ -2058,8 +2059,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 608013826}
-        m_TargetAssemblyTypeName: AdvancedLevelBack, Assembly-CSharp
-        m_MethodName: BackToTraining
+        m_TargetAssemblyTypeName: SceneBackController, Assembly-CSharp
+        m_MethodName: BackToTrainingPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2120,6 +2121,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
   returnPanelName: Panel_Clue
+  questMapSceneName: quest-map
 --- !u!1 &736933593
 GameObject:
   m_ObjectHideFlags: 0

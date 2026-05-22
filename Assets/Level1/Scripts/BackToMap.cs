@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
 
 public class BackToMap : MonoBehaviour
 {
@@ -11,10 +11,6 @@ public class BackToMap : MonoBehaviour
             confirmPanel.SetActive(true);
     }
 
-    public void OnConfirm()
-    {
-        SceneManager.LoadScene("quest-map");
-    }
 
     public void OnCancel()
     {
