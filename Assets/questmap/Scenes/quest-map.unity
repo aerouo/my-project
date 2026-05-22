@@ -1405,7 +1405,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -80}
-  m_SizeDelta: {x: 200, y: 50}
+  m_SizeDelta: {x: 300, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &712540377
 MonoBehaviour:
@@ -2294,6 +2294,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1713282731}
+  - component: {fileID: 1713282732}
   m_Layer: 5
   m_Name: LevelInfoPanel
   m_TagString: Untagged
@@ -2326,6 +2327,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1713282732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1713282730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2298a4880958b1b4393ca1f67ac242f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuestBestRecordDisplay
+  historyText: {fileID: 712540377}
 --- !u!1 &1848148369
 GameObject:
   m_ObjectHideFlags: 0
@@ -2358,6 +2372,7 @@ MonoBehaviour:
   levelInfoPanel: {fileID: 1713282730}
   titleText: {fileID: 860445291}
   descText: {fileID: 879173842}
+  bestRecordDisplay: {fileID: 1713282732}
 --- !u!4 &1848148371
 Transform:
   m_ObjectHideFlags: 0

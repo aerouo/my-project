@@ -647,7 +647,7 @@ MonoBehaviour:
   m_text: "\u6709\u597D\u591A\u82B1\u82B1\u5462!"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c1b3b5adb4359b34db34a7f2963fc954, type: 2}
-  m_sharedMaterial: {fileID: 7923214715162237786, guid: 4e07aa3b58fcde446b7086b0a4942eca, type: 2}
+  m_sharedMaterial: {fileID: -8901361916996971843, guid: c1b3b5adb4359b34db34a7f2963fc954, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

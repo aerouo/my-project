@@ -9,18 +9,18 @@ public class HistoryToggle : MonoBehaviour
     public RectTransform historyList;
 
     [Header("Layout")]
-    public LayoutElement recordLayout;     // 自己，例如 Record_Easy / Record_Normal / Record_Hard
-    public LayoutElement lessonLayout;     // 外層，例如 AdvancedLesson_01
-    public LayoutElement noDataLayout;     // Txt_Nodata 的 LayoutElement
+    public LayoutElement recordLayout;
+    public LayoutElement lessonLayout;
+    public LayoutElement noDataLayout;
 
     [Header("同一課程的其他紀錄")]
-    public HistoryToggle[] otherToggles;   // 同一排其他紀錄
+    public HistoryToggle[] otherToggles;
 
     [Header("Panel 自動高度")]
-    public AutoResizePanel panelBasicResizer; // Panel_Basic / Panel_Advanced / Panel_Challenge
+    public AutoResizePanel panelBasicResizer;
 
     [Header("是否有資料")]
-    public bool hasData = true;
+    public bool hasData = false;
 
     [Header("Height Settings")]
     public float closedHeight = 200f;
@@ -54,6 +54,12 @@ public class HistoryToggle : MonoBehaviour
         if (historyContainer != null)
             historyContainer.SetActive(isOpen);
 
+        RefreshLayout();
+    }
+
+    public void SetHasData(bool value)
+    {
+        hasData = value;
         RefreshLayout();
     }
 

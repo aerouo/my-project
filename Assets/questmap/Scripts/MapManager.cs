@@ -9,12 +9,17 @@ public class MapManager : MonoBehaviour
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI descText;
 
+    [Header("歷史紀錄顯示")]
+    public QuestBestRecordDisplay bestRecordDisplay;
+
     private int currentSelectedLevel = 1;
 
     public void OnClickLevel(int levelNum)
     {
         currentSelectedLevel = levelNum;
-        levelInfoPanel.SetActive(true);
+
+        if (levelInfoPanel != null)
+            levelInfoPanel.SetActive(true);
 
         if (levelNum == 1)
         {
@@ -41,6 +46,13 @@ public class MapManager : MonoBehaviour
             titleText.text = "第五關";
             descText.text = "天氣晴朗，你的心情和天氣一樣好，未知的旅程混雜著不安，你還是勇敢踏出了這一步...";
         }
+
+        // 讀取該關卡最佳紀錄
+        if (bestRecordDisplay != null)
+        {
+            string levelID = "Level" + levelNum;
+            bestRecordDisplay.ShowRecord(levelID);
+        }
     }
 
     public void OnClickStart()
@@ -55,6 +67,7 @@ public class MapManager : MonoBehaviour
 
     public void OnClickback()
     {
-        levelInfoPanel.SetActive(false);
+        if (levelInfoPanel != null)
+            levelInfoPanel.SetActive(false);
     }
 }

@@ -160,12 +160,28 @@ public class PrintGameManager : MonoBehaviour
 
     void ShowResult(float elapsed)
     {
-        if (resultPanel != null) resultPanel.SetActive(true);
+        if (resultPanel != null)
+            resultPanel.SetActive(true);
+
         if (resultText != null)
         {
             int minutes = (int)(elapsed / 60);
             int seconds = (int)(elapsed % 60);
-            resultText.text = $"恭喜通關\n耗時：{minutes:00}:{seconds:00}";
+
+            resultText.text =
+                $"恭喜通關\n耗時：{minutes:00}:{seconds:00}";
+        }
+
+        // 儲存闖關紀錄
+        if (FirestoreManager.Instance != null)
+        {
+            FirestoreManager.Instance.SaveQuestRecord(
+                "Level1",
+                elapsed,
+                100
+            );
+
+            FirestoreManager.Instance.AddCoins(200);
         }
     }
 }

@@ -983,7 +983,7 @@ MonoBehaviour:
   m_text: "\u7B54\u5C0D\u984C\u76EE\u5566!\\n\u592A\u967D\u597D\u5927\u8981\u597D\u597D\u6234\u5E3D\u5B50\u5462><"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c1b3b5adb4359b34db34a7f2963fc954, type: 2}
-  m_sharedMaterial: {fileID: 6214062466379785854, guid: cc7f8c6398b251e4a8e24c3186fafa7e, type: 2}
+  m_sharedMaterial: {fileID: -8901361916996971843, guid: c1b3b5adb4359b34db34a7f2963fc954, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

@@ -8,11 +8,18 @@ using System.Threading.Tasks;
 
 public class FirestoreManager : MonoBehaviour
 {
+    // =========================================================
+    // 0. 單例與 Firebase 基本設定
+    // =========================================================
+
     private static FirestoreManager _instance;
     public static FirestoreManager Instance => _instance;
 
     private FirebaseFirestore db;
     private string userID;
+
+    private Dictionary<string, object> achievementCache = new Dictionary<string, object>();
+    public bool AchievementLoaded { get; private set; } = false;
 
     void Awake()
     {
@@ -29,9 +36,6 @@ public class FirestoreManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-    private Dictionary<string, object> achievementCache = new Dictionary<string, object>();
-    public bool AchievementLoaded { get; private set; } = false;
 
     void RefreshUser()
     {
@@ -54,24 +58,464 @@ public class FirestoreManager : MonoBehaviour
         return true;
     }
 
-    // ===== 闖關碼頭 =====
-    public void SaveQuestLevel(string levelID, float timeSeconds)
+    // =========================================================
+    // 1. 學習紀錄：共用工具
+    // =========================================================
+
+    private Dictionary<string, object> CreateRecord(float timeSeconds, int score, int process)
+    {
+        return new Dictionary<string, object>
+    {
+        { "time", timeSeconds },
+        { "score", score },
+        { "process", process },
+        { "date", DateTime.Now.ToString("yyyy/MM/dd") }
+    };
+    }
+
+    private void SaveRecordWithHistory(DocumentReference docRef, Dictionary<string, object> latestRecord)
+    {
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogWarning("讀取紀錄失敗：" + task.Exception);
+                return;
+            }
+
+            List<object> history = new List<object>();
+
+            if (task.Result.Exists)
+            {
+                Dictionary<string, object> oldData = task.Result.ToDictionary();
+
+                if (oldData.TryGetValue("latest", out object oldLatestObj))
+                {
+                    history.Insert(0, oldLatestObj);
+                }
+
+                if (oldData.TryGetValue("history", out object oldHistoryObj))
+                {
+                    List<object> oldHistory = ConvertToObjectList(oldHistoryObj);
+                    history.AddRange(oldHistory);
+                }
+            }
+
+            if (history.Count > 5)
+                history.RemoveRange(5, history.Count - 5);
+
+            Dictionary<string, object> updates = new Dictionary<string, object>
+        {
+            { "latest", latestRecord },
+            { "history", history }
+        };
+
+            docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
+            {
+                if (saveTask.IsCompletedSuccessfully)
+                    Debug.Log("學習紀錄儲存成功");
+                else
+                    Debug.LogWarning("學習紀錄儲存失敗：" + saveTask.Exception);
+            });
+        });
+    }
+
+    private List<object> ConvertToObjectList(object obj)
+    {
+        if (obj == null)
+            return new List<object>();
+
+        if (obj is List<object> list)
+            return list;
+
+        if (obj is IEnumerable<object> enumerable)
+            return new List<object>(enumerable);
+
+        return new List<object>();
+    }
+    private int GetDictInt(Dictionary<string, object> dict, string key)
+    {
+        if (dict != null && dict.TryGetValue(key, out object value))
+            return Convert.ToInt32(value);
+
+        return 0;
+    }
+
+    private float GetDictFloat(Dictionary<string, object> dict, string key)
+    {
+        if (dict != null && dict.TryGetValue(key, out object value))
+            return Convert.ToSingle(value);
+
+        return 0f;
+    }
+
+    private string GetDictString(Dictionary<string, object> dict, string key)
+    {
+        if (dict != null && dict.TryGetValue(key, out object value))
+            return value.ToString();
+
+        return "";
+    }
+
+    // =========================================================
+    // 2. 學習紀錄：基礎影片
+    // 存在 learning / videos
+    // 成就與 Learning 顯示都讀這份
+    // =========================================================
+
+    public void SaveBasicVideoRecord(string basicID, float timeSeconds = 0f)
     {
         if (!CheckReady()) return;
 
         string date = DateTime.Now.ToString("yyyy/MM/dd");
 
         db.Collection("users").Document(userID)
-          .Collection("questLevels").Document(levelID)
+          .Collection("learning").Document("videos")
           .SetAsync(new Dictionary<string, object>
           {
-              { "completed", true },
-              { "time", timeSeconds },
-              { "date", date }
-          }, SetOptions.MergeAll);
+          { basicID + "_watched", true },
+          { basicID + "_date", date },
+          { basicID + "_process", 100 },
+          { basicID + "_time", timeSeconds }
+          }, SetOptions.MergeAll)
+          .ContinueWithOnMainThread(task =>
+          {
+              if (task.IsCompletedSuccessfully)
+                  Debug.Log("基礎影片紀錄儲存成功：" + basicID);
+              else
+                  Debug.LogWarning("基礎影片紀錄儲存失敗：" + task.Exception);
+          });
     }
 
-    // ===== 練功坊小遊戲 =====
+    public void LoadBasicVideoRecord(string basicID, Action<Dictionary<string, object>> onLoaded)
+    {
+        if (!CheckReady())
+        {
+            onLoaded?.Invoke(new Dictionary<string, object>());
+            return;
+        }
+
+        db.Collection("users").Document(userID)
+          .Collection("learning").Document("videos")
+          .GetSnapshotAsync()
+          .ContinueWithOnMainThread(task =>
+          {
+              if (task.IsFaulted || task.IsCanceled || !task.Result.Exists)
+              {
+                  onLoaded?.Invoke(new Dictionary<string, object>());
+                  return;
+              }
+
+              Dictionary<string, object> data = task.Result.ToDictionary();
+
+              if (!data.ContainsKey(basicID + "_watched"))
+              {
+                  onLoaded?.Invoke(new Dictionary<string, object>());
+                  return;
+              }
+
+              bool watched = Convert.ToBoolean(data[basicID + "_watched"]);
+
+              int process = 0;
+
+              if (data.ContainsKey(basicID + "_process"))
+                  process = GetDictInt(data, basicID + "_process");
+              else if (watched)
+                  process = 100;
+
+              Dictionary<string, object> latest = new Dictionary<string, object>
+              {
+              { "process", process },
+              { "date", GetDictString(data, basicID + "_date") },
+              { "time", GetDictFloat(data, basicID + "_time") }
+              };
+
+              onLoaded?.Invoke(new Dictionary<string, object>
+              {
+              { "latest", latest }
+              });
+          });
+    }
+
+    // =========================================================
+    // 3. 學習紀錄：基礎測驗
+    // 存在 learning / quizzes
+    // 成就看 basic_01_done，Learning 顯示看 process/date/history
+    // 日期只顯示年月日，不顯示時間
+    // =========================================================
+
+    public void SaveBasicQuizRecord(string basicID)
+    {
+        if (!CheckReady()) return;
+
+        string date = DateTime.Now.ToString("yyyy/MM/dd");
+
+        var docRef = db.Collection("users").Document(userID)
+                       .Collection("learning").Document("quizzes");
+
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogWarning("讀取基礎測驗紀錄失敗：" + task.Exception);
+                return;
+            }
+
+            List<object> history = new List<object>();
+
+            if (task.Result.Exists)
+            {
+                Dictionary<string, object> oldData = task.Result.ToDictionary();
+
+                bool hadOldLatest = oldData.ContainsKey(basicID + "_done");
+
+                if (hadOldLatest)
+                {
+                    Dictionary<string, object> oldLatest = new Dictionary<string, object>
+                {
+                    { "date", GetDictString(oldData, basicID + "_date") },
+                    { "process", GetDictInt(oldData, basicID + "_process") },
+                    { "time", GetDictFloat(oldData, basicID + "_time") }
+                };
+
+                    history.Insert(0, oldLatest);
+                }
+
+                if (oldData.TryGetValue(basicID + "_history", out object h))
+                {
+                    List<object> oldHistory = ConvertToObjectList(h);
+                    history.AddRange(oldHistory);
+                }
+            }
+
+            if (history.Count > 5)
+                history.RemoveRange(5, history.Count - 5);
+
+            Dictionary<string, object> updates = new Dictionary<string, object>
+        {
+            { basicID + "_done", true },
+            { basicID + "_date", date },
+            { basicID + "_process", 100 },
+            { basicID + "_time", 0f },
+            { basicID + "_history", history }
+        };
+
+            docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
+            {
+                if (saveTask.IsCompletedSuccessfully)
+                    Debug.Log("基礎測驗紀錄儲存成功：" + basicID);
+                else
+                    Debug.LogWarning("基礎測驗紀錄儲存失敗：" + saveTask.Exception);
+            });
+        });
+    }
+    public void LoadBasicQuizRecord(string basicID, Action<Dictionary<string, object>> onLoaded)
+    {
+        if (!CheckReady())
+        {
+            onLoaded?.Invoke(new Dictionary<string, object>());
+            return;
+        }
+
+        db.Collection("users").Document(userID)
+          .Collection("learning").Document("quizzes")
+          .GetSnapshotAsync()
+          .ContinueWithOnMainThread(task =>
+          {
+              if (task.IsFaulted || task.IsCanceled || !task.Result.Exists)
+              {
+                  onLoaded?.Invoke(new Dictionary<string, object>());
+                  return;
+              }
+
+              Dictionary<string, object> data = task.Result.ToDictionary();
+
+              if (!data.ContainsKey(basicID + "_done"))
+              {
+                  onLoaded?.Invoke(new Dictionary<string, object>());
+                  return;
+              }
+
+              int process = 100;
+
+              if (data.ContainsKey(basicID + "_process"))
+                  process = GetDictInt(data, basicID + "_process");
+
+              Dictionary<string, object> latest = new Dictionary<string, object>
+              {
+              { "process", process },
+              { "date", GetDictString(data, basicID + "_date") },
+              { "time", 0f }
+              };
+
+              List<object> history = new List<object>();
+
+              if (data.TryGetValue(basicID + "_history", out object historyObj))
+                  history = historyObj as List<object> ?? new List<object>();
+
+              onLoaded?.Invoke(new Dictionary<string, object>
+              {
+              { "latest", latest },
+              { "history", history }
+              });
+          });
+    }
+
+    // =========================================================
+    // 4. 學習紀錄：進階關卡
+    // 存在 learningRecords / advanced / advanced_01 / easy
+    // =========================================================
+
+    public void SaveAdvancedRecord(string gameID, string difficulty, float timeSeconds, int score)
+    {
+        if (!CheckReady()) return;
+
+        Dictionary<string, object> latestRecord = CreateRecord(timeSeconds, score, 100);
+
+        DocumentReference docRef = db.Collection("users").Document(userID)
+            .Collection("learningRecords").Document("advanced")
+            .Collection(gameID).Document(difficulty);
+
+        SaveRecordWithHistory(docRef, latestRecord);
+        SaveMinigame(gameID, difficulty, timeSeconds);
+    }
+
+    public void LoadAdvancedRecord(string gameID, string difficulty, Action<Dictionary<string, object>> onLoaded)
+    {
+        if (!CheckReady())
+        {
+            onLoaded?.Invoke(new Dictionary<string, object>());
+            return;
+        }
+
+        db.Collection("users").Document(userID)
+          .Collection("learningRecords").Document("advanced")
+          .Collection(gameID).Document(difficulty)
+          .GetSnapshotAsync()
+          .ContinueWithOnMainThread(task =>
+          {
+              if (task.IsFaulted || task.IsCanceled || !task.Result.Exists)
+              {
+                  onLoaded?.Invoke(new Dictionary<string, object>());
+                  return;
+              }
+
+              onLoaded?.Invoke(task.Result.ToDictionary());
+          });
+    }
+
+    // =========================================================
+    // 5. 學習紀錄：闖關
+    // 存在 learningRecords / quest
+    // 欄位格式：Level1_latest、Level1_history
+    // =========================================================
+
+    public void SaveQuestRecord(string levelID, float timeSeconds, int score)
+    {
+        if (!CheckReady()) return;
+
+        float roundedTime = Mathf.Round(timeSeconds * 100f) / 100f;
+
+        Dictionary<string, object> latestRecord = new Dictionary<string, object>
+    {
+        { "time", roundedTime },
+        { "score", score },
+        { "process", 100 },
+        { "date", DateTime.Now.ToString("yyyy/MM/dd") }
+    };
+
+        DocumentReference docRef = db.Collection("users").Document(userID)
+            .Collection("learningRecords").Document("quest");
+
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogWarning("讀取闖關紀錄失敗：" + task.Exception);
+                return;
+            }
+
+            List<object> history = new List<object>();
+
+            if (task.Result.Exists)
+            {
+                Dictionary<string, object> oldData = task.Result.ToDictionary();
+
+                if (oldData.TryGetValue(levelID + "_latest", out object oldLatest))
+                    history.Insert(0, oldLatest);
+
+                if (oldData.TryGetValue(levelID + "_history", out object oldHistory))
+                    history.AddRange(ConvertToObjectList(oldHistory));
+            }
+
+            if (history.Count > 5)
+                history.RemoveRange(5, history.Count - 5);
+
+            Dictionary<string, object> updates = new Dictionary<string, object>
+        {
+            { levelID + "_latest", latestRecord },
+            { levelID + "_history", history }
+        };
+
+            docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
+            {
+                if (saveTask.IsCompletedSuccessfully)
+                    Debug.Log("闖關紀錄儲存成功：" + levelID);
+                else
+                    Debug.LogWarning("闖關紀錄儲存失敗：" + saveTask.Exception);
+            });
+        });
+    }
+
+    public void LoadQuestRecord(string levelID, Action<Dictionary<string, object>> onLoaded)
+    {
+        if (!CheckReady())
+        {
+            onLoaded?.Invoke(new Dictionary<string, object>());
+            return;
+        }
+
+        db.Collection("users").Document(userID)
+          .Collection("learningRecords").Document("quest")
+          .GetSnapshotAsync()
+          .ContinueWithOnMainThread(task =>
+          {
+              if (task.IsFaulted || task.IsCanceled || !task.Result.Exists)
+              {
+                  onLoaded?.Invoke(new Dictionary<string, object>());
+                  return;
+              }
+
+              Dictionary<string, object> data = task.Result.ToDictionary();
+              Dictionary<string, object> result = new Dictionary<string, object>();
+
+              if (data.TryGetValue(levelID + "_latest", out object latest))
+                  result["latest"] = latest;
+
+              if (data.TryGetValue(levelID + "_history", out object history))
+                  result["history"] = history;
+
+              onLoaded?.Invoke(result);
+          });
+    }
+
+    // =========================================================
+    // 6. 舊方法保留：影片 / 測驗 / 小遊戲 / 闖關完成
+    // 避免其他舊 Script 呼叫時壞掉
+    // =========================================================
+
+    public void SaveVideoWatched(string videoID)
+    {
+        SaveBasicVideoRecord(videoID);
+    }
+
+    public void SaveQuizDone(string quizID, System.Action onSaved = null)
+    {
+        SaveBasicQuizRecord(quizID);
+        onSaved?.Invoke();
+    }
+
+
     public void SaveMinigame(string gameID, string level, float timeSeconds)
     {
         if (!CheckReady()) return;
@@ -115,52 +559,10 @@ public class FirestoreManager : MonoBehaviour
         });
     }
 
-    // ===== 學習影片 =====
-    public void SaveVideoWatched(string videoID)
-    {
-        if (!CheckReady()) return;
+    // =========================================================
+    // 7. 紙鶴 / 金幣
+    // =========================================================
 
-        string date = DateTime.Now.ToString("yyyy/MM/dd");
-
-        db.Collection("users").Document(userID)
-          .Collection("learning").Document("videos")
-          .SetAsync(new Dictionary<string, object>
-          {
-              { videoID + "_watched", true },
-              { videoID + "_date", date }
-          }, SetOptions.MergeAll);
-    }
-
-    // ===== 學習測驗 =====
-    public void SaveQuizDone(string quizID, System.Action onSaved = null)
-    {
-        if (!CheckReady()) return;
-
-        string date = DateTime.Now.ToString("yyyy/MM/dd");
-
-        db.Collection("users").Document(userID)
-          .Collection("learning").Document("quizzes")
-          .SetAsync(new Dictionary<string, object>
-          {
-          { quizID + "_done", true },
-          { quizID + "_date", date }
-          }, SetOptions.MergeAll)
-          .ContinueWithOnMainThread(task =>
-          {
-              if (task.IsCompletedSuccessfully)
-              {
-                  Debug.Log("測驗完成儲存成功：" + quizID);
-
-                  onSaved?.Invoke();
-              }
-              else
-              {
-                  Debug.LogWarning("測驗完成儲存失敗：" + task.Exception);
-              }
-          });
-    }
-
-    // ===== 紙鶴 / 金幣：增加 =====
     public void AddCoins(int amount)
     {
         if (!CheckReady()) return;
@@ -184,7 +586,6 @@ public class FirestoreManager : MonoBehaviour
         });
     }
 
-    // ===== 紙鶴 / 金幣：直接設定 =====
     public void SaveCoins(int coins)
     {
         if (!CheckReady()) return;
@@ -203,13 +604,15 @@ public class FirestoreManager : MonoBehaviour
           });
     }
 
-    // 保留這個方法名，避免其他舊程式呼叫壞掉
     public void SaveClosetMoney(int coins)
     {
         SaveCoins(coins);
     }
 
-    // ===== 衣櫃：購買狀態 =====
+    // =========================================================
+    // 8. 衣櫃
+    // =========================================================
+
     public void SaveWardrobeItem(string itemID, bool owned)
     {
         if (!CheckReady()) return;
@@ -235,7 +638,6 @@ public class FirestoreManager : MonoBehaviour
           });
     }
 
-    // ===== 衣櫃：穿戴資料 =====
     public void SaveClosetEquip(string part, string itemID)
     {
         if (!CheckReady()) return;
@@ -261,7 +663,6 @@ public class FirestoreManager : MonoBehaviour
           });
     }
 
-    // ===== 衣櫃：讀取資料 =====
     public void LoadCloset(Action<
         Dictionary<string, object>,
         Dictionary<string, object>,
@@ -313,15 +714,15 @@ public class FirestoreManager : MonoBehaviour
                 equippedDict = equippedTask.Result.ToDictionary();
 
             Debug.Log("Firebase 衣櫃資料讀取完成");
-            Debug.Log("coins 是否存在：" + userDict.ContainsKey("coins"));
-            Debug.Log("items 數量：" + itemsDict.Count);
-            Debug.Log("equipped 數量：" + equippedDict.Count);
 
             onLoaded?.Invoke(userDict, itemsDict, equippedDict);
         });
     }
 
-    // ===== 初始化新使用者 =====
+    // =========================================================
+    // 9. 使用者資料
+    // =========================================================
+
     public void InitNewUser(string username)
     {
         if (!CheckReady()) return;
@@ -334,7 +735,6 @@ public class FirestoreManager : MonoBehaviour
           }, SetOptions.MergeAll);
     }
 
-    // ===== 使用者名稱：儲存 =====
     public void SaveUsername(string username)
     {
         if (!CheckReady()) return;
@@ -348,7 +748,7 @@ public class FirestoreManager : MonoBehaviour
         db.Collection("users").Document(userID)
           .SetAsync(new Dictionary<string, object>
           {
-          { "username", username }
+              { "username", username }
           }, SetOptions.MergeAll)
           .ContinueWithOnMainThread(task =>
           {
@@ -359,7 +759,6 @@ public class FirestoreManager : MonoBehaviour
           });
     }
 
-    // ===== 使用者名稱：讀取 =====
     public void LoadUsername(System.Action<string> onLoaded)
     {
         if (!CheckReady())
@@ -387,7 +786,10 @@ public class FirestoreManager : MonoBehaviour
           });
     }
 
-    // ===== 成就：儲存完成 =====
+    // =========================================================
+    // 10. 成就
+    // =========================================================
+
     public void SaveAchievementCompleted(string achievementID)
     {
         if (!CheckReady()) return;
@@ -398,13 +800,12 @@ public class FirestoreManager : MonoBehaviour
           .Collection("achievements").Document("data")
           .SetAsync(new Dictionary<string, object>
           {
-          { achievementID + "_completed", true },
-          { achievementID + "_unlocked", true },
-          { achievementID + "_date", date }
+              { achievementID + "_completed", true },
+              { achievementID + "_unlocked", true },
+              { achievementID + "_date", date }
           }, SetOptions.MergeAll);
     }
 
-    // ===== 成就：解鎖 =====
     public void SaveAchievementUnlocked(string achievementID)
     {
         if (!CheckReady()) return;
@@ -413,11 +814,10 @@ public class FirestoreManager : MonoBehaviour
           .Collection("achievements").Document("data")
           .SetAsync(new Dictionary<string, object>
           {
-          { achievementID + "_unlocked", true }
+              { achievementID + "_unlocked", true }
           }, SetOptions.MergeAll);
     }
 
-    // ===== 成就：讀取 =====
     public void LoadAchievements(System.Action<Dictionary<string, object>> onLoaded)
     {
         if (!CheckReady())
@@ -441,7 +841,6 @@ public class FirestoreManager : MonoBehaviour
           });
     }
 
-    // ===== 成就：提前讀取並暫存 =====
     public void LoadAchievementCache(System.Action onDone = null)
     {
         if (!CheckReady())
@@ -470,13 +869,11 @@ public class FirestoreManager : MonoBehaviour
           });
     }
 
-    // ===== 成就：取得快取資料 =====
     public Dictionary<string, object> GetAchievementCache()
     {
         return achievementCache;
     }
 
-    // ===== 成就：檢查基礎關卡 =====
     public void CheckBasicAchievement(int levelNumber, System.Action<bool> onCompleted = null)
     {
         if (!CheckReady()) return;
@@ -510,25 +907,20 @@ public class FirestoreManager : MonoBehaviour
             bool videoDone =
                 videoTask.Result.Exists &&
                 videoTask.Result.ContainsField(levelID + "_watched") &&
-                (bool)videoTask.Result.GetValue<bool>(levelID + "_watched");
+                videoTask.Result.GetValue<bool>(levelID + "_watched");
 
             bool quizDone =
                 quizTask.Result.Exists &&
                 quizTask.Result.ContainsField(levelID + "_done") &&
-                (bool)quizTask.Result.GetValue<bool>(levelID + "_done");
+                quizTask.Result.GetValue<bool>(levelID + "_done");
 
             bool alreadyCompleted =
                 achievementTask.Result.Exists &&
                 achievementTask.Result.ContainsField(achievementID + "_completed") &&
                 achievementTask.Result.GetValue<bool>(achievementID + "_completed");
 
-            Debug.Log(levelID + " 影片完成：" + videoDone);
-            Debug.Log(levelID + " 測驗完成：" + quizDone);
-            Debug.Log(achievementID + " 是否已完成過：" + alreadyCompleted);
-
             if (alreadyCompleted)
             {
-                Debug.Log("成就已完成過，不再跳 Toast：" + achievementID);
                 onCompleted?.Invoke(false);
                 return;
             }
@@ -538,13 +930,10 @@ public class FirestoreManager : MonoBehaviour
                 SaveAchievementCompleted(achievementID);
 
                 if (levelNumber < 5)
-                {
                     SaveAchievementUnlocked(nextAchievementID);
-                }
 
                 LoadAchievementCache(() =>
                 {
-                    Debug.Log("第一次完成成就：" + achievementID);
                     onCompleted?.Invoke(true);
                 });
             }

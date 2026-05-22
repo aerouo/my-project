@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class Forestexploration_lvl1 : MonoBehaviour
@@ -32,12 +31,12 @@ public class Forestexploration_lvl1 : MonoBehaviour
     public Button goMid;
     public Button goRight;
 
-    [Header("錯誤提示（顯示1秒，同一個 Image 換圖）")]
+    [Header("錯誤提示")]
     public Image hintImage;
     public Sprite spriteSnakeHint;
     public Sprite spriteHoleHint;
 
-    [Header("Hearts（H-1, H-2, H-3）")]
+    [Header("Hearts")]
     public GameObject heart1;
     public GameObject heart2;
     public GameObject heart3;
@@ -60,12 +59,15 @@ public class Forestexploration_lvl1 : MonoBehaviour
     public TextMeshProUGUI coinRewardText;
     public Button btnEndConfirm;
 
+    [Header("Firebase 紀錄設定")]
+    public string advancedID = "advanced_03";
+    public string difficulty = "easy";
+
     [Header("結算設定")]
     public int coinPass = 50;
     public int coinRecord = 150;
 
     private const int totalRounds = 5;
-    private const string KEY_COINS = "TotalCoins";
     private const string KEY_BESTTIME = "ForestLvl1_BestTime";
     private const string KEY_PLAYED = "ForestLvl1_HasPlayed";
 
@@ -76,11 +78,12 @@ public class Forestexploration_lvl1 : MonoBehaviour
     private bool gamePaused = false;
     private bool gameStarted = false;
     private bool isAnswered = false;
-    private int savedCoins = 0;
+
     private float savedBestTime = 0f;
     private bool hasPlayedBefore = false;
+
     private int[] laneTypes = new int[3];
-    private int lastRoadLane = -1; // 上一輪路的位置
+    private int lastRoadLane = -1;
 
     void Start()
     {
@@ -88,11 +91,10 @@ public class Forestexploration_lvl1 : MonoBehaviour
         quitConfirmPanel?.SetActive(false);
         hintImage?.gameObject.SetActive(false);
         hintPanel?.SetActive(true);
+
         if (txtTimer) txtTimer.gameObject.SetActive(false);
 
-
         btnQuitCancel?.onClick.AddListener(OnQuitCancel);
-;
 
         goLeft.onClick.AddListener(() => OnGoClick(0));
         goMid.onClick.AddListener(() => OnGoClick(1));
@@ -114,6 +116,7 @@ public class Forestexploration_lvl1 : MonoBehaviour
     void UpdateTimerDisplay()
     {
         if (txtTimer == null) return;
+
         int min = (int)(elapsedTime / 60f);
         int sec = (int)(elapsedTime % 60f);
         txtTimer.text = string.Format("{0:00}:{1:00}", min, sec);
@@ -121,16 +124,12 @@ public class Forestexploration_lvl1 : MonoBehaviour
 
     void LoadData()
     {
-        // TODO: Firebase
-        savedCoins = PlayerPrefs.GetInt(KEY_COINS, 0);
         savedBestTime = PlayerPrefs.GetFloat(KEY_BESTTIME, 0f);
         hasPlayedBefore = PlayerPrefs.GetInt(KEY_PLAYED, 0) == 1;
     }
 
-    void SaveData(int newCoins, float newBestTime)
+    void SaveData(float newBestTime)
     {
-        // TODO: Firebase
-        PlayerPrefs.SetInt(KEY_COINS, newCoins);
         PlayerPrefs.SetFloat(KEY_BESTTIME, newBestTime);
         PlayerPrefs.SetInt(KEY_PLAYED, 1);
         PlayerPrefs.Save();
@@ -139,16 +138,20 @@ public class Forestexploration_lvl1 : MonoBehaviour
     public void OnClickConfirm()
     {
         hintPanel?.SetActive(false);
+
         if (!gameStarted)
         {
             gameStarted = true;
             timerRunning = true;
+
             if (txtTimer) txtTimer.gameObject.SetActive(true);
+
             StartCoroutine(RunGame());
         }
         else
         {
             gamePaused = false;
+
             if (txtTimer) txtTimer.gameObject.SetActive(true);
         }
     }
@@ -157,6 +160,7 @@ public class Forestexploration_lvl1 : MonoBehaviour
     {
         gamePaused = true;
         hintPanel?.SetActive(true);
+
         if (txtTimer) txtTimer.gameObject.SetActive(false);
     }
 
@@ -165,7 +169,6 @@ public class Forestexploration_lvl1 : MonoBehaviour
         gamePaused = true;
         quitConfirmPanel?.SetActive(true);
     }
-
 
     public void OnQuitCancel()
     {
@@ -178,6 +181,7 @@ public class Forestexploration_lvl1 : MonoBehaviour
         for (int i = 0; i < totalRounds; i++)
         {
             if (hearts <= 0) break;
+
             currentRound = i;
             SetupRound();
 
@@ -191,10 +195,14 @@ public class Forestexploration_lvl1 : MonoBehaviour
 
     void SetupRound()
     {
-        // 隨機一條是路，確保跟上一輪不同位置
         int roadLane;
-        do { roadLane = Random.Range(0, 3); }
+
+        do
+        {
+            roadLane = Random.Range(0, 3);
+        }
         while (roadLane == lastRoadLane);
+
         lastRoadLane = roadLane;
 
         for (int i = 0; i < 3; i++)
@@ -210,12 +218,14 @@ public class Forestexploration_lvl1 : MonoBehaviour
     void SetLaneSprite(Image img, int type, Sprite road, Sprite snake, Sprite hole)
     {
         if (img == null) return;
+
         img.sprite = type == 0 ? road : type == 1 ? snake : hole;
     }
 
     void OnGoClick(int laneIndex)
     {
         if (isAnswered || gamePaused) return;
+
         isAnswered = true;
         SetGoButtonsActive(false);
         StartCoroutine(HandleChoice(laneTypes[laneIndex]));
@@ -231,11 +241,12 @@ public class Forestexploration_lvl1 : MonoBehaviour
         {
             if (hintImage != null)
             {
-                hintImage.sprite = (type == 1) ? spriteSnakeHint : spriteHoleHint;
+                hintImage.sprite = type == 1 ? spriteSnakeHint : spriteHoleHint;
                 hintImage.gameObject.SetActive(true);
             }
 
             yield return new WaitForSeconds(1f);
+
             hintImage?.gameObject.SetActive(false);
 
             hearts--;
@@ -275,9 +286,20 @@ public class Forestexploration_lvl1 : MonoBehaviour
         if (isNewRecord) coinEarned += coinRecord;
 
         float newBestTime = (!hasPlayedBefore || (isPass && elapsedTime < savedBestTime))
-                            ? elapsedTime : savedBestTime;
+            ? elapsedTime
+            : savedBestTime;
 
-        SaveData(savedCoins + coinEarned, newBestTime);
+        if (isPass)
+        {
+            SaveData(newBestTime);
+
+            if (FirestoreManager.Instance != null)
+            {
+                FirestoreManager.Instance.AddCoins(coinEarned);
+                FirestoreManager.Instance.SaveAdvancedRecord(advancedID, difficulty, elapsedTime, coinEarned);
+            }
+        }
+
         endScreen?.SetActive(true);
 
         if (titleText) titleText.text = isPass ? "恭喜通關！" : "遊戲結束";
@@ -294,15 +316,6 @@ public class Forestexploration_lvl1 : MonoBehaviour
             string msg = isPass ? "金幣 +" + coinPass : "金幣 +0";
             if (isNewRecord) msg += "\n破紀錄！+" + coinRecord;
             coinRewardText.text = msg;
-        }
-    }
-
-    static void Shuffle<T>(List<T> list)
-    {
-        for (int i = list.Count - 1; i > 0; i--)
-        {
-            int j = Random.Range(0, i + 1);
-            (list[i], list[j]) = (list[j], list[i]);
         }
     }
 }
