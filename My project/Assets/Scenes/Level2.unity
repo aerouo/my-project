@@ -4235,7 +4235,7 @@ MonoBehaviour:
   puaper: {fileID: 1367779694}
   background1: {fileID: 21300000, guid: 2134e3306d1160644a056d35e900685f, type: 3}
   background2: {fileID: 21300000, guid: 9ca406dc8f066314092874b9fe1beed1, type: 3}
-  bgSwitchDelay: 0.5
+  bgSwitchDelay: 1
   puaperSprite2: {fileID: 21300000, guid: 49331f3fd35cf5643ac7f9539ae036ca, type: 3}
   block1_class: {fileID: 21300000, guid: 8272dd912956dc144a19a3c022da2ac6, type: 3}
   block1_main: {fileID: 21300000, guid: 09e23049bb05bb04c8e218811bc79445, type: 3}
@@ -5764,6 +5764,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 974064104}
+        m_TargetAssemblyTypeName: StringGameManager, Assembly-CSharp
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1367779697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7123,9 +7135,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Puzzle_Lvl1, Assembly-CSharp
-        m_MethodName: OnClickBack
+      - m_Target: {fileID: 841038502}
+        m_TargetAssemblyTypeName: BackToMap, Assembly-CSharp
+        m_MethodName: OnClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -7582,7 +7594,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1894174616
 RectTransform:
   m_ObjectHideFlags: 0
