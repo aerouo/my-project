@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class StringGameManager : MonoBehaviour
 {
@@ -26,7 +27,6 @@ public class StringGameManager : MonoBehaviour
     public Sprite background1;      // 原本的背景圖（圖1）
     public Sprite background2;      // 要換的背景圖（圖2）
     public float bgSwitchDelay = 1f; // 換圖等待時間（可調）
-    public Image puaperImage;       // 拉入 puaper 的 Image 組件
     public Sprite puaperSprite2;    // puaper 顯示時換成的新圖
 
     // 每個 slot 對應的各 blockID Sprite（9組）
@@ -117,8 +117,8 @@ public class StringGameManager : MonoBehaviour
         yield return new WaitForSeconds(bgSwitchDelay);
 
         // 4. 顯示 puaper，同時換圖
-        if (puaperImage != null && puaperSprite2 != null)
-            puaperImage.sprite = puaperSprite2;
+        if (puaper != null && puaperSprite2 != null)
+            puaper.GetComponent<Image>().sprite = puaperSprite2;
         if (puaper != null) puaper.SetActive(true);
     }
 
@@ -193,7 +193,7 @@ public class StringGameManager : MonoBehaviour
         {
             int minutes = (int)(elapsed / 60);
             int seconds = (int)(elapsed % 60);
-            resultText.text = $"通關！\n耗時：{minutes:00}:{seconds:00}";
+            resultText.text = $"恭喜通關\n耗時：{minutes:00}:{seconds:00}";
         }
     }
 }

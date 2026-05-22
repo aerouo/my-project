@@ -4208,10 +4208,6 @@ MonoBehaviour:
   computerPanel: {fileID: 1367779694}
   resultText: {fileID: 157496803}
   wrongText: {fileID: 860492236}
-  outputLine: {fileID: 0}
-  outputText: {fileID: 0}
-  outputWord: hum-001
-  typingSpeed: 0.08
   slots:
   - {fileID: 844039237}
   - {fileID: 518797002}
@@ -4240,6 +4236,7 @@ MonoBehaviour:
   background1: {fileID: 21300000, guid: 2134e3306d1160644a056d35e900685f, type: 3}
   background2: {fileID: 21300000, guid: 9ca406dc8f066314092874b9fe1beed1, type: 3}
   bgSwitchDelay: 0.5
+  puaperSprite2: {fileID: 21300000, guid: 49331f3fd35cf5643ac7f9539ae036ca, type: 3}
   block1_class: {fileID: 21300000, guid: 8272dd912956dc144a19a3c022da2ac6, type: 3}
   block1_main: {fileID: 21300000, guid: 09e23049bb05bb04c8e218811bc79445, type: 3}
   block1_print: {fileID: 21300000, guid: ca0ab760d4bd0bc43b180c6d772703be, type: 3}
