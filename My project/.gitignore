@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ==========================================
 # Unity 官方標準過濾清單
 # ==========================================
@@ -85,3 +86,12 @@ Desktop.ini
 .Spotlight-V100
 .Trashes
 *.icloud
+=======
+Library/
+Temp/
+Logs/
+UserSettings/
+obj/
+*.csproj
+*.sln
+>>>>>>> feature/level2
