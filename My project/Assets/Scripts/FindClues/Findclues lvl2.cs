@@ -4,53 +4,52 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 
-/// <summary>
-/// FindClues_lvl2.cs
-/// 掛在場景的 GameManager 物件上
-///
-/// 8題選擇題（每題左右兩個圖片選項）
-/// 玩家選完按確認 → YOU 根據選擇的邏輯在格子上走
-/// 選錯 → YOU 走錯路 → 失敗
-/// 全對 → YOU 走到終點 → 通關
-/// </summary>
 public class FindClues_lvl2 : MonoBehaviour
 {
-    // ══════════════════════════════════════════
-    // 8題選項圖片（每題左右各兩張：原始版/發光版）
-    // ══════════════════════════════════════════
     [System.Serializable]
     public class QuestionOption
     {
-        public Sprite normalSprite;  // 原始版
-        public Sprite glowSprite;    // 發光版（選中時）
+        public Sprite normalSprite;
+        public Sprite glowSprite;
     }
 
     [System.Serializable]
     public class Question
     {
-        public string questionTitle;         // 題目說明文字（選用）
-        public QuestionOption leftOption;    // 左選項
-        public QuestionOption rightOption;   // 右選項
+        public string questionTitle;
+        public QuestionOption leftOption;
+        public QuestionOption rightOption;
     }
 
-    [Header("8題題目設定")]
-    public Question[] questions = new Question[8];
+    [Header("下方6個空格的Image")]
+    public Image[] slotImages = new Image[6];
 
-    [Header("題目 UI（8題的左右按鈕，順序對應）")]
-    public Button[] leftButtons = new Button[8];
-    public Button[] rightButtons = new Button[8];
-    public Image[] leftImages = new Image[8];
-    public Image[] rightImages = new Image[8];
+    [Header("方向圖片（只需填 Sprite Up 和 Sprite Empty）")]
+    public Sprite spriteUp;
+    public Sprite spriteEmpty;
+
+    [Header("7題題目設定")]
+    public Question[] questions = new Question[7];
+
+    [Header("按鈕文字（左右各7個）")]
+    public TextMeshProUGUI[] leftTexts = new TextMeshProUGUI[7];
+    public TextMeshProUGUI[] rightTexts = new TextMeshProUGUI[7];
+
+    [Header("題目 UI（7題的左右按鈕，順序對應）")]
+    public Button[] leftButtons = new Button[7];
+    public Button[] rightButtons = new Button[7];
+    public Image[] leftImages = new Image[7];
+    public Image[] rightImages = new Image[7];
 
     [Header("確認按鈕")]
     public Button confirmButton;
 
-    [Header("角色設定（跟等級一相同）")]
+    [Header("角色設定")]
     public GameObject player;
     public float yOffset = 70f;
-    public float moveSpeed = 0.4f;  // 每步移動秒數
+    public float moveSpeed = 0.4f;
 
-    [Header("格子視覺設定（跟等級一相同）")]
+    [Header("格子視覺設定")]
     public Sprite spriteStart;
     public Sprite spritePath;
     public Sprite spriteEnd;
@@ -58,7 +57,7 @@ public class FindClues_lvl2 : MonoBehaviour
 
     [Header("提示文字")]
     public TextMeshProUGUI failHintText;
-    public TextMeshProUGUI resultText;   // 通關/失敗大字
+    public TextMeshProUGUI resultText;
 
     [Header("In-Game UI")]
     public TextMeshProUGUI txtTimer;
@@ -89,22 +88,23 @@ public class FindClues_lvl2 : MonoBehaviour
     private const string KEY_BESTTIME = "FindCluesLvl2_BestTime";
     private const string KEY_PLAYED = "FindCluesLvl2_HasPlayed";
 
-    // ── 玩家選擇記錄（true=選左, false=選右, null=未選）──
-    private bool?[] playerChoices = new bool?[8];
-    // ── 每題正確答案實際在左還是右（隨機決定）──
-    private bool[] correctOnLeft = new bool[8];
+    private bool?[] playerChoices = new bool?[7];
+    private bool[] correctOnLeft = new bool[7];
 
-    // ── 格子 ──────────────────────────────────
     private Image[,] cellImages = new Image[3, 5];
     private Vector2Int startCell;
     private Vector2Int endCell;
     private List<Vector2Int> path = new List<Vector2Int>();
-    private string[] correctDirs = new string[6]; // 正確方向序列
+    private string[] correctDirs = new string[6];
 
-    private static readonly Vector2Int[] DIRS = { new Vector2Int(-1, 0), new Vector2Int(1, 0), new Vector2Int(0, -1), new Vector2Int(0, 1) };
+    private static readonly Vector2Int[] DIRS = {
+        new Vector2Int(-1, 0),
+        new Vector2Int(1, 0),
+        new Vector2Int(0, -1),
+        new Vector2Int(0, 1)
+    };
     private static readonly string[] DIR_NAMES = { "up", "down", "left", "right" };
 
-    // ── 狀態 ──────────────────────────────────
     private Vector3 playerStartPos;
     private bool isRunning = false;
     private bool gamePaused = false;
@@ -116,7 +116,6 @@ public class FindClues_lvl2 : MonoBehaviour
     private float savedBestTime = 0f;
     private bool hasPlayedBefore = false;
 
-    // ════════════════════════════════════════════
     void Start()
     {
         endScreen?.SetActive(false);
@@ -133,30 +132,30 @@ public class FindClues_lvl2 : MonoBehaviour
         btnEndConfirm?.onClick.AddListener(OnQuitConfirm);
         confirmButton?.onClick.AddListener(OnClickConfirmAnswer);
 
-        // 綁定選項按鈕
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 7; i++)
         {
             int idx = i;
             leftButtons[i]?.onClick.AddListener(() => OnSelectLeft(idx));
             rightButtons[i]?.onClick.AddListener(() => OnSelectRight(idx));
         }
 
-        // 初始化選項圖片（隨機決定正確答案在左或右）
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 7; i++)
         {
             playerChoices[i] = null;
-            correctOnLeft[i] = (Random.Range(0, 2) == 0); // 隨機左或右
+            correctOnLeft[i] = (Random.Range(0, 2) == 0);
 
-            // 若 correctOnLeft = true：左放正確，右放錯誤
-            // 若 correctOnLeft = false：左放錯誤，右放正確
-            Sprite leftNormal = correctOnLeft[i] ? questions[i].leftOption.normalSprite : questions[i].rightOption.normalSprite;
-            Sprite rightNormal = correctOnLeft[i] ? questions[i].rightOption.normalSprite : questions[i].leftOption.normalSprite;
-
-            if (leftImages[i] != null) leftImages[i].sprite = leftNormal;
-            if (rightImages[i] != null) rightImages[i].sprite = rightNormal;
+            if (!correctOnLeft[i])
+            {
+                if (leftTexts[i] != null && rightTexts[i] != null)
+                {
+                    string leftStr = leftTexts[i].text;
+                    string rightStr = rightTexts[i].text;
+                    leftTexts[i].text = rightStr;
+                    rightTexts[i].text = leftStr;
+                }
+            }
         }
 
-        // 抓格子
         for (int r = 0; r < 3; r++)
             for (int c = 0; c < 5; c++)
             {
@@ -182,11 +181,8 @@ public class FindClues_lvl2 : MonoBehaviour
         }
     }
 
-    // ═══════════════ 資料讀寫 ═══════════════════
-
     void LoadData()
     {
-        // TODO: Firebase
         savedCoins = PlayerPrefs.GetInt(KEY_COINS, 0);
         savedBestTime = PlayerPrefs.GetFloat(KEY_BESTTIME, 0f);
         hasPlayedBefore = PlayerPrefs.GetInt(KEY_PLAYED, 0) == 1;
@@ -194,14 +190,11 @@ public class FindClues_lvl2 : MonoBehaviour
 
     void SaveData(int newCoins, float newBestTime)
     {
-        // TODO: Firebase
         PlayerPrefs.SetInt(KEY_COINS, newCoins);
         PlayerPrefs.SetFloat(KEY_BESTTIME, newBestTime);
         PlayerPrefs.SetInt(KEY_PLAYED, 1);
         PlayerPrefs.Save();
     }
-
-    // ═══════════════ Hint / Back ════════════════
 
     public void OnClickConfirm()
     {
@@ -232,17 +225,8 @@ public class FindClues_lvl2 : MonoBehaviour
 
     public void OnClickJavaHint()
     {
-        gamePaused = true;
-        javaHintPanel?.SetActive(true);
-        if (txtTimer) txtTimer.gameObject.SetActive(false);
-    }
-
-    public void OnClickJavaConfirm()
-    {
-        gamePaused = false;
-        javaHintPanel?.SetActive(false);
-        confirmButton?.gameObject.SetActive(false);
-        if (txtTimer) txtTimer.gameObject.SetActive(true);
+        bool isActive = javaHintPanel.activeSelf;
+        javaHintPanel?.SetActive(!isActive);
     }
 
     public void OnClickBack()
@@ -262,16 +246,14 @@ public class FindClues_lvl2 : MonoBehaviour
         quitConfirmPanel?.SetActive(false);
     }
 
-    // ═══════════════ 選項選擇 ════════════════════
-
-    void OnSelectLeft(int idx)
+    public void OnSelectLeft(int idx)
     {
         if (isRunning || !gameStarted) return;
         playerChoices[idx] = true;
         UpdateOptionVisual(idx);
     }
 
-    void OnSelectRight(int idx)
+    public void OnSelectRight(int idx)
     {
         if (isRunning || !gameStarted) return;
         playerChoices[idx] = false;
@@ -280,32 +262,22 @@ public class FindClues_lvl2 : MonoBehaviour
 
     void UpdateOptionVisual(int idx)
     {
-        // 根據 correctOnLeft 決定哪張是哪個選項的圖
-        Sprite leftGlow = correctOnLeft[idx] ? questions[idx].leftOption.glowSprite : questions[idx].rightOption.glowSprite;
-        Sprite leftNormal = correctOnLeft[idx] ? questions[idx].leftOption.normalSprite : questions[idx].rightOption.normalSprite;
-        Sprite rightGlow = correctOnLeft[idx] ? questions[idx].rightOption.glowSprite : questions[idx].leftOption.glowSprite;
-        Sprite rightNormal = correctOnLeft[idx] ? questions[idx].rightOption.normalSprite : questions[idx].leftOption.normalSprite;
+        if (leftImages[idx] != null)
+            leftImages[idx].sprite = (playerChoices[idx] == true)
+                ? questions[idx].leftOption.glowSprite
+                : questions[idx].leftOption.normalSprite;
 
-        if (playerChoices[idx] == true)
-        {
-            if (leftImages[idx] != null) leftImages[idx].sprite = leftGlow;
-            if (rightImages[idx] != null) rightImages[idx].sprite = rightNormal;
-        }
-        else if (playerChoices[idx] == false)
-        {
-            if (leftImages[idx] != null) leftImages[idx].sprite = leftNormal;
-            if (rightImages[idx] != null) rightImages[idx].sprite = rightGlow;
-        }
+        if (rightImages[idx] != null)
+            rightImages[idx].sprite = (playerChoices[idx] == false)
+                ? questions[idx].rightOption.glowSprite
+                : questions[idx].rightOption.normalSprite;
     }
-
-    // ═══════════════ 按確認驗證 ══════════════════
 
     void OnClickConfirmAnswer()
     {
         if (isRunning || !gameStarted) return;
 
-        // 檢查是否全部都選了
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 7; i++)
         {
             if (playerChoices[i] == null)
             {
@@ -314,25 +286,68 @@ public class FindClues_lvl2 : MonoBehaviour
             }
         }
 
-        // 隱藏選題介面，開始執行
         javaHintPanel?.SetActive(false);
         confirmButton?.gameObject.SetActive(false);
 
-        // 根據玩家選擇組合出執行邏輯
-        // Q0: 宣告變數（正確才能執行後續）
-        // Q1: 陣列宣告
-        // Q2: for迴圈條件
-        // Q3~Q6: 四個方向判斷
-        bool[] isCorrect = new bool[8];
-        for (int i = 0; i < 8; i++)
-            // 玩家選左(true) + 正確在左(correctOnLeft) = 對
-            // 玩家選右(false) + 正確在右(!correctOnLeft) = 對
+        bool[] isCorrect = new bool[7];
+        for (int i = 0; i < 7; i++)
             isCorrect[i] = (playerChoices[i] == true) == correctOnLeft[i];
 
+        // 填入下方空格
+        FillSlots(isCorrect);
+
+        // 讓 YOU 走路
         StartCoroutine(RunWithPlayerLogic(isCorrect));
     }
 
-    // ═══════════════ 執行驗證 ════════════════════
+    void FillSlots(bool[] isCorrect)
+    {
+        // Q4=up(3), Q5=down(4), Q6=left(5), Q7=right(6)
+        Dictionary<string, int> dirToQ = new Dictionary<string, int>();
+        dirToQ.Add("up", 3);
+        dirToQ.Add("down", 4);
+        dirToQ.Add("left", 5);
+        dirToQ.Add("right", 6);
+
+        // 箭頭預設朝左，旋轉對應方向
+        Dictionary<string, float> dirToRotation = new Dictionary<string, float>();
+        dirToRotation.Add("up", 180f);
+        dirToRotation.Add("down", 0f);
+        dirToRotation.Add("left", 270f);
+        dirToRotation.Add("right", 90f);
+
+        int slotIndex = 0;
+
+        for (int step = 0; step < path.Count - 1; step++)
+        {
+            if (slotIndex >= slotImages.Length) break;
+
+            Vector2Int delta = path[step + 1] - path[step];
+            string dir = "";
+            for (int d = 0; d < 4; d++)
+                if (DIRS[d] == delta) { dir = DIR_NAMES[d]; break; }
+
+            if (dirToQ.ContainsKey(dir) && isCorrect[dirToQ[dir]])
+            {
+                if (slotImages[slotIndex] != null)
+                {
+                    slotImages[slotIndex].sprite = spriteUp;
+                    slotImages[slotIndex].transform.rotation =
+                        Quaternion.Euler(0, 0, dirToRotation[dir]);
+                }
+                slotIndex++;
+            }
+        }
+
+        for (int i = slotIndex; i < slotImages.Length; i++)
+        {
+            if (slotImages[i] != null)
+            {
+                slotImages[i].sprite = spriteEmpty;
+                slotImages[i].transform.rotation = Quaternion.identity;
+            }
+        }
+    }
 
     IEnumerator RunWithPlayerLogic(bool[] isCorrect)
     {
@@ -340,7 +355,7 @@ public class FindClues_lvl2 : MonoBehaviour
         confirmButton.interactable = false;
         SetAllOptionsInteractable(false);
 
-        // Q0 宣告變數錯 → 什麼都不動
+        // Q1 選錯 → 什麼都不動
         if (!isCorrect[0])
         {
             ShowHint("變數宣告錯誤，程式無法執行！", Color.red);
@@ -350,7 +365,7 @@ public class FindClues_lvl2 : MonoBehaviour
             yield break;
         }
 
-        // Q1 陣列宣告錯 → 什麼都不動
+        // Q2 選錯 → 什麼都不動
         if (!isCorrect[1])
         {
             ShowHint("陣列大小錯誤，無法存取步驟！", Color.red);
@@ -360,29 +375,24 @@ public class FindClues_lvl2 : MonoBehaviour
             yield break;
         }
 
-        // Q2 for條件錯 → 多走一步（走出界就停）
-        int maxSteps = isCorrect[2] ? path.Count - 1 : path.Count; // 多一步
+        // Q3 選錯 → 多走一步
+        int maxSteps = isCorrect[2] ? path.Count - 1 : path.Count;
 
         Vector2Int curCell = startCell;
 
         for (int step = 0; step < Mathf.Min(maxSteps, path.Count - 1); step++)
         {
-            // 這一步的正確方向
             Vector2Int delta = path[step + 1] - path[step];
             string correctDir = "";
             for (int d = 0; d < 4; d++)
                 if (DIRS[d] == delta) { correctDir = DIR_NAMES[d]; break; }
 
-            // 玩家選的方向（根據 Q3~Q6）
             string playerDir = GetPlayerDir(isCorrect, correctDir);
-
-            // 計算實際移動
             Vector2Int moveDir = GetDirVector(playerDir);
             Vector2Int nextCell = curCell + moveDir;
 
             if (!InBounds(nextCell))
             {
-                // 走出界
                 ShowHint("走出邊界了！", Color.red);
                 yield return new WaitForSeconds(1.5f);
                 failHintText?.gameObject.SetActive(false);
@@ -390,11 +400,9 @@ public class FindClues_lvl2 : MonoBehaviour
                 yield break;
             }
 
-            // 移動 YOU
             yield return StartCoroutine(MovePlayer(nextCell));
             curCell = nextCell;
 
-            // 如果走到的不是路徑格（走錯了）
             bool onPath = path.Contains(nextCell);
             if (!onPath && nextCell != endCell)
             {
@@ -406,7 +414,6 @@ public class FindClues_lvl2 : MonoBehaviour
             }
         }
 
-        // 判斷是否到達終點
         if (curCell == endCell)
         {
             timerRunning = false;
@@ -423,33 +430,20 @@ public class FindClues_lvl2 : MonoBehaviour
         isRunning = false;
     }
 
-    /// <summary>
-    /// 根據玩家選的方向邏輯，決定這一步實際走哪個方向
-    /// Q3=up, Q4=down, Q5=left, Q6=right
-    /// 若玩家選錯，該方向的判斷就失效（用 == 而不是 =，或走錯格）
-    /// </summary>
     string GetPlayerDir(bool[] isCorrect, string correctDir)
     {
-        // 每個方向對應的題目 index
-        // Q3=up(3), Q4=down(4), Q5=left(5), Q6=right(6)
-        Dictionary<string, int> dirQuestionIdx = new Dictionary<string, int>
-        {
-            { "up",    3 },
-            { "down",  4 },
-            { "left",  5 },
-            { "right", 6 },
-        };
+        // Q4=up(3), Q5=down(4), Q6=left(5), Q7=right(6)
+        Dictionary<string, int> dirQuestionIdx = new Dictionary<string, int>();
+        dirQuestionIdx.Add("up", 3);
+        dirQuestionIdx.Add("down", 4);
+        dirQuestionIdx.Add("left", 5);
+        dirQuestionIdx.Add("right", 6);
 
-        // 若正確方向對應的題目選錯，就不走那個方向（走反方向或不動）
         if (dirQuestionIdx.ContainsKey(correctDir))
         {
             int qIdx = dirQuestionIdx[correctDir];
             if (!isCorrect[qIdx])
-            {
-                // 錯誤：slots[i] = up（賦值不比較），相當於條件永遠成立或不成立
-                // 這裡模擬「判斷失效，走了上一個方向或原地」
                 return "none";
-            }
         }
         return correctDir;
     }
@@ -465,8 +459,6 @@ public class FindClues_lvl2 : MonoBehaviour
             default: return Vector2Int.zero;
         }
     }
-
-    // ═══════════════ 格子生成 ════════════════════
 
     void GeneratePuzzle()
     {
@@ -514,7 +506,11 @@ public class FindClues_lvl2 : MonoBehaviour
             return false;
         }
         int[] order = { 0, 1, 2, 3 };
-        for (int i = 3; i > 0; i--) { int j = Random.Range(0, i + 1); (order[i], order[j]) = (order[j], order[i]); }
+        for (int i = 3; i > 0; i--)
+        {
+            int j = Random.Range(0, i + 1);
+            (order[i], order[j]) = (order[j], order[i]);
+        }
         foreach (int d in order)
         {
             Vector2Int next = cur + DIRS[d];
@@ -540,13 +536,14 @@ public class FindClues_lvl2 : MonoBehaviour
         {
             var cell = path[i];
             if (cellImages[cell.x, cell.y] == null) continue;
-            if (i == 0) cellImages[cell.x, cell.y].sprite = spriteStart ?? spriteNormal;
-            else if (i == path.Count - 1) cellImages[cell.x, cell.y].sprite = spriteEnd ?? spriteNormal;
-            else cellImages[cell.x, cell.y].sprite = spritePath ?? spriteNormal;
+            if (i == 0)
+                cellImages[cell.x, cell.y].sprite = spriteStart ?? spriteNormal;
+            else if (i == path.Count - 1)
+                cellImages[cell.x, cell.y].sprite = spriteEnd ?? spriteNormal;
+            else
+                cellImages[cell.x, cell.y].sprite = spritePath ?? spriteNormal;
         }
     }
-
-    // ═══════════════ YOU 移動 ════════════════════
 
     IEnumerator MovePlayer(Vector2Int targetCell)
     {
@@ -568,13 +565,12 @@ public class FindClues_lvl2 : MonoBehaviour
         yield return new WaitForSeconds(0.15f);
     }
 
-    // ═══════════════ 結算 ════════════════════════
-
     void ShowEndScreen()
     {
         bool isNewRecord = hasPlayedBefore && elapsedTime < savedBestTime;
         int coinEarned = coinComplete + (isNewRecord ? coinRecord : 0);
-        float newBestTime = (!hasPlayedBefore || elapsedTime < savedBestTime) ? elapsedTime : savedBestTime;
+        float newBestTime = (!hasPlayedBefore || elapsedTime < savedBestTime)
+            ? elapsedTime : savedBestTime;
 
         SaveData(savedCoins + coinEarned, newBestTime);
         endScreen?.SetActive(true);
@@ -594,8 +590,6 @@ public class FindClues_lvl2 : MonoBehaviour
         }
     }
 
-    // ═══════════════ 工具 ════════════════════════
-
     void ShowHint(string msg, Color col)
     {
         if (failHintText == null) return;
@@ -609,12 +603,14 @@ public class FindClues_lvl2 : MonoBehaviour
         isRunning = false;
         if (player != null) player.transform.position = playerStartPos;
         confirmButton.interactable = true;
+        confirmButton.gameObject.SetActive(true);   
+        javaHintPanel?.SetActive(true);
         SetAllOptionsInteractable(true);
     }
 
     void SetAllOptionsInteractable(bool v)
     {
-        for (int i = 0; i < 8; i++)
+        for (int i = 0; i < 7; i++)
         {
             if (leftButtons[i]) leftButtons[i].interactable = v;
             if (rightButtons[i]) rightButtons[i].interactable = v;
