@@ -1,0 +1,87 @@
+# ==========================================
+# Unity 官方標準過濾清單
+# ==========================================
+.utmp/
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
+*.log
+
+# 記憶體快照與錄影檔（體積過大且可能包含敏感資料）
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# 自動產生的 Jetbrains Rider 外掛
+/[Aa]ssets/Plugins/Editor/JetBrains*
+
+# Visual Studio / MonoDevelop / VS Code 暫存與環境設定
+.vs/
+.vscode/
+.gradle/
+ExportedObj/
+.consulo/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# Unity 自動產生的特定 meta 檔
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+
+# 編譯產出物 (Builds)
+*.apk
+*.aab
+*.unitypackage
+*.unitypackage.meta
+*.app
+
+# ==========================================
+# 常見套件與第三方工具優化 (Firebase / Addressables)
+# ==========================================
+crashlytics-build.properties
+
+# Firebase / Play Services 產生的自動解壓檔案
+/[Aa]ssets/Firebase/m2repository/
+
+# Packed Addressables
+/[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+
+# 臨時自動產生的 Android Assets
+/[Aa]ssets/[Ss]treamingAssets/aa.meta
+/[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# ==========================================
+# 作業系統與系統垃圾檔案 (防止 Mac/Windows 混用衝突)
+# ==========================================
+# Windows 縮圖快取
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Mac 系統屬性檔案 (組員若有人用 Mac 必備)
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.Trashes
+*.icloud
