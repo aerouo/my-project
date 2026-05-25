@@ -3308,7 +3308,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4433a901b70a0fa41866140cf21df9eb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ComputerInteraction
-  puaperPanel: {fileID: 0}
+  puaperPanel: {fileID: 1367779694}
   printGroupPanel: {fileID: 529406753}
 --- !u!1 &860492234
 GameObject:
