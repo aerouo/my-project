@@ -302,6 +302,19 @@ public class FindClues_lvl2 : MonoBehaviour
 
     void FillSlots(bool[] isCorrect)
     {
+        // Q1 或 Q2 選錯，空格全部清空，不顯示任何箭頭
+        if (!isCorrect[0] || !isCorrect[1])
+        {
+            for (int i = 0; i < slotImages.Length; i++)
+            {
+                if (slotImages[i] != null)
+                {
+                    slotImages[i].sprite = spriteEmpty;
+                    slotImages[i].transform.rotation = Quaternion.identity;
+                }
+            }
+            return;
+        }
         // Q4=up(3), Q5=down(4), Q6=left(5), Q7=right(6)
         Dictionary<string, int> dirToQ = new Dictionary<string, int>();
         dirToQ.Add("up", 3);
