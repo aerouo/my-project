@@ -55,6 +55,10 @@ public class FindClues_lvl2 : MonoBehaviour
     public Sprite spriteEnd;
     public Sprite spriteNormal;
 
+    [Header("Slot 顏色設定")]
+    public Color slotNormalColor = Color.white;
+    public Color slotActiveColor = new Color(0.6f, 0.6f, 0.6f, 1f); // 變深
+
     [Header("提示文字")]
     public TextMeshProUGUI failHintText;
     public TextMeshProUGUI resultText;
@@ -98,10 +102,10 @@ public class FindClues_lvl2 : MonoBehaviour
     private string[] correctDirs = new string[6];
 
     private static readonly Vector2Int[] DIRS = {
-        new Vector2Int(-1, 0),
-        new Vector2Int(1, 0),
-        new Vector2Int(0, -1),
-        new Vector2Int(0, 1)
+        new Vector2Int(-1, 0),  // up
+        new Vector2Int( 1, 0),  // down
+        new Vector2Int( 0,-1),  // left
+        new Vector2Int( 0, 1)   // right
     };
     private static readonly string[] DIR_NAMES = { "up", "down", "left", "right" };
 
@@ -115,6 +119,10 @@ public class FindClues_lvl2 : MonoBehaviour
     private int savedCoins = 0;
     private float savedBestTime = 0f;
     private bool hasPlayedBefore = false;
+
+    // ─────────────────────────────────────────────
+    //  UNITY LIFECYCLE
+    // ─────────────────────────────────────────────
 
     void Start()
     {
@@ -148,10 +156,9 @@ public class FindClues_lvl2 : MonoBehaviour
             {
                 if (leftTexts[i] != null && rightTexts[i] != null)
                 {
-                    string leftStr = leftTexts[i].text;
-                    string rightStr = rightTexts[i].text;
-                    leftTexts[i].text = rightStr;
-                    rightTexts[i].text = leftStr;
+                    string tmp = leftTexts[i].text;
+                    leftTexts[i].text = rightTexts[i].text;
+                    rightTexts[i].text = tmp;
                 }
             }
         }
@@ -169,17 +176,20 @@ public class FindClues_lvl2 : MonoBehaviour
 
     void Update()
     {
-        if (timerRunning && !gamePaused)
+        if (!timerRunning || gamePaused) return;
+
+        elapsedTime += Time.deltaTime;
+        if (txtTimer != null)
         {
-            elapsedTime += Time.deltaTime;
-            if (txtTimer != null)
-            {
-                int min = (int)(elapsedTime / 60f);
-                int sec = (int)(elapsedTime % 60f);
-                txtTimer.text = string.Format("{0:00}:{1:00}", min, sec);
-            }
+            int min = (int)(elapsedTime / 60f);
+            int sec = (int)(elapsedTime % 60f);
+            txtTimer.text = string.Format("{0:00}:{1:00}", min, sec);
         }
     }
+
+    // ─────────────────────────────────────────────
+    //  DATA
+    // ─────────────────────────────────────────────
 
     void LoadData()
     {
@@ -195,6 +205,10 @@ public class FindClues_lvl2 : MonoBehaviour
         PlayerPrefs.SetInt(KEY_PLAYED, 1);
         PlayerPrefs.Save();
     }
+
+    // ─────────────────────────────────────────────
+    //  UI BUTTON HANDLERS
+    // ─────────────────────────────────────────────
 
     public void OnClickConfirm()
     {
@@ -225,8 +239,7 @@ public class FindClues_lvl2 : MonoBehaviour
 
     public void OnClickJavaHint()
     {
-        bool isActive = javaHintPanel.activeSelf;
-        javaHintPanel?.SetActive(!isActive);
+        javaHintPanel?.SetActive(!javaHintPanel.activeSelf);
     }
 
     public void OnClickBack()
@@ -273,6 +286,19 @@ public class FindClues_lvl2 : MonoBehaviour
                 : questions[idx].rightOption.normalSprite;
     }
 
+    // ─────────────────────────────────────────────
+    //  CONFIRM ANSWER
+    // ─────────────────────────────────────────────
+
+    void UpdateSlotHighlight(int currentStep)
+    {
+        for (int i = 0; i < slotImages.Length; i++)
+        {
+            if (slotImages[i] == null) continue;
+            slotImages[i].color = (i == currentStep) ? slotActiveColor : slotNormalColor;
+        }
+    }
+
     void OnClickConfirmAnswer()
     {
         if (isRunning || !gameStarted) return;
@@ -293,66 +319,74 @@ public class FindClues_lvl2 : MonoBehaviour
         for (int i = 0; i < 7; i++)
             isCorrect[i] = (playerChoices[i] == true) == correctOnLeft[i];
 
-        // 填入下方空格
         FillSlots(isCorrect);
-
-        // 讓 YOU 走路
         StartCoroutine(RunWithPlayerLogic(isCorrect));
     }
 
+    // ─────────────────────────────────────────────
+    //  FILL SLOTS
+    //  Q1 錯 → 全清
+    //  Q2 錯 → 只顯示第 1 格
+    //  Q4-Q7 對應方向錯 → 那格不顯示
+    // ─────────────────────────────────────────────
+
     void FillSlots(bool[] isCorrect)
     {
-        // Q1 或 Q2 選錯，空格全部清空，不顯示任何箭頭
-        if (!isCorrect[0] || !isCorrect[1])
+        // Q1 選錯：全清
+        if (!isCorrect[0])
         {
-            for (int i = 0; i < slotImages.Length; i++)
-            {
-                if (slotImages[i] != null)
-                {
-                    slotImages[i].sprite = spriteEmpty;
-                    slotImages[i].transform.rotation = Quaternion.identity;
-                }
-            }
+            ClearAllSlots();
             return;
         }
-        // Q4=up(3), Q5=down(4), Q6=left(5), Q7=right(6)
-        Dictionary<string, int> dirToQ = new Dictionary<string, int>();
-        dirToQ.Add("up", 3);
-        dirToQ.Add("down", 4);
-        dirToQ.Add("left", 5);
-        dirToQ.Add("right", 6);
 
-        // 箭頭預設朝左，旋轉對應方向
-        Dictionary<string, float> dirToRotation = new Dictionary<string, float>();
-        dirToRotation.Add("up", 180f);
-        dirToRotation.Add("down", 0f);
-        dirToRotation.Add("left", 270f);
-        dirToRotation.Add("right", 90f);
+        var dirToQ = new Dictionary<string, int>
+        { { "up", 3 }, { "down", 4 }, { "left", 5 }, { "right", 6 } };
+        var dirToRot = new Dictionary<string, float>
+        { { "up", 180f }, { "down", 0f }, { "left", 270f }, { "right", 90f } };
 
-        int slotIndex = 0;
+        // Q2 選錯：最多顯示 1 格
+        int maxSlots = isCorrect[1] ? slotImages.Length : 1;
 
         for (int step = 0; step < path.Count - 1; step++)
         {
-            if (slotIndex >= slotImages.Length) break;
+            if (step >= slotImages.Length) break;
 
-            Vector2Int delta = path[step + 1] - path[step];
-            string dir = "";
-            for (int d = 0; d < 4; d++)
-                if (DIRS[d] == delta) { dir = DIR_NAMES[d]; break; }
-
-            if (dirToQ.ContainsKey(dir) && isCorrect[dirToQ[dir]])
+            // 超過 maxSlots 的格子清空
+            if (step >= maxSlots)
             {
-                if (slotImages[slotIndex] != null)
+                if (slotImages[step] != null)
                 {
-                    slotImages[slotIndex].sprite = spriteUp;
-                    slotImages[slotIndex].transform.rotation =
-                        Quaternion.Euler(0, 0, dirToRotation[dir]);
+                    slotImages[step].sprite = spriteEmpty;
+                    slotImages[step].transform.rotation = Quaternion.identity;
                 }
-                slotIndex++;
+                continue;
+            }
+
+            string dir = DeltaToDir(path[step + 1] - path[step]);
+
+            // 對應方向選錯 → 這格留空，不往前補
+            bool dirCorrect = !dirToQ.ContainsKey(dir) || isCorrect[dirToQ[dir]];
+
+            if (slotImages[step] != null)
+            {
+                if (dirCorrect)
+                {
+                    slotImages[step].sprite = spriteUp;
+                    slotImages[step].transform.rotation =
+                        Quaternion.Euler(0, 0, dirToRot[dir]);
+                }
+                else
+                {
+                    slotImages[step].sprite = spriteEmpty;
+                    slotImages[step].transform.rotation = Quaternion.identity;
+                }
             }
         }
+    }
 
-        for (int i = slotIndex; i < slotImages.Length; i++)
+    void ClearAllSlots()
+    {
+        for (int i = 0; i < slotImages.Length; i++)
         {
             if (slotImages[i] != null)
             {
@@ -362,102 +396,283 @@ public class FindClues_lvl2 : MonoBehaviour
         }
     }
 
+    // ─────────────────────────────────────────────
+    //  MAIN COROUTINE
+    // ─────────────────────────────────────────────
+
     IEnumerator RunWithPlayerLogic(bool[] isCorrect)
     {
         isRunning = true;
         confirmButton.interactable = false;
         SetAllOptionsInteractable(false);
 
-        // Q1 選錯 → 什麼都不動
+        // ── Q1 選錯：不動、不提示 ──
         if (!isCorrect[0])
         {
-            ShowHint("變數宣告錯誤，程式無法執行！", Color.red);
+            ShowHint("a變數宣告錯誤，程式無法執行！", Color.red);
             yield return new WaitForSeconds(2f);
             failHintText?.gameObject.SetActive(false);
             ResetAndUnlock();
             yield break;
         }
 
-        // Q2 選錯 → 什麼都不動
+        // ── Q2 選錯：不動、提示 ──
         if (!isCorrect[1])
         {
-            ShowHint("陣列大小錯誤，無法存取步驟！", Color.red);
+            ShowHint("b陣列大小錯誤，無法存取步驟！", Color.red);
             yield return new WaitForSeconds(2f);
             failHintText?.gameObject.SetActive(false);
             ResetAndUnlock();
             yield break;
         }
 
-        // Q3 選錯 → 多走一步
-        int maxSteps = isCorrect[2] ? path.Count - 1 : path.Count;
-
+        int normalSteps = path.Count - 1; // = 6
         Vector2Int curCell = startCell;
+        bool failed = false;
 
-        for (int step = 0; step < Mathf.Min(maxSteps, path.Count - 1); step++)
+        // ── 正常走 6 步 ──
+        for (int step = 0; step < normalSteps; step++)
         {
-            Vector2Int delta = path[step + 1] - path[step];
-            string correctDir = "";
-            for (int d = 0; d < 4; d++)
-                if (DIRS[d] == delta) { correctDir = DIR_NAMES[d]; break; }
-
+            string correctDir = DeltaToDir(path[step + 1] - path[step]);
             string playerDir = GetPlayerDir(isCorrect, correctDir);
-            Vector2Int moveDir = GetDirVector(playerDir);
-            Vector2Int nextCell = curCell + moveDir;
+
+            // Q4-Q7 對應方向選錯 → 停住
+            if (playerDir == "none")
+            {
+                ShowHint("c方向指令錯誤，角色無法移動！", Color.red);
+                yield return new WaitForSeconds(2f);
+                failHintText?.gameObject.SetActive(false);
+                failed = true;
+                break;
+            }
+
+            Vector2Int nextCell = curCell + GetDirVector(playerDir);
 
             if (!InBounds(nextCell))
             {
-                ShowHint("走出邊界了！", Color.red);
+                ShowHint("d走出邊界了！", Color.red);
                 yield return new WaitForSeconds(1.5f);
                 failHintText?.gameObject.SetActive(false);
-                ResetAndUnlock();
-                yield break;
+                failed = true;
+                break;
             }
 
-            yield return StartCoroutine(MovePlayer(nextCell));
+            UpdateSlotHighlight(step);                          // ← 先變色
+            yield return StartCoroutine(MovePlayer(nextCell));  // ← 再移動
             curCell = nextCell;
+            
 
-            bool onPath = path.Contains(nextCell);
-            if (!onPath && nextCell != endCell)
+            // 提早踩到終點（還未走完）→ 失敗
+            if (curCell == endCell && step < normalSteps - 1)
             {
-                ShowHint("走錯路了！", Color.red);
+                ShowHint("e路徑不完整，需要走完所有格子！", Color.red);
                 yield return new WaitForSeconds(1.5f);
                 failHintText?.gameObject.SetActive(false);
-                ResetAndUnlock();
-                yield break;
+                failed = true;
+                break;
+            }
+
+            // 走到不在路徑上的格子 → 失敗
+            if (!path.Contains(curCell) && curCell != endCell)
+            {
+                ShowHint("f走錯路了！", Color.red);
+                yield return new WaitForSeconds(1.5f);
+                failHintText?.gameObject.SetActive(false);
+                failed = true;
+                break;
             }
         }
 
-        if (curCell == endCell)
+        // ── Q3 選錯：走完 6 步後，最後方向再多走一步 ──
+        if (!failed && !isCorrect[2])
         {
-            timerRunning = false;
-            ShowEndScreen();
+            string lastDir = DeltaToDir(path[normalSteps] - path[normalSteps - 1]);
+            string playerDir = GetPlayerDir(isCorrect, lastDir);
+
+            if (playerDir == "none")
+            {
+                // 對應方向題也選錯，停在原地提示
+                ShowHint("g迴圈判斷錯誤，多執行了一次！", Color.red);
+                yield return new WaitForSeconds(2f);
+                failHintText?.gameObject.SetActive(false);
+                failed = true;
+            }
+            else
+            {
+                Vector2Int extraCell = curCell + GetDirVector(playerDir);
+
+                if (InBounds(extraCell))
+                {
+                    // 在界內：正常播動畫走過去
+                    UpdateSlotHighlight(normalSteps);                   // ← 先變色
+                    yield return StartCoroutine(MovePlayer(extraCell));
+                    curCell = extraCell;
+                    
+                    ShowHint("h迴圈判斷錯誤，多走了一步！", Color.red);
+                    yield return new WaitForSeconds(2f);
+                    failHintText?.gameObject.SetActive(false);
+                    failed = true;
+                }
+                else
+                {
+                    // 走出界：計算出界外世界座標，播動畫後提示
+                    yield return StartCoroutine(MovePlayerOutOfBounds(curCell, playerDir));
+                    ShowHint("i迴圈判斷錯誤，走出邊界！", Color.red);
+                    yield return new WaitForSeconds(2f);
+                    failHintText?.gameObject.SetActive(false);
+                    failed = true;
+                }
+            }
+        }
+
+        // ── 最終判斷 ──
+        if (!failed)
+        {
+            if (curCell == endCell)
+            {
+                timerRunning = false;
+                ShowEndScreen();
+            }
+            else
+            {
+                ShowHint("j沒有到達終點！", Color.red);
+                yield return new WaitForSeconds(1.5f);
+                failHintText?.gameObject.SetActive(false);
+                ResetAndUnlock();
+            }
         }
         else
         {
-            ShowHint("沒有到達終點！", Color.red);
-            yield return new WaitForSeconds(1.5f);
-            failHintText?.gameObject.SetActive(false);
             ResetAndUnlock();
         }
 
         isRunning = false;
     }
 
+    // ─────────────────────────────────────────────
+    //  HELPER：走出界外的動畫
+    // ─────────────────────────────────────────────
+
+    IEnumerator MovePlayerOutOfBounds(Vector2Int fromCell, string dir)
+    {
+        if (player == null) yield break;
+
+        GameObject fromObj = GameObject.Find((fromCell.x + 1) + "_" + (fromCell.y + 1));
+        if (fromObj == null) yield break;
+
+        // 找任意鄰格算出格子間距
+        Vector3 cellOffset = Vector3.zero;
+        for (int d = 0; d < 4; d++)
+        {
+            Vector2Int neighbor = fromCell + DIRS[d];
+            if (!InBounds(neighbor)) continue;
+            GameObject neighborObj = GameObject.Find((neighbor.x + 1) + "_" + (neighbor.y + 1));
+            if (neighborObj != null)
+            {
+                cellOffset = neighborObj.transform.position - fromObj.transform.position;
+                break;
+            }
+        }
+
+        // 把格子間距投影到移動方向
+        Vector2Int dirVec = GetDirVector(dir);
+        // dirVec.x = row 變化（對應 world Y），dirVec.y = col 變化（對應 world X）
+        // 用已知鄰格間距推算單軸位移
+        Vector3 moveWorld = Vector3.zero;
+
+        // 找一個在同 row 或同 col 的鄰格來精確取對應軸的間距
+        // 否則直接用 cellOffset 的 x/y 分量
+        // row 方向（up/down）→ 用 cellOffset.y
+        // col 方向（left/right）→ 用 cellOffset.x
+        if (dirVec.x != 0) // up or down：row 改變
+        {
+            // 找上或下方向的鄰格間距
+            Vector2Int rowNeighbor = fromCell + new Vector2Int(dirVec.x, 0);
+            if (InBounds(rowNeighbor))
+            {
+                GameObject rObj = GameObject.Find((rowNeighbor.x + 1) + "_" + (rowNeighbor.y + 1));
+                if (rObj != null)
+                    moveWorld = rObj.transform.position - fromObj.transform.position;
+                else
+                    moveWorld = new Vector3(0, dirVec.x * Mathf.Abs(cellOffset.y), 0);
+            }
+            else
+            {
+                // 用反方向鄰格取絕對間距，再反向
+                Vector2Int opposite = fromCell + new Vector2Int(-dirVec.x, 0);
+                if (InBounds(opposite))
+                {
+                    GameObject oObj = GameObject.Find((opposite.x + 1) + "_" + (opposite.y + 1));
+                    if (oObj != null)
+                        moveWorld = fromObj.transform.position - oObj.transform.position;
+                    else
+                        moveWorld = new Vector3(0, dirVec.x * Mathf.Abs(cellOffset.y), 0);
+                }
+                else
+                    moveWorld = new Vector3(0, dirVec.x * Mathf.Abs(cellOffset.y), 0);
+            }
+        }
+        else // left or right：col 改變
+        {
+            Vector2Int colNeighbor = fromCell + new Vector2Int(0, dirVec.y);
+            if (InBounds(colNeighbor))
+            {
+                GameObject cObj = GameObject.Find((colNeighbor.x + 1) + "_" + (colNeighbor.y + 1));
+                if (cObj != null)
+                    moveWorld = cObj.transform.position - fromObj.transform.position;
+                else
+                    moveWorld = new Vector3(dirVec.y * Mathf.Abs(cellOffset.x), 0, 0);
+            }
+            else
+            {
+                Vector2Int opposite = fromCell + new Vector2Int(0, -dirVec.y);
+                if (InBounds(opposite))
+                {
+                    GameObject oObj = GameObject.Find((opposite.x + 1) + "_" + (opposite.y + 1));
+                    if (oObj != null)
+                        moveWorld = fromObj.transform.position - oObj.transform.position;
+                    else
+                        moveWorld = new Vector3(dirVec.y * Mathf.Abs(cellOffset.x), 0, 0);
+                }
+                else
+                    moveWorld = new Vector3(dirVec.y * Mathf.Abs(cellOffset.x), 0, 0);
+            }
+        }
+
+        Vector3 targetPos = fromObj.transform.position + moveWorld;
+        targetPos.y += yOffset;
+
+        float elapsed = 0f;
+        Vector3 startPos = player.transform.position;
+        while (elapsed < moveSpeed)
+        {
+            player.transform.position = Vector3.Lerp(startPos, targetPos, elapsed / moveSpeed);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        player.transform.position = targetPos;
+        yield return new WaitForSeconds(0.15f);
+    }
+
+    // ─────────────────────────────────────────────
+    //  HELPER METHODS
+    // ─────────────────────────────────────────────
+
+    string DeltaToDir(Vector2Int delta)
+    {
+        for (int d = 0; d < 4; d++)
+            if (DIRS[d] == delta) return DIR_NAMES[d];
+        return "";
+    }
+
     string GetPlayerDir(bool[] isCorrect, string correctDir)
     {
-        // Q4=up(3), Q5=down(4), Q6=left(5), Q7=right(6)
-        Dictionary<string, int> dirQuestionIdx = new Dictionary<string, int>();
-        dirQuestionIdx.Add("up", 3);
-        dirQuestionIdx.Add("down", 4);
-        dirQuestionIdx.Add("left", 5);
-        dirQuestionIdx.Add("right", 6);
+        var map = new Dictionary<string, int>
+            { { "up", 3 }, { "down", 4 }, { "left", 5 }, { "right", 6 } };
 
-        if (dirQuestionIdx.ContainsKey(correctDir))
-        {
-            int qIdx = dirQuestionIdx[correctDir];
-            if (!isCorrect[qIdx])
-                return "none";
-        }
+        if (map.ContainsKey(correctDir) && !isCorrect[map[correctDir]])
+            return "none";
+
         return correctDir;
     }
 
@@ -472,6 +687,10 @@ public class FindClues_lvl2 : MonoBehaviour
             default: return Vector2Int.zero;
         }
     }
+
+    // ─────────────────────────────────────────────
+    //  PUZZLE GENERATION
+    // ─────────────────────────────────────────────
 
     void GeneratePuzzle()
     {
@@ -488,11 +707,7 @@ public class FindClues_lvl2 : MonoBehaviour
         }
 
         for (int i = 0; i < 6; i++)
-        {
-            Vector2Int delta = path[i + 1] - path[i];
-            for (int d = 0; d < 4; d++)
-                if (DIRS[d] == delta) { correctDirs[i] = DIR_NAMES[d]; break; }
-        }
+            correctDirs[i] = DeltaToDir(path[i + 1] - path[i]);
 
         UpdateCellVisuals();
 
@@ -518,12 +733,14 @@ public class FindClues_lvl2 : MonoBehaviour
             result.RemoveAt(result.Count - 1);
             return false;
         }
+
         int[] order = { 0, 1, 2, 3 };
         for (int i = 3; i > 0; i--)
         {
             int j = Random.Range(0, i + 1);
             (order[i], order[j]) = (order[j], order[i]);
         }
+
         foreach (int d in order)
         {
             Vector2Int next = cur + DIRS[d];
@@ -532,6 +749,7 @@ public class FindClues_lvl2 : MonoBehaviour
             if (dist > stepsLeft - 1) continue;
             if (FindRandomPath(next, target, stepsLeft - 1, result)) return true;
         }
+
         result.RemoveAt(result.Count - 1);
         return false;
     }
@@ -542,13 +760,14 @@ public class FindClues_lvl2 : MonoBehaviour
     {
         for (int r = 0; r < 3; r++)
             for (int c = 0; c < 5; c++)
-                if (cellImages[r, c] != null && spriteNormal != null)
+                if (cellImages[r, c] != null)
                     cellImages[r, c].sprite = spriteNormal;
 
         for (int i = 0; i < path.Count; i++)
         {
             var cell = path[i];
             if (cellImages[cell.x, cell.y] == null) continue;
+
             if (i == 0)
                 cellImages[cell.x, cell.y].sprite = spriteStart ?? spriteNormal;
             else if (i == path.Count - 1)
@@ -557,6 +776,10 @@ public class FindClues_lvl2 : MonoBehaviour
                 cellImages[cell.x, cell.y].sprite = spritePath ?? spriteNormal;
         }
     }
+
+    // ─────────────────────────────────────────────
+    //  MOVE PLAYER
+    // ─────────────────────────────────────────────
 
     IEnumerator MovePlayer(Vector2Int targetCell)
     {
@@ -578,12 +801,16 @@ public class FindClues_lvl2 : MonoBehaviour
         yield return new WaitForSeconds(0.15f);
     }
 
+    // ─────────────────────────────────────────────
+    //  END SCREEN
+    // ─────────────────────────────────────────────
+
     void ShowEndScreen()
     {
         bool isNewRecord = hasPlayedBefore && elapsedTime < savedBestTime;
         int coinEarned = coinComplete + (isNewRecord ? coinRecord : 0);
         float newBestTime = (!hasPlayedBefore || elapsedTime < savedBestTime)
-            ? elapsedTime : savedBestTime;
+                            ? elapsedTime : savedBestTime;
 
         SaveData(savedCoins + coinEarned, newBestTime);
         endScreen?.SetActive(true);
@@ -603,6 +830,10 @@ public class FindClues_lvl2 : MonoBehaviour
         }
     }
 
+    // ─────────────────────────────────────────────
+    //  UTILITY
+    // ─────────────────────────────────────────────
+
     void ShowHint(string msg, Color col)
     {
         if (failHintText == null) return;
@@ -615,8 +846,14 @@ public class FindClues_lvl2 : MonoBehaviour
     {
         isRunning = false;
         if (player != null) player.transform.position = playerStartPos;
+
+        // 重置所有 slot 顏色
+        for (int i = 0; i < slotImages.Length; i++)
+            if (slotImages[i] != null)
+                slotImages[i].color = slotNormalColor;
+
         confirmButton.interactable = true;
-        confirmButton.gameObject.SetActive(true);   
+        confirmButton.gameObject.SetActive(true);
         javaHintPanel?.SetActive(true);
         SetAllOptionsInteractable(true);
     }

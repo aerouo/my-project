@@ -1647,7 +1647,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 250036593}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7688e50ff93e2d144be6468ec412c259, type: 3}
   m_Name: 
@@ -2740,6 +2740,8 @@ MonoBehaviour:
   spritePath: {fileID: 21300000, guid: fa07e5fb064f1124ebd2b0a66ae35fa3, type: 3}
   spriteEnd: {fileID: 21300000, guid: dadbfa1f7651f0a4f82c79f080522963, type: 3}
   spriteNormal: {fileID: 21300000, guid: 9df96745fd448014fb776a83333c6acd, type: 3}
+  slotNormalColor: {r: 1, g: 1, b: 1, a: 1}
+  slotActiveColor: {r: 0.6, g: 0.6, b: 0.6, a: 1}
   failHintText: {fileID: 1538630884}
   resultText: {fileID: 0}
   txtTimer: {fileID: 1503534105}
@@ -3603,7 +3605,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 501242786}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7688e50ff93e2d144be6468ec412c259, type: 3}
   m_Name: 
@@ -9725,7 +9727,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1473715283}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7688e50ff93e2d144be6468ec412c259, type: 3}
   m_Name: 
@@ -12125,7 +12127,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1951198781}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7688e50ff93e2d144be6468ec412c259, type: 3}
   m_Name: 
