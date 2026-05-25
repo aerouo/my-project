@@ -33,12 +33,23 @@ public class EatingGame : MonoBehaviour
     void Start()
     {
         foodImage = foodTransform.GetComponent<Image>();
+        if (foodImage == null) Debug.LogError("foodImage 是 null！請確認 food 物件上有 Image 組件");
+        foodImage.enabled = false;
+    }
+
+    private bool gameStarted = false;
+
+    public void StartGame()
+    {
+        if (gameStarted) return;
+        gameStarted = true;
+        Debug.Log("【EatingGame】StartGame 被呼叫了！");
         StartCoroutine(RunGame());
     }
 
     void Update()
     {
-        if (!isEating || gameFinished) return;
+        if (!isEating || isMoving || gameFinished) return;
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -66,6 +77,7 @@ public class EatingGame : MonoBehaviour
 
             // 設定這輪的食物圖片
             foodImage.sprite = foodSprites[order[round]];
+            Debug.Log($"Round {round}: sprite = {foodImage.sprite?.name ?? "NULL"}");
             foodImage.enabled = true;
 
             // food 從畫面外開始

@@ -9,11 +9,11 @@ public class Level3Manager : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     public Image backgroundImage;
 
-    [Header("第一段劇情（拼圖前）")]
+    [Header("第一段劇情（吃吃吃前）")]
     [TextArea(10, 20)]
     public string storyPart1;
 
-    [Header("第二段劇情（拼圖後）")]
+    [Header("第二段劇情（吃吃吃後）")]
     [TextArea(10, 20)]
     public string storyPart2;
 
@@ -25,11 +25,11 @@ public class Level3Manager : MonoBehaviour
     [Header("背景圖片庫")]
     public Sprite scene1;
     public Sprite scene2;
-    public Sprite scene3;
 
     [Header("小遊戲銜接")]
     public GameObject miniGameCanvas;
     public GameObject miniGameBackground;
+    public EatingGame eatingGame;   // 拉入 EatingGameManager 物件
 
     [Header("第二段劇情結束後銜接")]
     public GameObject nextGameUI;
@@ -63,6 +63,7 @@ public class Level3Manager : MonoBehaviour
         dialogueText.text = "";
         if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
         if (miniGameBackground != null) miniGameBackground.SetActive(true);
+        if (eatingGame != null) eatingGame.StartGame();
 
         Debug.Log("【劇情控制】第一段結束，等待吃東西小遊戲完成...");
     }
@@ -78,12 +79,6 @@ public class Level3Manager : MonoBehaviour
         // 隱藏小遊戲
         if (miniGameCanvas != null) miniGameCanvas.SetActive(false);
         if (miniGameBackground != null) miniGameBackground.SetActive(false);
-
-        // 換成 scene2
-        if (backgroundImage != null && scene2 != null)
-        {
-            backgroundImage.sprite = scene2;
-        }
 
         Debug.Log("【劇情控制】吃東西完成，開始第二段劇情");
         StartCoroutine(PlayPart2());
@@ -118,7 +113,7 @@ public class Level3Manager : MonoBehaviour
             if (currentLine.Contains("[換圖]"))
             {
                 currentScene++;
-                Sprite nextSprite = currentScene == 2 ? scene2 : scene3;
+                Sprite nextSprite = scene2;
                 if (backgroundImage != null && nextSprite != null)
                 {
                     backgroundImage.sprite = nextSprite;
@@ -148,6 +143,7 @@ public class Level3Manager : MonoBehaviour
         {
             if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
             if (miniGameBackground != null) miniGameBackground.SetActive(true);
+            if (eatingGame != null) eatingGame.StartGame();
         }
         else
         {
