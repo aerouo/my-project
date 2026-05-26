@@ -3024,8 +3024,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -7049,6 +7049,7 @@ MonoBehaviour:
   scene2: {fileID: 21300000, guid: ab7aab6edd8db34479958c50d1cf7605, type: 3}
   miniGameCanvas: {fileID: 712135923}
   miniGameBackground: {fileID: 1612223805}
+  printGameManager: {fileID: 974064104}
 --- !u!1 &1965588173
 GameObject:
   m_ObjectHideFlags: 0

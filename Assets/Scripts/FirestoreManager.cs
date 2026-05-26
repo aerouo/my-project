@@ -244,7 +244,7 @@ public class FirestoreManager : MonoBehaviour
     // 日期只顯示年月日，不顯示時間
     // =========================================================
 
-    public void SaveBasicQuizRecord(string basicID)
+    public void SaveBasicQuizRecord(string basicID, System.Action onSaved = null)
     {
         if (!CheckReady()) return;
 
@@ -303,9 +303,16 @@ public class FirestoreManager : MonoBehaviour
             docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
             {
                 if (saveTask.IsCompletedSuccessfully)
+                {
                     Debug.Log("基礎測驗紀錄儲存成功：" + basicID);
+
+                    // 確定 Firebase 存完後，才去檢查成就
+                    onSaved?.Invoke();
+                }
                 else
+                {
                     Debug.LogWarning("基礎測驗紀錄儲存失敗：" + saveTask.Exception);
+                }
             });
         });
     }
@@ -377,7 +384,6 @@ public class FirestoreManager : MonoBehaviour
             .Collection(gameID).Document(difficulty);
 
         SaveRecordWithHistory(docRef, latestRecord);
-        SaveMinigame(gameID, difficulty, timeSeconds);
     }
 
     public void LoadAdvancedRecord(string gameID, string difficulty, Action<Dictionary<string, object>> onLoaded)
@@ -511,53 +517,9 @@ public class FirestoreManager : MonoBehaviour
 
     public void SaveQuizDone(string quizID, System.Action onSaved = null)
     {
-        SaveBasicQuizRecord(quizID);
-        onSaved?.Invoke();
+        SaveBasicQuizRecord(quizID, onSaved);
     }
 
-
-    public void SaveMinigame(string gameID, string level, float timeSeconds)
-    {
-        if (!CheckReady()) return;
-
-        string date = DateTime.Now.ToString("yyyy/MM/dd");
-
-        var docRef = db.Collection("users").Document(userID)
-                       .Collection("minigames").Document(gameID);
-
-        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
-        {
-            if (task.IsFaulted || task.IsCanceled)
-            {
-                Debug.LogWarning("讀取小遊戲紀錄失敗：" + task.Exception);
-                return;
-            }
-
-            var updates = new Dictionary<string, object>
-            {
-                { level + "_lastTime", timeSeconds },
-                { level + "_lastDate", date }
-            };
-
-            List<object> history = new List<object>();
-
-            if (task.Result.Exists && task.Result.TryGetValue(level + "_history", out object h))
-                history = h as List<object> ?? new List<object>();
-
-            history.Add(new Dictionary<string, object>
-            {
-                { "time", timeSeconds },
-                { "date", date }
-            });
-
-            if (history.Count > 5)
-                history.RemoveAt(0);
-
-            updates[level + "_history"] = history;
-
-            docRef.SetAsync(updates, SetOptions.MergeAll);
-        });
-    }
 
     // =========================================================
     // 7. 紙鶴 / 金幣

@@ -42,16 +42,90 @@ public class PrintGameManager : MonoBehaviour
     [Header("Block 5 圖片")]
     public Sprite block5_class, block5_main, block5_print, block5_string, block5_num;
 
-    private float startTime;
+    private float totalPlayTime = 0f;
+    private float segmentStartTime = 0f;
+
+    private bool isTiming = false;
+    private bool hasStarted = false;
+    private bool hasFinished = false;
+
+    private Coroutine executeCoroutine;
+
+    void OnEnable()
+    {
+        hasFinished = false;
+
+        if (resultPanel != null)
+            resultPanel.SetActive(false);
+    }
 
     public void StartGame()
     {
-        startTime = Time.time;
+        ResetTimer();
+        StartTimer();
+
+        hasStarted = true;
+        hasFinished = false;
+
+        Debug.Log("【第一關】小遊戲開始，計時重置並開始");
+    }
+
+    public void ResetTimer()
+    {
+        totalPlayTime = 0f;
+        segmentStartTime = 0f;
+        isTiming = false;
+    }
+
+    public void StartTimer()
+    {
+        if (hasFinished) return;
+        if (isTiming) return;
+
+        segmentStartTime = Time.time;
+        isTiming = true;
+
+        Debug.Log("【第一關】開始計時：" + segmentStartTime);
+    }
+
+    public void PauseTimer()
+    {
+        if (!isTiming) return;
+
+        float segmentTime = Time.time - segmentStartTime;
+        totalPlayTime += segmentTime;
+        isTiming = false;
+
+        Debug.Log("【第一關】暫停計時，本段：" + segmentTime + " 秒，累積：" + totalPlayTime + " 秒");
+    }
+
+    public float GetFinalTime()
+    {
+        PauseTimer();
+
+        if (totalPlayTime < 0f)
+            totalPlayTime = 0f;
+
+        return Mathf.Round(totalPlayTime * 10f) / 10f;
     }
 
     public void CheckAnswer()
     {
-        StartCoroutine(ExecuteBlocks(slots));
+        if (hasFinished) return;
+
+        if (!hasStarted)
+        {
+            Debug.LogWarning("【第一關】StartGame 沒有被呼叫，改從第一次確認答案開始計時");
+            StartGame();
+        }
+
+        // 按下完成後，開始跑檢查動畫，所以這裡先停止計時
+        PauseTimer();
+
+        if (executeCoroutine != null)
+            StopCoroutine(executeCoroutine);
+
+        executeCoroutine = StartCoroutine(ExecuteBlocks(slots));
     }
 
     Sprite GetBlockSprite(int blockIndex, string blockID)
@@ -81,28 +155,41 @@ public class PrintGameManager : MonoBehaviour
 
     IEnumerator ExecuteBlocks(Lvl1DropSlot[] slots)
     {
-        if (printGroupPanel != null) printGroupPanel.SetActive(false);
-        if (computerPanel != null) computerPanel.SetActive(true);
+        if (slots == null || slots.Length == 0)
+        {
+            Debug.LogWarning("【第一關】slots 沒有設定");
+            yield break;
+        }
 
-        if (outputText != null) outputText.text = "";
-        if (outputLine != null) outputLine.SetActive(false);
+        if (printGroupPanel != null)
+            printGroupPanel.SetActive(false);
 
-        // 設定 block1~5 圖片
+        if (computerPanel != null)
+            computerPanel.SetActive(true);
+
+        if (outputText != null)
+            outputText.text = "";
+
+        if (outputLine != null)
+            outputLine.SetActive(false);
+
         for (int i = 0; i < blockImages.Length && i < slots.Length; i++)
         {
-            if (blockImages[i] == null) continue;
+            if (blockImages[i] == null || slots[i] == null) continue;
+
             blockImages[i].gameObject.SetActive(true);
+
             string placedID = slots[i].GetCurrentBlockID();
             blockImages[i].sprite = GetBlockSprite(i, placedID);
         }
 
-        // 逐框發光並判斷
         for (int i = 0; i < blockImages.Length && i < slots.Length; i++)
         {
-            if (blockImages[i] == null) continue;
+            if (blockImages[i] == null || slots[i] == null) continue;
 
             Color original = blockImages[i].color;
             blockImages[i].color = highlightColor;
+
             yield return new WaitForSeconds(highlightDuration);
 
             if (!slots[i].isCorrect)
@@ -119,25 +206,38 @@ public class PrintGameManager : MonoBehaviour
 
             if (slots[i].acceptID == "num")
             {
-                if (outputLine != null) outputLine.SetActive(true);                
+                if (outputLine != null)
+                    outputLine.SetActive(true);
+
                 yield return StartCoroutine(TypeText(outputWord));
             }
         }
 
         yield return new WaitForSeconds(0.5f);
-        ShowResult(Time.time - startTime);
+
+        float elapsed = GetFinalTime();
+        ShowResult(elapsed);
     }
 
     IEnumerator ShowWrongHint(Lvl1DropSlot[] slots)
     {
         foreach (Image img in blockImages)
-            if (img != null) img.gameObject.SetActive(false);
+        {
+            if (img != null)
+                img.gameObject.SetActive(false);
+        }
 
         foreach (Lvl1DropSlot slot in slots)
-            slot.ResetSlot();
+        {
+            if (slot != null)
+                slot.ResetSlot();
+        }
 
-        if (computerPanel != null) computerPanel.SetActive(false);
-        if (printGroupPanel != null) printGroupPanel.SetActive(true);
+        if (computerPanel != null)
+            computerPanel.SetActive(false);
+
+        if (printGroupPanel != null)
+            printGroupPanel.SetActive(true);
 
         if (wrongText != null)
         {
@@ -145,12 +245,17 @@ public class PrintGameManager : MonoBehaviour
             yield return new WaitForSeconds(2f);
             wrongText.gameObject.SetActive(false);
         }
+
+        // 答錯後回到可操作狀態，繼續計時
+        StartTimer();
     }
 
     IEnumerator TypeText(string text)
     {
         if (outputText == null) yield break;
+
         outputText.text = "";
+
         foreach (char c in text)
         {
             outputText.text += c;
@@ -160,28 +265,31 @@ public class PrintGameManager : MonoBehaviour
 
     void ShowResult(float elapsed)
     {
+        if (hasFinished) return;
+        hasFinished = true;
+
         if (resultPanel != null)
             resultPanel.SetActive(true);
 
         if (resultText != null)
         {
-            int minutes = (int)(elapsed / 60);
-            int seconds = (int)(elapsed % 60);
+            int minutes = Mathf.FloorToInt(elapsed / 60f);
+            int seconds = Mathf.FloorToInt(elapsed % 60f);
 
             resultText.text =
                 $"恭喜通關\n耗時：{minutes:00}:{seconds:00}";
         }
 
-        // 儲存闖關紀錄
+        Debug.Log("【第一關】最終累積遊玩時間：" + elapsed + " 秒");
+
         if (FirestoreManager.Instance != null)
         {
-            FirestoreManager.Instance.SaveQuestRecord(
-                "Level1",
-                elapsed,
-                100
-            );
-
+            FirestoreManager.Instance.SaveQuestRecord("Level1", elapsed, 100);
             FirestoreManager.Instance.AddCoins(200);
+        }
+        else
+        {
+            Debug.LogWarning("【第一關】FirestoreManager.Instance 不存在，無法儲存紀錄");
         }
     }
 }

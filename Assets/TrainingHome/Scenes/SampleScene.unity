@@ -2257,7 +2257,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2026/01/05
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -4786,7 +4786,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/12/05
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -5795,7 +5795,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2026/01/05
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -6831,7 +6831,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/12/05
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -9179,7 +9179,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2026/01/05
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -11020,7 +11020,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/12/05
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -12631,7 +12631,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/10/11
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -13216,7 +13216,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2026/01/05
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -13809,7 +13809,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/10/11
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -14779,7 +14779,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/12/05
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -15647,7 +15647,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/10/11
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -16001,7 +16001,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/10/11
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
