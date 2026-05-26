@@ -54,6 +54,16 @@ public class Forestexploration_lvl2 : MonoBehaviour
         public Sprite leftGlow;
         public Sprite rightNormal;
         public Sprite rightGlow;
+
+        [Header("題目文字元件（左、右各一個 TMP）")]
+        public TextMeshProUGUI leftText;
+        public TextMeshProUGUI rightText;
+
+        [Tooltip("正確答案的程式碼文字（在 Inspector 填入）")]
+        [TextArea(2, 6)] public string correctCode;
+        [Tooltip("錯誤答案的程式碼文字（在 Inspector 填入）")]
+        [TextArea(2, 6)] public string wrongCode;
+
         [HideInInspector] public bool correctOnLeft;
         [HideInInspector] public bool? playerChoice;
     }
@@ -164,8 +174,16 @@ public class Forestexploration_lvl2 : MonoBehaviour
     {
         for (int i = 0; i < questions.Length; i++)
         {
-            questions[i].correctOnLeft = (Random.Range(0, 2) == 0);
-            questions[i].playerChoice = null;
+            var q = questions[i];
+            q.correctOnLeft = (Random.Range(0, 2) == 0);
+            q.playerChoice = null;
+
+            // 依隨機結果把正確/錯誤程式碼放到對應的文字元件
+            if (q.leftText != null)
+                q.leftText.text = q.correctOnLeft ? q.correctCode : q.wrongCode;
+            if (q.rightText != null)
+                q.rightText.text = q.correctOnLeft ? q.wrongCode : q.correctCode;
+
             RefreshQuestionVisual(i);
         }
     }
@@ -206,8 +224,19 @@ public class Forestexploration_lvl2 : MonoBehaviour
         }
         else
         {
+            // 從 HintPanel 返回遊戲：恢復計時、顯示遊戲中所有 UI
             gamePaused = false;
             if (txtTimer) txtTimer.gameObject.SetActive(true);
+
+            // 恢復 javaHintPanel
+            javaHintPanel?.SetActive(true);
+
+            // confirmButton：一律顯示，但若驗證中則設為不可互動
+            if (confirmButton != null)
+            {
+                confirmButton.gameObject.SetActive(true);
+                confirmButton.interactable = !isRunning;
+            }
         }
     }
 
@@ -215,14 +244,18 @@ public class Forestexploration_lvl2 : MonoBehaviour
     {
         gamePaused = true;
         hintPanel?.SetActive(true);
+        // 暫存並隱藏遊戲中 UI，避免與 HintPanel 疊在一起
         javaHintPanel?.SetActive(false);
         confirmButton?.gameObject.SetActive(false);
         if (txtTimer) txtTimer.gameObject.SetActive(false);
     }
 
+    // JavaHintPanel 是獨立的 toggle，與 HintPanel 無關
     public void OnClickJavaHint()
     {
-        if (javaHintPanel != null)
+        if (javaHintPanel == null) return;
+        // 只在遊戲進行中（非暫停、非 HintPanel 開啟）才允許 toggle
+        if (!gamePaused)
             javaHintPanel.SetActive(!javaHintPanel.activeSelf);
     }
 
@@ -241,6 +274,14 @@ public class Forestexploration_lvl2 : MonoBehaviour
     {
         gamePaused = false;
         quitConfirmPanel?.SetActive(false);
+
+        // 恢復遊戲中 UI（X 按鈕取消後）
+        javaHintPanel?.SetActive(true);
+        if (confirmButton != null)
+        {
+            confirmButton.gameObject.SetActive(true);
+            confirmButton.interactable = !isRunning;
+        }
     }
 
     public void OnSelectLeft(int idx)
@@ -478,9 +519,18 @@ public class Forestexploration_lvl2 : MonoBehaviour
 
     // ── Reset & Unlock ─────────────────────────────────────────────
 
+    /// <summary>
+    /// 答錯後恢復可操作狀態：
+    /// 保留原本的題目左右位置與玩家已選的選項，只重置 Phase、解鎖按鈕。
+    /// 若需要重新隨機題目（例如完全重來），請改呼叫 RandomizeAnswerSides()。
+    /// </summary>
     void ResetAndUnlock()
     {
-        RandomizeAnswerSides();
+        // 不重新隨機，保留原選項讓玩家修改
+        // 只把視覺刷新（保持已選的高亮）
+        for (int i = 0; i < questions.Length; i++)
+            RefreshQuestionVisual(i);
+
         currentPhase = 0;
         UpdateProgressText();
         SetupLanes();
