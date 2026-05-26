@@ -1,0 +1,538 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
+
+/// <summary>
+/// 森林探索 Lv2 — 5 道程式碼選擇題
+///
+/// 題目（左右隨機）：
+///   Q1 - 變數型別  ：int（正確）vs string（錯誤）
+///   Q2 - for 迴圈  ：i <= 5; i++（正確）vs i < 5; i--（錯誤）
+///   Q3 - 蛇路判斷  ：yourchoice == snakePath（正確）vs != snakePath（錯誤）
+///   Q4 - 洞路判斷  ：yourchoice == pitPath（正確）vs != pitPath（錯誤）
+///   Q5 - 安全路    ：else { player.moveForward(); }（正確）
+///                    vs else { player.moveForward(123); }（錯誤）
+///
+/// 按 OK 後驗證順序：
+///   Step 1：先驗證掉洞（Q4）
+///   Step 2：再驗證被蛇咬（Q3）
+///   Step 3-5：三次安全通關（Q5）
+/// </summary>
+public class Forestexploration_lvl2 : MonoBehaviour
+{
+    [Header("Lane Images（左、中、右）")]
+    public Image leftImage;
+    public Image midImage;
+    public Image rightImage;
+
+    [Header("左邊三種 Sprite")]
+    public Sprite leftRoad;
+    public Sprite leftSnake;
+    public Sprite leftHole;
+
+    [Header("中間三種 Sprite")]
+    public Sprite midRoad;
+    public Sprite midSnake;
+    public Sprite midHole;
+
+    [Header("右邊三種 Sprite")]
+    public Sprite rightRoad;
+    public Sprite rightSnake;
+    public Sprite rightHole;
+
+    [System.Serializable]
+    public class CodeQuestion
+    {
+        public string label;
+        public Button leftButton;
+        public Button rightButton;
+        public Image leftImage;
+        public Image rightImage;
+        public Sprite leftNormal;
+        public Sprite leftGlow;
+        public Sprite rightNormal;
+        public Sprite rightGlow;
+        [HideInInspector] public bool correctOnLeft;
+        [HideInInspector] public bool? playerChoice;
+    }
+
+    [Header("5 道程式碼選擇題（Q1~Q5）")]
+    public CodeQuestion[] questions = new CodeQuestion[5];
+
+    [Header("確認按鈕")]
+    public Button confirmButton;
+
+    [Header("錯誤提示 Image")]
+    public Image hintImage;
+    public Sprite spriteHoleHint;
+    public Sprite spriteSnakeHint;
+
+    [Header("Hearts")]
+    public GameObject heart1;
+    public GameObject heart2;
+    public GameObject heart3;
+
+    [Header("In-Game UI")]
+    public TextMeshProUGUI txtTimer;
+    public TextMeshProUGUI failHintText;
+
+    [Header("Hint Panel")]
+    public GameObject hintPanel;
+
+    [Header("Java Hint Panel")]
+    public GameObject javaHintPanel;
+
+    [Header("Quit Confirm Panel")]
+    public GameObject quitConfirmPanel;
+    public Button btnQuitConfirm;
+    public Button btnQuitCancel;
+
+    [Header("End Screen")]
+    public GameObject endScreen;
+    public TextMeshProUGUI titleText;
+    public TextMeshProUGUI finalTimeText;
+    public TextMeshProUGUI coinRewardText;
+    public Button btnEndConfirm;
+
+    [Header("結算設定")]
+    public int coinPass = 50;
+    public int coinRecord = 150;
+
+    [Header("驗證進度文字（可選）")]
+    public TextMeshProUGUI progressText;
+
+    private const string KEY_COINS = "TotalCoins";
+    private const string KEY_BESTTIME = "ForestLvl2_BestTime";
+    private const string KEY_PLAYED = "ForestLvl2_HasPlayed";
+
+    private int hearts = 3;
+    private float elapsedTime = 0f;
+    private bool timerRunning = false;
+    private bool gamePaused = false;
+    private bool gameStarted = false;
+    private bool isRunning = false;
+    private int savedCoins = 0;
+    private float savedBestTime = 0f;
+    private bool hasPlayedBefore = false;
+    private int[] laneTypes = new int[3];
+    private int lastRoadLane = -1;
+    private int currentPhase = 0;
+
+    void Start()
+    {
+        endScreen?.SetActive(false);
+        quitConfirmPanel?.SetActive(false);
+        hintImage?.gameObject.SetActive(false);
+        failHintText?.gameObject.SetActive(false);
+        hintPanel?.SetActive(true);
+        javaHintPanel?.SetActive(false);
+        confirmButton?.gameObject.SetActive(false);
+        if (txtTimer) txtTimer.gameObject.SetActive(false);
+        if (progressText) progressText.gameObject.SetActive(false);
+
+        btnQuitConfirm?.onClick.AddListener(OnQuitConfirm);
+        btnQuitCancel?.onClick.AddListener(OnQuitCancel);
+        btnEndConfirm?.onClick.AddListener(OnQuitConfirm);
+        confirmButton?.onClick.AddListener(OnClickConfirmAnswer);
+
+        for (int i = 0; i < questions.Length; i++)
+        {
+            int idx = i;
+            questions[i].leftButton?.onClick.AddListener(() => OnSelectLeft(idx));
+            questions[i].rightButton?.onClick.AddListener(() => OnSelectRight(idx));
+        }
+
+        RandomizeAnswerSides();
+        LoadData();
+    }
+
+    void Update()
+    {
+        if (!timerRunning || gamePaused) return;
+        elapsedTime += Time.deltaTime;
+        if (txtTimer != null)
+        {
+            int min = (int)(elapsedTime / 60f);
+            int sec = (int)(elapsedTime % 60f);
+            txtTimer.text = string.Format("{0:00}:{1:00}", min, sec);
+        }
+    }
+
+    void RandomizeAnswerSides()
+    {
+        for (int i = 0; i < questions.Length; i++)
+        {
+            questions[i].correctOnLeft = (Random.Range(0, 2) == 0);
+            questions[i].playerChoice = null;
+            RefreshQuestionVisual(i);
+        }
+    }
+
+    void LoadData()
+    {
+        savedCoins = PlayerPrefs.GetInt(KEY_COINS, 0);
+        savedBestTime = PlayerPrefs.GetFloat(KEY_BESTTIME, 0f);
+        hasPlayedBefore = PlayerPrefs.GetInt(KEY_PLAYED, 0) == 1;
+    }
+
+    void SaveData(int newCoins, float newBestTime)
+    {
+        PlayerPrefs.SetInt(KEY_COINS, newCoins);
+        PlayerPrefs.SetFloat(KEY_BESTTIME, newBestTime);
+        PlayerPrefs.SetInt(KEY_PLAYED, 1);
+        PlayerPrefs.Save();
+    }
+
+    // ── UI Handlers ────────────────────────────────────────────────
+
+    public void OnClickConfirm()
+    {
+        hintPanel?.SetActive(false);
+        if (!gameStarted)
+        {
+            gameStarted = true;
+            timerRunning = true;
+            if (txtTimer) txtTimer.gameObject.SetActive(true);
+            javaHintPanel?.SetActive(true);
+            confirmButton?.gameObject.SetActive(true);
+            if (progressText)
+            {
+                progressText.gameObject.SetActive(true);
+                UpdateProgressText();
+            }
+            SetupLanes();
+        }
+        else
+        {
+            gamePaused = false;
+            if (txtTimer) txtTimer.gameObject.SetActive(true);
+        }
+    }
+
+    public void OnClickHint()
+    {
+        gamePaused = true;
+        hintPanel?.SetActive(true);
+        javaHintPanel?.SetActive(false);
+        confirmButton?.gameObject.SetActive(false);
+        if (txtTimer) txtTimer.gameObject.SetActive(false);
+    }
+
+    public void OnClickJavaHint()
+    {
+        if (javaHintPanel != null)
+            javaHintPanel.SetActive(!javaHintPanel.activeSelf);
+    }
+
+    public void OnClickBack()
+    {
+        gamePaused = true;
+        quitConfirmPanel?.SetActive(true);
+    }
+
+    public void OnQuitConfirm()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("TrainingRoom");
+    }
+
+    public void OnQuitCancel()
+    {
+        gamePaused = false;
+        quitConfirmPanel?.SetActive(false);
+    }
+
+    public void OnSelectLeft(int idx)
+    {
+        if (isRunning || !gameStarted) return;
+        questions[idx].playerChoice = true;
+        RefreshQuestionVisual(idx);
+    }
+
+    public void OnSelectRight(int idx)
+    {
+        if (isRunning || !gameStarted) return;
+        questions[idx].playerChoice = false;
+        RefreshQuestionVisual(idx);
+    }
+
+    void RefreshQuestionVisual(int idx)
+    {
+        var q = questions[idx];
+        if (q.leftImage != null)
+            q.leftImage.sprite = (q.playerChoice == true) ? q.leftGlow : q.leftNormal;
+        if (q.rightImage != null)
+            q.rightImage.sprite = (q.playerChoice == false) ? q.rightGlow : q.rightNormal;
+    }
+
+    // ── Confirm Answer ─────────────────────────────────────────────
+
+    void OnClickConfirmAnswer()
+    {
+        if (isRunning || !gameStarted) return;
+
+        for (int i = 0; i < questions.Length; i++)
+        {
+            if (questions[i].playerChoice == null)
+            {
+                StartCoroutine(ShowHintCoroutine("請選擇所有題目！", Color.yellow, 1.5f));
+                return;
+            }
+        }
+
+        bool[] isCorrect = new bool[questions.Length];
+        for (int i = 0; i < questions.Length; i++)
+            isCorrect[i] = (questions[i].playerChoice == true) == questions[i].correctOnLeft;
+
+        javaHintPanel?.SetActive(false);
+        confirmButton.interactable = false;
+        SetAllQuestionsInteractable(false);
+
+        StartCoroutine(RunVerification(isCorrect));
+    }
+
+    // ── Main Verification Coroutine ────────────────────────────────
+    // isCorrect[0] = Q1 型別
+    // isCorrect[1] = Q2 迴圈
+    // isCorrect[2] = Q3 蛇
+    // isCorrect[3] = Q4 洞
+    // isCorrect[4] = Q5 安全路
+
+    IEnumerator RunVerification(bool[] isCorrect)
+    {
+        isRunning = true;
+
+        // Q1 錯
+        if (!isCorrect[0])
+        {
+            yield return ShowHintCoroutine("變數型別宣告錯誤，程式無法執行！", Color.red, 2f);
+            ResetAndUnlock();
+            isRunning = false;
+            yield break;
+        }
+
+        // Q2 錯
+        if (!isCorrect[1])
+        {
+            yield return ShowHintCoroutine("for 迴圈條件錯誤（i < 5 只走 4 次），路徑不完整！", Color.red, 2f);
+            ResetAndUnlock();
+            isRunning = false;
+            yield break;
+        }
+
+        // ── Phase 0：先驗證掉洞（Q4）────────────────────────────────
+        currentPhase = 0;
+        UpdateProgressText();
+        SetupPhaseScene(2); // 2 = 洞
+        yield return new WaitForSeconds(0.6f);
+
+        if (!isCorrect[3])
+        {
+            yield return ShowHintImageCoroutine(spriteHoleHint, 1.5f);
+            yield return ShowHintCoroutine("洞路判斷錯誤（應用 ==），角色掉進洞裡了！", Color.red, 2f);
+            LoseHeart();
+            if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
+            ResetAndUnlock();
+            isRunning = false;
+            yield break;
+        }
+
+        yield return ShowHintCoroutine("洞路判斷正確！安全避開！", Color.green, 0.8f);
+
+        // ── Phase 1：再驗證被蛇咬（Q3）──────────────────────────────
+        currentPhase = 1;
+        UpdateProgressText();
+        SetupPhaseScene(1); // 1 = 蛇
+        yield return new WaitForSeconds(0.6f);
+
+        if (!isCorrect[2])
+        {
+            yield return ShowHintImageCoroutine(spriteSnakeHint, 1.5f);
+            yield return ShowHintCoroutine("蛇路判斷錯誤（應用 ==），角色被蛇咬了！", Color.red, 2f);
+            LoseHeart();
+            if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
+            ResetAndUnlock();
+            isRunning = false;
+            yield break;
+        }
+
+        yield return ShowHintCoroutine("蛇路判斷正確！安全避開！", Color.green, 0.8f);
+
+        // ── Phase 2-4：三次安全通關（Q5）────────────────────────────
+        for (int safeRound = 0; safeRound < 3; safeRound++)
+        {
+            currentPhase = 2 + safeRound;
+            UpdateProgressText();
+            SetupLanes();
+            yield return new WaitForSeconds(0.6f);
+
+            if (!isCorrect[4])
+            {
+                yield return ShowHintCoroutine(
+                    string.Format("第 {0} 次：moveForward(123) 參數錯誤，角色無法移動！", safeRound + 1),
+                    Color.red, 2f);
+                LoseHeart();
+                if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
+                ResetAndUnlock();
+                isRunning = false;
+                yield break;
+            }
+
+            yield return ShowHintCoroutine(
+                string.Format("第 {0} 次安全通過！", safeRound + 1), Color.green, 0.8f);
+        }
+
+        // 全通過
+        timerRunning = false;
+        ShowEndScreen(true);
+        isRunning = false;
+    }
+
+    // ── Lane Setup ─────────────────────────────────────────────────
+
+    void SetupLanes()
+    {
+        int roadLane;
+        do { roadLane = Random.Range(0, 3); }
+        while (roadLane == lastRoadLane);
+        lastRoadLane = roadLane;
+
+        for (int i = 0; i < 3; i++)
+            laneTypes[i] = (i == roadLane) ? 0 : Random.Range(1, 3);
+
+        ApplyLaneSprites();
+    }
+
+    void SetupPhaseScene(int dangerType)
+    {
+        int safeLane = (Random.Range(0, 2) == 0) ? 0 : 2;
+        int otherLane = (safeLane == 0) ? 2 : 0;
+        int otherType = (dangerType == 1) ? 2 : 1;
+
+        laneTypes[1] = dangerType;
+        laneTypes[safeLane] = 0;
+        laneTypes[otherLane] = otherType;
+        lastRoadLane = safeLane;
+
+        ApplyLaneSprites();
+    }
+
+    void ApplyLaneSprites()
+    {
+        SetLaneSprite(leftImage, laneTypes[0], leftRoad, leftSnake, leftHole);
+        SetLaneSprite(midImage, laneTypes[1], midRoad, midSnake, midHole);
+        SetLaneSprite(rightImage, laneTypes[2], rightRoad, rightSnake, rightHole);
+    }
+
+    void SetLaneSprite(Image img, int type, Sprite road, Sprite snake, Sprite hole)
+    {
+        if (img == null) return;
+        img.sprite = type == 0 ? road : type == 1 ? snake : hole;
+    }
+
+    // ── Hearts / Game Over ─────────────────────────────────────────
+
+    void LoseHeart()
+    {
+        hearts--;
+        heart1?.SetActive(hearts >= 1);
+        heart2?.SetActive(hearts >= 2);
+        heart3?.SetActive(hearts >= 3);
+    }
+
+    void GameOver()
+    {
+        timerRunning = false;
+        ShowEndScreen(false);
+    }
+
+    // ── End Screen ─────────────────────────────────────────────────
+
+    void ShowEndScreen(bool isPass)
+    {
+        bool isNewRecord = isPass && hasPlayedBefore && elapsedTime < savedBestTime;
+        int coinEarned = isPass ? coinPass : 0;
+        if (isNewRecord) coinEarned += coinRecord;
+
+        float newBestTime = (!hasPlayedBefore || (isPass && elapsedTime < savedBestTime))
+                            ? elapsedTime : savedBestTime;
+
+        SaveData(savedCoins + coinEarned, newBestTime);
+        endScreen?.SetActive(true);
+
+        if (titleText) titleText.text = isPass ? "恭喜通關！" : "遊戲結束";
+        if (finalTimeText)
+        {
+            int min = (int)(elapsedTime / 60f);
+            int sec = (int)(elapsedTime % 60f);
+            finalTimeText.text = string.Format("{0:00}:{1:00}", min, sec);
+        }
+        if (coinRewardText)
+        {
+            string msg = isPass ? "金幣 +" + coinPass : "金幣 +0";
+            if (isNewRecord) msg += "\n破紀錄！+" + coinRecord;
+            coinRewardText.text = msg;
+        }
+    }
+
+    // ── Reset & Unlock ─────────────────────────────────────────────
+
+    void ResetAndUnlock()
+    {
+        RandomizeAnswerSides();
+        currentPhase = 0;
+        UpdateProgressText();
+        SetupLanes();
+
+        confirmButton.interactable = true;
+        confirmButton?.gameObject.SetActive(true);
+        javaHintPanel?.SetActive(true);
+        SetAllQuestionsInteractable(true);
+    }
+
+    void SetAllQuestionsInteractable(bool v)
+    {
+        foreach (var q in questions)
+        {
+            if (q.leftButton) q.leftButton.interactable = v;
+            if (q.rightButton) q.rightButton.interactable = v;
+        }
+    }
+
+    // ── Helpers ────────────────────────────────────────────────────
+
+    void UpdateProgressText()
+    {
+        if (progressText == null) return;
+        string[] names =
+        {
+            "驗證 1/5：洞路判斷",
+            "驗證 2/5：蛇路判斷",
+            "安全通關 3/5（第1次）",
+            "安全通關 4/5（第2次）",
+            "安全通關 5/5（第3次）"
+        };
+        if (currentPhase < names.Length)
+            progressText.text = names[currentPhase];
+    }
+
+    IEnumerator ShowHintCoroutine(string msg, Color col, float duration)
+    {
+        if (failHintText == null) yield break;
+        failHintText.text = msg;
+        failHintText.color = col;
+        failHintText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        failHintText.gameObject.SetActive(false);
+    }
+
+    IEnumerator ShowHintImageCoroutine(Sprite sprite, float duration)
+    {
+        if (hintImage == null || sprite == null) yield break;
+        hintImage.sprite = sprite;
+        hintImage.gameObject.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        hintImage.gameObject.SetActive(false);
+    }
+}
