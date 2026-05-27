@@ -27,6 +27,11 @@ public class Forestexploration_lvl2 : MonoBehaviour
     public Image midImage;
     public Image rightImage;
 
+    [Header("GO Buttons（左、中、右）")]
+    public GameObject goLeft;
+    public GameObject goMid;
+    public GameObject goRight;
+
     [Header("左邊三種 Sprite")]
     public Sprite leftRoad;
     public Sprite leftSnake;
@@ -156,6 +161,9 @@ public class Forestexploration_lvl2 : MonoBehaviour
 
         RandomizeAnswerSides();
         LoadData();
+
+        // 確保愛心顯示與 hearts 變數同步（防止場景初始狀態不一致）
+        UpdateHearts();
     }
 
     void Update()
@@ -334,17 +342,34 @@ public class Forestexploration_lvl2 : MonoBehaviour
     }
 
     // ── Main Verification Coroutine ────────────────────────────────
-    // isCorrect[0] = Q1 型別
-    // isCorrect[1] = Q2 迴圈
-    // isCorrect[2] = Q3 蛇
-    // isCorrect[3] = Q4 洞
-    // isCorrect[4] = Q5 安全路
+    // isCorrect[0] = Q1 型別宣告
+    // isCorrect[1] = Q2 for 迴圈條件
+    // isCorrect[2] = Q3 蛇路判斷 (==)
+    // isCorrect[3] = Q4 洞路判斷 (==)
+    // isCorrect[4] = Q5 安全路 moveForward()
+    //
+    // 全對時執行順序：
+    //   回合1：蛇路（被蛇咬、扣一顆心）
+    //   回合2：洞路（掉進洞、扣一顆心）
+    //   回合3-5：安全路×3（不扣心）
+    //
+    // 各題錯誤效果：
+    //   Q1錯：無法動，提示型別錯誤
+    //   Q2錯（其他全對）：只跑4次（蛇→洞→安全→安全），提示迴圈不完整
+    //   Q3錯：走蛇路時行為錯亂，顯示掉洞動畫（不是被蛇）
+    //   Q4錯：走洞路時行為錯亂，顯示被蛇動畫（不是掉洞）
+    //   Q5錯：安全路一直重複5次停不了
 
     IEnumerator RunVerification(bool[] isCorrect)
     {
         isRunning = true;
 
-        // Q1 錯
+        // 驗證期間隱藏所有 GO 按鈕（自動跑，玩家不需要按）
+        goLeft?.SetActive(false);
+        goMid?.SetActive(false);
+        goRight?.SetActive(false);
+
+        // ── Q1 錯：型別宣告錯，程式無法執行，不動 ───────────────────
         if (!isCorrect[0])
         {
             yield return ShowHintCoroutine("變數型別宣告錯誤，程式無法執行！", Color.red, 2f);
@@ -353,78 +378,102 @@ public class Forestexploration_lvl2 : MonoBehaviour
             yield break;
         }
 
-        // Q2 錯
-        if (!isCorrect[1])
+        // ── Q2 錯（其他全對）：只跑4次，少最後一次安全路 ─────────────
+        // 決定總回合數：Q2對=5次，Q2錯=4次
+        int totalRounds = isCorrect[1] ? 5 : 4;
+
+        // 定義5回合的內容：0=蛇,1=洞,2=安全,3=安全,4=安全
+        // laneType：1=蛇場景, 2=洞場景, 0=安全場景
+        int[] roundScene = { 1, 2, 0, 0, 0 }; // 各回合場景（蛇/洞/安全）
+
+        bool q2WrongHinted = false; // Q2 錯誤提示只顯示一次（在第4回合後）
+
+        for (int round = 0; round < totalRounds; round++)
         {
-            yield return ShowHintCoroutine("for 迴圈條件錯誤（i < 5 只走 4 次），路徑不完整！", Color.red, 2f);
-            ResetAndUnlock();
-            isRunning = false;
-            yield break;
-        }
-
-        // ── Phase 0：先驗證掉洞（Q4）────────────────────────────────
-        currentPhase = 0;
-        UpdateProgressText();
-        SetupPhaseScene(2); // 2 = 洞
-        yield return new WaitForSeconds(0.6f);
-
-        if (!isCorrect[3])
-        {
-            yield return ShowHintImageCoroutine(spriteHoleHint, 1.5f);
-            yield return ShowHintCoroutine("洞路判斷錯誤（應用 ==），角色掉進洞裡了！", Color.red, 2f);
-            LoseHeart();
-            if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
-            ResetAndUnlock();
-            isRunning = false;
-            yield break;
-        }
-
-        yield return ShowHintCoroutine("洞路判斷正確！安全避開！", Color.green, 0.8f);
-
-        // ── Phase 1：再驗證被蛇咬（Q3）──────────────────────────────
-        currentPhase = 1;
-        UpdateProgressText();
-        SetupPhaseScene(1); // 1 = 蛇
-        yield return new WaitForSeconds(0.6f);
-
-        if (!isCorrect[2])
-        {
-            yield return ShowHintImageCoroutine(spriteSnakeHint, 1.5f);
-            yield return ShowHintCoroutine("蛇路判斷錯誤（應用 ==），角色被蛇咬了！", Color.red, 2f);
-            LoseHeart();
-            if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
-            ResetAndUnlock();
-            isRunning = false;
-            yield break;
-        }
-
-        yield return ShowHintCoroutine("蛇路判斷正確！安全避開！", Color.green, 0.8f);
-
-        // ── Phase 2-4：三次安全通關（Q5）────────────────────────────
-        for (int safeRound = 0; safeRound < 3; safeRound++)
-        {
-            currentPhase = 2 + safeRound;
+            currentPhase = round;
             UpdateProgressText();
-            SetupLanes();
+
+            int scene = roundScene[round];
+            SetupPhaseScene(scene); // 設定該回合場景
             yield return new WaitForSeconds(0.6f);
 
-            if (!isCorrect[4])
+            if (scene == 1)
             {
-                yield return ShowHintCoroutine(
-                    string.Format("第 {0} 次：moveForward(123) 參數錯誤，角色無法移動！", safeRound + 1),
-                    Color.red, 2f);
+                // ── 蛇路回合 ──────────────────────────────────────────
+                if (!isCorrect[2])
+                {
+                    // Q3錯：走蛇路卻掉進洞（立即扣心，顯示洞的動畫）
+                    LoseHeart();
+                    if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
+                    yield return ShowHintImageCoroutine(spriteHoleHint, 1.5f);
+                    yield return ShowHintCoroutine("蛇路判斷錯誤，角色走蛇路卻掉進洞裡了！", Color.red, 2f);
+                    ResetAndUnlock();
+                    isRunning = false;
+                    yield break;
+                }
+                // Q3對：被蛇咬（立即扣心，顯示蛇的動畫，繼續下一回合）
                 LoseHeart();
                 if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
-                ResetAndUnlock();
-                isRunning = false;
-                yield break;
+                yield return ShowHintImageCoroutine(spriteSnakeHint, 1.5f);
+                yield return ShowHintCoroutine("遇到蛇！被蛇咬了一口！", Color.yellow, 1.2f);
             }
-
-            yield return ShowHintCoroutine(
-                string.Format("第 {0} 次安全通過！", safeRound + 1), Color.green, 0.8f);
+            else if (scene == 2)
+            {
+                // ── 洞路回合 ──────────────────────────────────────────
+                if (!isCorrect[3])
+                {
+                    // Q4錯：走洞路卻進蛇窟（立即扣心，顯示蛇的動畫）
+                    LoseHeart();
+                    if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
+                    yield return ShowHintImageCoroutine(spriteSnakeHint, 1.5f);
+                    yield return ShowHintCoroutine("洞路判斷錯誤，角色掉進洞卻走進蛇窟！", Color.red, 2f);
+                    ResetAndUnlock();
+                    isRunning = false;
+                    yield break;
+                }
+                // Q4對：掉進洞（立即扣心，顯示洞的動畫，繼續下一回合）
+                LoseHeart();
+                if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
+                yield return ShowHintImageCoroutine(spriteHoleHint, 1.5f);
+                yield return ShowHintCoroutine("掉進洞裡了！", Color.yellow, 1.2f);
+            }
+            else
+            {
+                // ── 安全路回合 ────────────────────────────────────────
+                if (!isCorrect[4])
+                {
+                    // Q5錯：安全路卻一直重複5次停不了（立即扣心）
+                    LoseHeart();
+                    if (hearts <= 0) { GameOver(); isRunning = false; yield break; }
+                    for (int loop = 0; loop < 5; loop++)
+                    {
+                        SetupLanes();
+                        yield return new WaitForSeconds(0.5f);
+                        yield return ShowHintCoroutine(
+                            string.Format("第 {0}/5 次：卡在同一條路……", loop + 1),
+                            Color.yellow, 0.6f);
+                    }
+                    yield return ShowHintCoroutine("安全路判斷錯誤，永遠無法離開這個森林！", Color.red, 2.5f);
+                    ResetAndUnlock();
+                    isRunning = false;
+                    yield break;
+                }
+                // Q5對：安全通過
+                yield return ShowHintCoroutine(
+                    string.Format("安全通過！（{0}/3）", round - 1), Color.green, 0.8f);
+            }
         }
 
-        // 全通過
+        // ── Q2 錯提示（跑完4次後）────────────────────────────────────
+        if (!isCorrect[1])
+        {
+            yield return ShowHintCoroutine("迴圈條件錯誤，路徑不完整！", Color.red, 2f);
+            ResetAndUnlock();
+            isRunning = false;
+            yield break;
+        }
+
+        // ── 全部5回合通過 → 結算 ──────────────────────────────────────
         timerRunning = false;
         ShowEndScreen(true);
         isRunning = false;
@@ -432,29 +481,54 @@ public class Forestexploration_lvl2 : MonoBehaviour
 
     // ── Lane Setup ─────────────────────────────────────────────────
 
+    /// <summary>
+    /// 安全路回合場景：一條安全路（GO顯示），一條蛇，一條洞。
+    /// 安全路位置隨機但不重複上一輪。
+    /// </summary>
     void SetupLanes()
     {
-        int roadLane;
-        do { roadLane = Random.Range(0, 3); }
-        while (roadLane == lastRoadLane);
-        lastRoadLane = roadLane;
+        int safeLane;
+        do { safeLane = Random.Range(0, 3); }
+        while (safeLane == lastRoadLane);
+        lastRoadLane = safeLane;
 
+        // 另外兩條：一條蛇(1)、一條洞(2)，隨機分配給剩下兩格
+        int[] others = new int[2];
+        int idx = 0;
         for (int i = 0; i < 3; i++)
-            laneTypes[i] = (i == roadLane) ? 0 : Random.Range(1, 3);
+            if (i != safeLane) others[idx++] = i;
+
+        // 隨機決定哪格是蛇、哪格是洞
+        bool snakeFirst = (Random.Range(0, 2) == 0);
+        laneTypes[safeLane] = 0;
+        laneTypes[others[0]] = snakeFirst ? 1 : 2;
+        laneTypes[others[1]] = snakeFirst ? 2 : 1;
 
         ApplyLaneSprites();
     }
 
     void SetupPhaseScene(int dangerType)
     {
+        // 安全路隨機在左(0)或右(2)，中間固定危險，另一側是另一種危險
+        // 明確設定全部三格，避免殘留值
         int safeLane = (Random.Range(0, 2) == 0) ? 0 : 2;
         int otherLane = (safeLane == 0) ? 2 : 0;
-        int otherType = (dangerType == 1) ? 2 : 1;
+        int otherType = (dangerType == 1) ? 2 : 1; // 另一種危險
 
-        laneTypes[1] = dangerType;
-        laneTypes[safeLane] = 0;
-        laneTypes[otherLane] = otherType;
+        laneTypes[0] = 0; // 先全清
+        laneTypes[1] = 0;
+        laneTypes[2] = 0;
+
+        laneTypes[1] = dangerType; // 中間：指定危險
+        laneTypes[safeLane] = 0;          // 安全路
+        laneTypes[otherLane] = otherType;  // 另一側：另一種危險
         lastRoadLane = safeLane;
+
+        // 確認只有一條安全路
+        int safeCount = 0;
+        for (int i = 0; i < 3; i++) if (laneTypes[i] == 0) safeCount++;
+        if (safeCount != 1)
+            UnityEngine.Debug.LogError($"[SetupPhaseScene] 安全路數量錯誤：{safeCount}，應為 1");
 
         ApplyLaneSprites();
     }
@@ -464,6 +538,15 @@ public class Forestexploration_lvl2 : MonoBehaviour
         SetLaneSprite(leftImage, laneTypes[0], leftRoad, leftSnake, leftHole);
         SetLaneSprite(midImage, laneTypes[1], midRoad, midSnake, midHole);
         SetLaneSprite(rightImage, laneTypes[2], rightRoad, rightSnake, rightHole);
+        UpdateGoButtons();
+    }
+
+    /// <summary>只顯示安全路（type=0）的 GO 按鈕，危險路隱藏</summary>
+    void UpdateGoButtons()
+    {
+        goLeft?.SetActive(laneTypes[0] == 0);
+        goMid?.SetActive(laneTypes[1] == 0);
+        goRight?.SetActive(laneTypes[2] == 0);
     }
 
     void SetLaneSprite(Image img, int type, Sprite road, Sprite snake, Sprite hole)
@@ -477,6 +560,11 @@ public class Forestexploration_lvl2 : MonoBehaviour
     void LoseHeart()
     {
         hearts--;
+        UpdateHearts();
+    }
+
+    void UpdateHearts()
+    {
         heart1?.SetActive(hearts >= 1);
         heart2?.SetActive(hearts >= 2);
         heart3?.SetActive(hearts >= 3);
@@ -531,9 +619,18 @@ public class Forestexploration_lvl2 : MonoBehaviour
         for (int i = 0; i < questions.Length; i++)
             RefreshQuestionVisual(i);
 
+        // 愛心補回 3 顆
+        hearts = 3;
+        heart1?.SetActive(true);
+        heart2?.SetActive(true);
+        heart3?.SetActive(true);
+
         currentPhase = 0;
         UpdateProgressText();
         SetupLanes();
+
+        // 強制同步愛心顯示（防止 UI 狀態不一致）
+        UpdateHearts();
 
         confirmButton.interactable = true;
         confirmButton?.gameObject.SetActive(true);
@@ -557,11 +654,11 @@ public class Forestexploration_lvl2 : MonoBehaviour
         if (progressText == null) return;
         string[] names =
         {
-            "驗證 1/5：洞路判斷",
-            "驗證 2/5：蛇路判斷",
-            "安全通關 3/5（第1次）",
-            "安全通關 4/5（第2次）",
-            "安全通關 5/5（第3次）"
+            "回合 1/5：蛇路",
+            "回合 2/5：洞路",
+            "回合 3/5：安全路",
+            "回合 4/5：安全路",
+            "回合 5/5：安全路"
         };
         if (currentPhase < names.Length)
             progressText.text = names[currentPhase];
