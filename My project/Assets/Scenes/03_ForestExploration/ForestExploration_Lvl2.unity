@@ -1966,7 +1966,7 @@ MonoBehaviour:
   finalTimeText: {fileID: 1902883349}
   coinRewardText: {fileID: 476020678}
   btnEndConfirm: {fileID: 398896018}
-  coinPass: 50
+  coinPass: 100
   coinRecord: 150
   progressText: {fileID: 0}
 --- !u!1 &428734960
