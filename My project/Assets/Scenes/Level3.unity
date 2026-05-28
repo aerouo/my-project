@@ -1169,7 +1169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: hum-001
+  acceptID: if
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: cd32c45e09ad6554482e9b794f54ff0d, type: 3}
   sprite_main: {fileID: 21300000, guid: 8918d861e0742da48b181e6ff8e6f645, type: 3}
@@ -1429,108 +1429,6 @@ MonoBehaviour:
   humanEat2: {fileID: 21300000, guid: 146b60ad1b92bd346964027540deddea, type: 3}
   pressesPerRound: 10
   level3Manager: {fileID: 1915700029}
---- !u!1 &317186268
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 317186269}
-  - component: {fileID: 317186273}
-  - component: {fileID: 317186272}
-  - component: {fileID: 317186271}
-  - component: {fileID: 317186270}
-  m_Layer: 5
-  m_Name: tuo 16
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &317186269
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 317186268}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 529406754}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: -350}
-  m_SizeDelta: {x: 400, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &317186270
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 317186268}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!114 &317186271
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 317186268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df71f1630040f654a8e2c6a606da4430, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DragBlock
-  blockID: class
---- !u!114 &317186272
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 317186268}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a93cf622123be044b94871c45a78b90b, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &317186273
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 317186268}
-  m_CullTransparentMesh: 1
 --- !u!1 &326012953
 GameObject:
   m_ObjectHideFlags: 0
@@ -1695,7 +1593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df71f1630040f654a8e2c6a606da4430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragBlock
-  blockID: name num
+  blockID: yes
 --- !u!225 &344505235
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2200,7 +2098,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: name num
+  acceptID: int name
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: fc4d1e8e3c46129489856fb0edbc504f, type: 3}
   sprite_main: {fileID: 21300000, guid: e7d8f7efa0ccb95429e88ebabcfe4dca, type: 3}
@@ -2362,7 +2260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: print
+  acceptID: int see
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 6d95e700bbc90394a829b1ea237d3de4, type: 3}
   sprite_main: {fileID: 21300000, guid: 9bf06d8b833e25f45b25617847149a34, type: 3}
@@ -2422,7 +2320,7 @@ GameObject:
   m_Component:
   - component: {fileID: 529406754}
   m_Layer: 5
-  m_Name: if else group
+  m_Name: if else group-bad
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2473,9 +2371,6 @@ RectTransform:
   - {fileID: 788351757}
   - {fileID: 61979303}
   - {fileID: 1525600241}
-  - {fileID: 1455305900}
-  - {fileID: 317186269}
-  - {fileID: 1384210676}
   - {fileID: 848743921}
   - {fileID: 860492235}
   - {fileID: 2046857698}
@@ -2807,7 +2702,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -700, y: 0}
+  m_AnchoredPosition: {x: -850, y: 0}
   m_SizeDelta: {x: 130, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &628942485
@@ -2834,7 +2729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df71f1630040f654a8e2c6a606da4430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragBlock
-  blockID: string
+  blockID: string marks
 --- !u!114 &628942487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2963,7 +2858,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string num
+  acceptID: yes
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 64e91c628fe5f2245963e00374709cfd, type: 3}
   sprite_main: {fileID: 21300000, guid: 3a26b1f23467a7842b07d18746a7fe50, type: 3}
@@ -3213,7 +3108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string num
+  acceptID: else
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 64e91c628fe5f2245963e00374709cfd, type: 3}
   sprite_main: {fileID: 21300000, guid: 3a26b1f23467a7842b07d18746a7fe50, type: 3}
@@ -4922,7 +4817,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string num
+  acceptID: no
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 64e91c628fe5f2245963e00374709cfd, type: 3}
   sprite_main: {fileID: 21300000, guid: 3a26b1f23467a7842b07d18746a7fe50, type: 3}
@@ -5110,7 +5005,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df71f1630040f654a8e2c6a606da4430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragBlock
-  blockID: hum-001
+  blockID: else
 --- !u!114 &930944374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6164,7 +6059,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string
+  acceptID: int
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: a5b98f2689e0a5240b3f5af9e412371e, type: 3}
   sprite_main: {fileID: 21300000, guid: 9169f5f5f4265984cb25f99c2d349264, type: 3}
@@ -6746,108 +6641,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1369067406}
   m_CullTransparentMesh: 1
---- !u!1 &1384210675
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1384210676}
-  - component: {fileID: 1384210680}
-  - component: {fileID: 1384210679}
-  - component: {fileID: 1384210678}
-  - component: {fileID: 1384210677}
-  m_Layer: 5
-  m_Name: tuo 17
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1384210676
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384210675}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 529406754}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: -350}
-  m_SizeDelta: {x: 400, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &1384210677
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384210675}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!114 &1384210678
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384210675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df71f1630040f654a8e2c6a606da4430, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DragBlock
-  blockID: class
---- !u!114 &1384210679
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384210675}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a93cf622123be044b94871c45a78b90b, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1384210680
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384210675}
-  m_CullTransparentMesh: 1
 --- !u!1 &1437727778
 GameObject:
   m_ObjectHideFlags: 0
@@ -6898,7 +6691,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string num
+  acceptID: ==
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 64e91c628fe5f2245963e00374709cfd, type: 3}
   sprite_main: {fileID: 21300000, guid: 3a26b1f23467a7842b07d18746a7fe50, type: 3}
@@ -7112,7 +6905,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df71f1630040f654a8e2c6a606da4430, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DragBlock
-  blockID: string num
+  blockID: 0
 --- !u!225 &1451551083
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -7125,108 +6918,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!1 &1455305899
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1455305900}
-  - component: {fileID: 1455305904}
-  - component: {fileID: 1455305903}
-  - component: {fileID: 1455305902}
-  - component: {fileID: 1455305901}
-  m_Layer: 5
-  m_Name: tuo 15
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1455305900
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1455305899}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 529406754}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: -350}
-  m_SizeDelta: {x: 400, y: 100}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &1455305901
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1455305899}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
---- !u!114 &1455305902
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1455305899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df71f1630040f654a8e2c6a606da4430, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DragBlock
-  blockID: class
---- !u!114 &1455305903
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1455305899}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: a93cf622123be044b94871c45a78b90b, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &1455305904
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1455305899}
-  m_CullTransparentMesh: 1
 --- !u!1 &1464674835
 GameObject:
   m_ObjectHideFlags: 0
@@ -8213,7 +7904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string num
+  acceptID: string marks
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 64e91c628fe5f2245963e00374709cfd, type: 3}
   sprite_main: {fileID: 21300000, guid: 3a26b1f23467a7842b07d18746a7fe50, type: 3}
@@ -8660,7 +8351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string marks
+  acceptID: 0
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 797dde30ff3fc864481716c1d11ebb3d, type: 3}
   sprite_main: {fileID: 21300000, guid: ca1352ba7a6ef834a83ddf8531bf1339, type: 3}
@@ -8907,7 +8598,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string num
+  acceptID: string marks
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 64e91c628fe5f2245963e00374709cfd, type: 3}
   sprite_main: {fileID: 21300000, guid: 3a26b1f23467a7842b07d18746a7fe50, type: 3}
@@ -9007,7 +8698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string num
+  acceptID: print
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 64e91c628fe5f2245963e00374709cfd, type: 3}
   sprite_main: {fileID: 21300000, guid: 3a26b1f23467a7842b07d18746a7fe50, type: 3}
@@ -9403,7 +9094,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -400, y: -10}
+  m_AnchoredPosition: {x: -500, y: -10}
   m_SizeDelta: {x: 400, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &1980761944
@@ -9519,7 +9210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string num
+  acceptID: 0
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 64e91c628fe5f2245963e00374709cfd, type: 3}
   sprite_main: {fileID: 21300000, guid: 3a26b1f23467a7842b07d18746a7fe50, type: 3}
@@ -9830,7 +9521,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0316742e3ac0e6e4188778713d548a23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropSlot
-  acceptID: string num
+  acceptID: print
   isCorrect: 0
   sprite_class: {fileID: 21300000, guid: 64e91c628fe5f2245963e00374709cfd, type: 3}
   sprite_main: {fileID: 21300000, guid: 3a26b1f23467a7842b07d18746a7fe50, type: 3}
