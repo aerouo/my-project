@@ -1,8 +1,14 @@
+<<<<<<< HEAD
 # =========================================================================
 # Unity Standard Gitignore
 # =========================================================================
 
 # 絕對不要進 Git 的主要快取與暫存資料夾（直接用全域比對，更安全）
+=======
+# =========================
+# Unity generated folders
+# =========================
+>>>>>>> feature/level2
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -10,6 +16,7 @@
 [Bb]uilds/
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
+<<<<<<< HEAD
 .utmp/
 
 # 記憶體與錄影檔案
@@ -21,6 +28,12 @@
 .gradle/
 .idea/
 .vsconfig
+=======
+
+# =========================
+# Unity generated files
+# =========================
+>>>>>>> feature/level2
 *.csproj
 *.unityproj
 *.sln
@@ -36,6 +49,7 @@
 *.opendb
 *.VC.db
 
+<<<<<<< HEAD
 # Unity 自動產生的 Meta 雜訊
 *.pidb.meta
 *.pdb.meta
@@ -58,3 +72,31 @@ crashlytics-build.properties
 # OS 產生的雜訊
 .DS_Store
 Thumbs.db
+=======
+# =========================
+# OS generated files
+# =========================
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# =========================
+# IDE / Editor
+# =========================
+.vscode/
+.idea/
+
+# =========================
+# Unity meta handling
+# =========================
+!/[Aa]ssets/**/*.meta
+!/[Pp]ackages/**/*.meta
+!/[Pp]roject[Ss]ettings/**/*.meta
+
+# =========================
+# Crash reports
+# =========================
+sysinfo.txt
+.vs/
+>>>>>>> feature/level2
