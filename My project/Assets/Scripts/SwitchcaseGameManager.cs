@@ -3,12 +3,12 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
-public class StringGameManager : MonoBehaviour
+public class SwitchcaseGameManager : MonoBehaviour
 {
     [Header("UI 連結")]
-    public GameObject printGroupPanel;
+    public GameObject SwitchcaseGroupPanel;
     public GameObject resultPanel;
-    public GameObject computerPanel;
+    public GameObject draftPanel;
     public TextMeshProUGUI resultText;
     public TextMeshProUGUI wrongText;
 
@@ -124,8 +124,8 @@ public class StringGameManager : MonoBehaviour
 
     IEnumerator ExecuteBlocks(DropSlot[] slots)
     {
-        if (printGroupPanel != null) printGroupPanel.SetActive(false);
-        if (computerPanel != null) computerPanel.SetActive(true);
+        if (SwitchcaseGroupPanel != null) SwitchcaseGroupPanel.SetActive(false);
+        if (draftPanel != null) draftPanel.SetActive(true);
 
         for (int i = 0; i < blockImages.Length && i < slots.Length; i++)
         {
@@ -175,8 +175,8 @@ public class StringGameManager : MonoBehaviour
         foreach (DropSlot slot in slots)
             slot.ResetSlot();
 
-        if (computerPanel != null) computerPanel.SetActive(false);
-        if (printGroupPanel != null) printGroupPanel.SetActive(true);
+        if (draftPanel != null) draftPanel.SetActive(false);
+        if (SwitchcaseGroupPanel != null) SwitchcaseGroupPanel.SetActive(true);
 
         if (wrongText != null)
         {

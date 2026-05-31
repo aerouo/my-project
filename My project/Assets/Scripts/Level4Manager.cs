@@ -25,42 +25,36 @@ public class Level4Manager : MonoBehaviour
     [Header("背景圖片庫")]
     public Sprite scene1;
     public Sprite scene2;
-    public Sprite scene3;
 
     [Header("小遊戲銜接")]
     public GameObject miniGameCanvas;
     public GameObject miniGameBackground;
 
     [Header("第二段劇情結束後銜接")]
-    public GameObject nextGameUI;  // 程式方塊拖曳的 UI，拼圖後劇情結束開啟
+    public GameObject nextGameUI;
 
-    private bool puzzleCompleted = false;
-    private int currentScene = 1; // 目前背景編號
+    private bool woodCompleted = false;
 
     void Start()
     {
         if (backgroundImage != null && scene1 != null) backgroundImage.sprite = scene1;
-        if (dialogueText != null) dialogueText.color = Color.white;
-
         if (miniGameCanvas != null) miniGameCanvas.SetActive(false);
         if (miniGameBackground != null) miniGameBackground.SetActive(false);
         if (nextGameUI != null) nextGameUI.SetActive(false);
 
         if (dialogueText != null)
         {
+            dialogueText.color = Color.black;
             dialogueText.text = "";
             StartCoroutine(PlayPart1());
         }
     }
-
-    // ═══════════════ 第一段劇情 ══════════════════════
 
     IEnumerator PlayPart1()
     {
         yield return new WaitForSeconds(waitBeforeStory);
         yield return StartCoroutine(PlayStory(storyPart1));
 
-        // 第一段跑完，顯示挑木頭
         dialogueText.text = "";
         if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
         if (miniGameBackground != null) miniGameBackground.SetActive(true);
@@ -68,36 +62,31 @@ public class Level4Manager : MonoBehaviour
         Debug.Log("【劇情控制】第一段結束，等待挑木頭完成...");
     }
 
-    // ═══════════════ 挑木頭完成通知 ════════════════════
-    // 由 Puzzle_Lvl2 的 CompleteGame() 呼叫
-
-    public void OnPuzzleComplete()
+    public void OnWoodComplete()
     {
-        if (puzzleCompleted) return;
-        puzzleCompleted = true;
+        if (woodCompleted) return;
+        woodCompleted = true;
 
-        // 隱藏挑木頭
         if (miniGameCanvas != null) miniGameCanvas.SetActive(false);
         if (miniGameBackground != null) miniGameBackground.SetActive(false);
+
+        // 換成第二張背景
+        if (backgroundImage != null && scene2 != null)
+            backgroundImage.sprite = scene2;
 
         Debug.Log("【劇情控制】挑木頭完成，開始第二段劇情");
         StartCoroutine(PlayPart2());
     }
-
-    // ═══════════════ 第二段劇情 ══════════════════════
 
     IEnumerator PlayPart2()
     {
         if (dialogueText != null) dialogueText.text = "";
         yield return StartCoroutine(PlayStory(storyPart2));
 
-        // 第二段跑完，銜接程式方塊
         dialogueText.text = "";
         if (nextGameUI != null) nextGameUI.SetActive(true);
         Debug.Log("【劇情控制】第二段結束，開啟程式方塊");
     }
-
-    // ═══════════════ 通用劇情播放 ════════════════════
 
     IEnumerator PlayStory(string content)
     {
@@ -111,21 +100,6 @@ public class Level4Manager : MonoBehaviour
             string currentLine = line.Trim();
             if (string.IsNullOrEmpty(currentLine)) continue;
 
-            // 換圖指令
-            if (currentLine.Contains("[換圖]"))
-            {
-                currentScene++;
-                Sprite nextSprite = currentScene == 2 ? scene2 : scene3;
-                if (backgroundImage != null && nextSprite != null)
-                {
-                    backgroundImage.sprite = nextSprite;
-                    if (dialogueText != null) dialogueText.color = Color.black;
-                    Debug.Log("【劇情控制】背景切換到 scene" + currentScene);
-                }
-                continue;
-            }
-
-            // 打字機效果
             if (dialogueText != null) dialogueText.text = "";
             foreach (char letter in currentLine.ToCharArray())
             {
@@ -136,22 +110,18 @@ public class Level4Manager : MonoBehaviour
         }
     }
 
-    // ═══════════════ 跳過 ════════════════════════════
-
     public void SkipStory()
     {
         StopAllCoroutines();
         if (dialogueText != null) dialogueText.text = "";
 
-        if (!puzzleCompleted)
+        if (!woodCompleted)
         {
-            // 跳過第一段，直接顯示挑木頭
             if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
             if (miniGameBackground != null) miniGameBackground.SetActive(true);
         }
         else
         {
-            // 跳過第二段，直接銜接下一關
             if (nextGameUI != null) nextGameUI.SetActive(true);
         }
     }
