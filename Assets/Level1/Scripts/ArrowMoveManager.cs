@@ -16,23 +16,32 @@ public class ArrowMoveManager : MonoBehaviour
     [Header("通關劇情演出設定")]
     public GameObject endingBackground;
     public TextMeshProUGUI endingPlotText;
-    public GameObject continueButton;  // 妳新增的 ContinueButton
+    public GameObject continueButton;
 
     [Header("下一關設定")]
-    public GameObject nextGameUI;      // 拖入「遊戲-print」物件
+    public GameObject nextGameUI;
+
+    [Header("闖關紀錄")]
+    public string levelID = "Level1";
+    public int firstPartProgress = 50;
+    public PrintGameManager printGameManager;
 
     [Header("位置微調")]
     public float yOffset = 70f;
 
     [Header("正確答案設定")]
-    public string[] correctAnswers = { "箭頭 (右)", "箭頭 (右)", "箭頭 (右)", "箭頭 (上)", "箭頭 (右)", "箭頭 (右)" };
+    public string[] correctAnswers =
+    {
+        "箭頭 (右)", "箭頭 (右)", "箭頭 (右)",
+        "箭頭 (上)", "箭頭 (右)", "箭頭 (右)"
+    };
 
     private Vector3 playerStartPosition;
     private bool isMoving = false;
+    private bool firstPartSaved = false;
 
     void OnEnable()
     {
-        // --- 自動尋找物件邏輯 ---
         for (int i = 0; i < 6; i++)
         {
             GameObject slotObj = GameObject.Find("虛線方塊 (" + (i + 1) + ")");
@@ -46,11 +55,16 @@ public class ArrowMoveManager : MonoBehaviour
         if (failHintText == null)
         {
             GameObject hintObj = GameObject.Find("FailHintText");
-            if (hintObj != null) failHintText = hintObj.GetComponent<TextMeshProUGUI>();
+            if (hintObj != null)
+                failHintText = hintObj.GetComponent<TextMeshProUGUI>();
         }
 
-        // 初始隱藏所有通關後的 UI
-        if (player != null) playerStartPosition = player.transform.position;
+        if (printGameManager == null)
+            printGameManager = FindObjectOfType<PrintGameManager>();
+
+        if (player != null)
+            playerStartPosition = player.transform.position;
+
         if (failHintText != null) failHintText.gameObject.SetActive(false);
         if (endingBackground != null) endingBackground.SetActive(false);
         if (endingPlotText != null) endingPlotText.gameObject.SetActive(false);
@@ -59,7 +73,8 @@ public class ArrowMoveManager : MonoBehaviour
 
     public void StartWalking()
     {
-        if (!isMoving && player != null) StartCoroutine(FollowCommands());
+        if (!isMoving && player != null)
+            StartCoroutine(FollowCommands());
     }
 
     IEnumerator FollowCommands()
@@ -74,6 +89,7 @@ public class ArrowMoveManager : MonoBehaviour
                 GameObject arrow = slot.GetChild(0).gameObject;
                 Image arrowImage = arrow.GetComponent<Image>();
                 Color originalColor = arrowImage.color;
+
                 arrowImage.color = new Color(0.4f, 0.2f, 0.6f);
 
                 if (arrow.name.Contains(correctAnswers[stepIndex]))
@@ -81,73 +97,132 @@ public class ArrowMoveManager : MonoBehaviour
                     Vector3 targetPos = footPrints[stepIndex].position;
                     targetPos.y += yOffset;
 
-                    float elapsed = 0;
+                    float elapsed = 0f;
                     Vector3 startPos = player.transform.position;
+
                     while (elapsed < 0.4f)
                     {
                         player.transform.position = Vector3.Lerp(startPos, targetPos, elapsed / 0.4f);
                         elapsed += Time.deltaTime;
                         yield return null;
                     }
+
                     player.transform.position = targetPos;
                     arrowImage.color = originalColor;
                     stepIndex++;
+
                     yield return new WaitForSeconds(0.2f);
                 }
                 else
                 {
                     arrowImage.color = Color.red;
+
                     ShowMessage("再試一次吧！", Color.white);
+
                     yield return new WaitForSeconds(1.5f);
-                    failHintText.gameObject.SetActive(false);
+
+                    if (failHintText != null)
+                        failHintText.gameObject.SetActive(false);
+
                     arrowImage.color = originalColor;
+
                     ResetPlayer();
+
                     isMoving = false;
+
+                    // 錯誤不存 50%，回去繼續計時
+                    if (printGameManager != null)
+                        printGameManager.StartTimer();
+
                     yield break;
                 }
             }
-            else break;
+            else
+            {
+                break;
+            }
         }
 
         if (stepIndex == footPrints.Length)
         {
-            // 通關演出：閃爍後換幕
+            SaveFirstPartProgress();
+
             for (int i = 0; i < 4; i++)
             {
                 ShowMessage("恭喜通關！", Color.white);
                 yield return new WaitForSeconds(0.25f);
-                failHintText.gameObject.SetActive(false);
+
+                if (failHintText != null)
+                    failHintText.gameObject.SetActive(false);
+
                 yield return new WaitForSeconds(0.25f);
             }
+
             ShowEndingPlot();
         }
         else
         {
             ResetPlayer();
         }
+
         isMoving = false;
     }
 
+    private void SaveFirstPartProgress()
+    {
+        if (firstPartSaved)
+            return;
+
+        firstPartSaved = true;
+
+        float currentTime = 0f;
+
+        if (printGameManager != null)
+            currentTime = printGameManager.GetFinalTime();
+
+        Level1Manager level1Manager = FindObjectOfType<Level1Manager>();
+        if (level1Manager != null)
+            level1Manager.SetFirstPartTime(currentTime);
+
+        if (FirestoreManager.Instance != null)
+        {
+            FirestoreManager.Instance.SaveQuestProgress(levelID, firstPartProgress, currentTime, 0);
+            Debug.Log("【第一關】第一段完成，停止計時並儲存 50%，時間：" + currentTime + " 秒");
+        }
+        else
+        {
+            Debug.LogWarning("【第一關】FirestoreManager.Instance 不存在，無法儲存 50%");
+        }
+    }
     void ShowEndingPlot()
     {
-        if (endingBackground != null) endingBackground.SetActive(true);
+        if (endingBackground != null)
+            endingBackground.SetActive(true);
+
         if (endingPlotText != null)
         {
-            endingPlotText.text = "你晃了晃仍然發麻的雙腿，走向靠牆的一台舊型電腦，\n螢幕上的綠色指示燈閃著微弱光芒，似乎仍保存著最後一絲電力。";
+            endingPlotText.text =
+                "你晃了晃仍然發麻的雙腿，走向靠牆的一台舊型電腦，\n" +
+                "螢幕上的綠色指示燈閃著微弱光芒，似乎仍保存著最後一絲電力。";
+
             endingPlotText.gameObject.SetActive(true);
         }
 
-        // 顯示繼續按鈕，讓玩家可以手動點擊
-        if (continueButton != null) continueButton.SetActive(true);
+        if (continueButton != null)
+            continueButton.SetActive(true);
     }
 
-    // 💡 點擊「繼續」按鈕時會執行的函數
     public void OnClickContinue()
     {
-        // 1. 打開下一個遊戲介面「遊戲-print」
-        if (nextGameUI != null) nextGameUI.SetActive(true);
+        if (printGameManager != null)
+        {
+            printGameManager.StartTimer();
+            Debug.Log("【第一關】第二段開始，繼續計時");
+        }
 
-        // 2. 關閉目前的「小遊戲-尋找線索」整體
+        if (nextGameUI != null)
+            nextGameUI.SetActive(true);
+
         this.gameObject.SetActive(false);
     }
 
@@ -163,6 +238,7 @@ public class ArrowMoveManager : MonoBehaviour
 
     public void ResetPlayer()
     {
-        if (player != null) player.transform.position = playerStartPosition;
+        if (player != null)
+            player.transform.position = playerStartPosition;
     }
 }

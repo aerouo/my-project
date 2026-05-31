@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PrintGameManager : MonoBehaviour
 {
@@ -42,6 +43,12 @@ public class PrintGameManager : MonoBehaviour
     [Header("Block 5 圖片")]
     public Sprite block5_class, block5_main, block5_print, block5_string, block5_num;
 
+    [Header("Quest Record")]
+    public string levelID = "Level1";
+    public int rewardCoins = 200;
+    public string returnSceneName = "SampleScene";
+    public string returnPanelName = "Panel_Clue";
+
     private float totalPlayTime = 0f;
     private float segmentStartTime = 0f;
 
@@ -57,6 +64,9 @@ public class PrintGameManager : MonoBehaviour
 
         if (resultPanel != null)
             resultPanel.SetActive(false);
+
+        if (wrongText != null)
+            wrongText.gameObject.SetActive(false);
     }
 
     public void StartGame()
@@ -67,7 +77,7 @@ public class PrintGameManager : MonoBehaviour
         hasStarted = true;
         hasFinished = false;
 
-        Debug.Log("【第一關】小遊戲開始，計時重置並開始");
+        Debug.Log("【第一關】小遊戲開始，正式開始計時");
     }
 
     public void ResetTimer()
@@ -99,6 +109,19 @@ public class PrintGameManager : MonoBehaviour
         Debug.Log("【第一關】暫停計時，本段：" + segmentTime + " 秒，累積：" + totalPlayTime + " 秒");
     }
 
+    public float GetCurrentTime()
+    {
+        float currentTime = totalPlayTime;
+
+        if (isTiming)
+            currentTime += Time.time - segmentStartTime;
+
+        if (currentTime < 0f)
+            currentTime = 0f;
+
+        return Mathf.Round(currentTime * 10f) / 10f;
+    }
+
     public float GetFinalTime()
     {
         PauseTimer();
@@ -119,13 +142,13 @@ public class PrintGameManager : MonoBehaviour
             StartGame();
         }
 
-        // 按下完成後，開始跑檢查動畫，所以這裡先停止計時
+        // 按完成後先暫停，檢查動畫不算時間
         PauseTimer();
 
         if (executeCoroutine != null)
             StopCoroutine(executeCoroutine);
 
-        executeCoroutine = StartCoroutine(ExecuteBlocks(slots));
+        executeCoroutine = StartCoroutine(ExecuteBlocks());
     }
 
     Sprite GetBlockSprite(int blockIndex, string blockID)
@@ -153,11 +176,12 @@ public class PrintGameManager : MonoBehaviour
         }
     }
 
-    IEnumerator ExecuteBlocks(Lvl1DropSlot[] slots)
+    IEnumerator ExecuteBlocks()
     {
         if (slots == null || slots.Length == 0)
         {
             Debug.LogWarning("【第一關】slots 沒有設定");
+            StartTimer();
             yield break;
         }
 
@@ -198,7 +222,7 @@ public class PrintGameManager : MonoBehaviour
                 yield return new WaitForSeconds(0.5f);
                 blockImages[i].color = original;
 
-                yield return StartCoroutine(ShowWrongHint(slots));
+                yield return StartCoroutine(ShowWrongHint());
                 yield break;
             }
 
@@ -215,11 +239,12 @@ public class PrintGameManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
 
-        float elapsed = GetFinalTime();
-        ShowResult(elapsed);
+        // 全部正確，第一關完成，直接顯示 Result Panel
+        float finalTime = GetFinalTime();
+        ShowResult(finalTime);
     }
 
-    IEnumerator ShowWrongHint(Lvl1DropSlot[] slots)
+    IEnumerator ShowWrongHint()
     {
         foreach (Image img in blockImages)
         {
@@ -246,7 +271,7 @@ public class PrintGameManager : MonoBehaviour
             wrongText.gameObject.SetActive(false);
         }
 
-        // 答錯後回到可操作狀態，繼續計時
+        // 答錯後繼續計時
         StartTimer();
     }
 
@@ -263,33 +288,73 @@ public class PrintGameManager : MonoBehaviour
         }
     }
 
+    public void CompleteLevel()
+    {
+        float elapsed = GetFinalTime();
+        ShowResult(elapsed);
+    }
+
     void ShowResult(float elapsed)
     {
         if (hasFinished) return;
         hasFinished = true;
+
+        float finalTotalTime = elapsed;
+
+        Level1Manager level1Manager = FindObjectOfType<Level1Manager>();
+        if (level1Manager != null)
+            finalTotalTime += level1Manager.GetFirstPartTime();
+
+        finalTotalTime = Mathf.Round(finalTotalTime * 10f) / 10f;
 
         if (resultPanel != null)
             resultPanel.SetActive(true);
 
         if (resultText != null)
         {
-            int minutes = Mathf.FloorToInt(elapsed / 60f);
-            int seconds = Mathf.FloorToInt(elapsed % 60f);
+            int minutes = Mathf.FloorToInt(finalTotalTime / 60f);
+            int seconds = Mathf.FloorToInt(finalTotalTime % 60f);
 
             resultText.text =
                 $"恭喜通關\n耗時：{minutes:00}:{seconds:00}";
         }
 
-        Debug.Log("【第一關】最終累積遊玩時間：" + elapsed + " 秒");
+        Debug.Log("【第一關】第二段時間：" + elapsed + " 秒");
+        Debug.Log("【第一關】第一段 + 第二段總時間：" + finalTotalTime + " 秒");
 
         if (FirestoreManager.Instance != null)
         {
-            FirestoreManager.Instance.SaveQuestRecord("Level1", elapsed, 100);
-            FirestoreManager.Instance.AddCoins(200);
+            FirestoreManager.Instance.SaveQuestRecord(levelID, finalTotalTime, 100);
+            FirestoreManager.Instance.AddCoins(rewardCoins);
+
+            Debug.Log("【第一關】完成關卡，儲存 100% 紀錄，獎勵金幣：" + rewardCoins);
+        }
+    }
+
+
+
+    public void SaveCurrentProgress()
+    {
+        if (hasFinished) return;
+
+        float currentTime = GetFinalTime();
+
+        if (FirestoreManager.Instance != null)
+        {
+            FirestoreManager.Instance.SaveQuestProgress(levelID, 50, currentTime, 0);
+            Debug.Log("【第一關】離開前儲存目前闖關進度：50%，時間：" + currentTime + " 秒");
         }
         else
         {
-            Debug.LogWarning("【第一關】FirestoreManager.Instance 不存在，無法儲存紀錄");
+            Debug.LogWarning("【第一關】FirestoreManager.Instance 不存在，無法儲存進度");
         }
+    }
+
+    public void SaveCurrentProgressAndQuit()
+    {
+        SaveCurrentProgress();
+
+        PlayerPrefs.SetString("ReturnPanel", returnPanelName);
+        SceneManager.LoadScene(returnSceneName);
     }
 }

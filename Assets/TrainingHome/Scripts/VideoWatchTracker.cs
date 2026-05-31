@@ -10,41 +10,184 @@ public class VideoWatchTracker : MonoBehaviour
     public string videoID = "basic_01";
 
     [Header("Complete Setting")]
+    [Range(0.1f, 1f)]
     public double completeRate = 0.9;
 
-    private bool saved = false;
-    private double maxProgress = 0;
+    [Header("Anti Skip Setting")]
+    public double maxValidTimeJump = 5.0;
+
+    [Header("Save Setting")]
+    [Tooltip("Firebase 每幾%儲存一次，建議 5。")]
+    public int saveStepPercent = 5;
+
+    [Header("Debug")]
+    public bool showDebugLog = true;
+
+    [Tooltip("播放過程中每增加 1% 是否顯示 Console 訊息")]
+    public bool logEveryPercent = true;
+
+    private bool completedSaved = false;
+    private float watchedSeconds = 0f;
+    private double lastVideoTime = 0;
+    private bool hasStartedTracking = false;
+
+    private int lastSavedPercent = 0; // Firebase 儲存用
+    private int lastLoggedPercent = 0; // Console 顯示用
+
+    void Awake()
+    {
+        if (videoPlayer == null)
+            videoPlayer = GetComponent<VideoPlayer>();
+    }
+
+    void Start()
+    {
+        ResetTracking();
+    }
 
     void Update()
     {
-        if (saved) return;
         if (videoPlayer == null) return;
+        if (videoPlayer.clip == null) return;
         if (videoPlayer.length <= 0) return;
 
-        double progress = videoPlayer.time / videoPlayer.length;
+        TrackWatchingProgress();
+    }
 
-        if (progress > maxProgress)
-            maxProgress = progress;
+    void TrackWatchingProgress()
+    {
+        if (!videoPlayer.isPlaying)
+            return;
 
-        if (maxProgress >= completeRate)
+        double currentTime = videoPlayer.time;
+
+        if (!hasStartedTracking)
         {
-            SaveWatched();
+            lastVideoTime = currentTime;
+            hasStartedTracking = true;
+            DebugLog("開始追蹤影片：" + videoID);
+            return;
+        }
+
+        double timeDiff = currentTime - lastVideoTime;
+
+        if (timeDiff > 0 && timeDiff <= maxValidTimeJump)
+        {
+            watchedSeconds += (float)timeDiff;
+        }
+        else if (timeDiff > maxValidTimeJump)
+        {
+            DebugLog("偵測到拖拉影片，不累積秒數：" + timeDiff);
+        }
+
+        lastVideoTime = currentTime;
+
+        int percent = GetRealWatchPercent();
+
+        // Console 1% 一次顯示，不代表每 1% 都寫 Firebase
+        if (logEveryPercent && percent > lastLoggedPercent)
+        {
+            DebugLog(videoID + " 目前觀看進度 = " + percent + "%");
+            lastLoggedPercent = percent;
+        }
+
+        // Firebase 仍然依 saveStepPercent 儲存，避免寫太頻繁
+        if (percent >= lastSavedPercent + saveStepPercent)
+        {
+            SaveProgress(percent);
+            lastSavedPercent = percent;
+        }
+
+        // 超過 90% 後標記完成，但 process 保留實際百分比
+        if (!completedSaved && GetRealWatchRate() >= completeRate)
+        {
+            SaveCompleted(percent);
         }
     }
 
-    void SaveWatched()
+    public int ForceSaveProgress()
     {
-        if (saved) return;
+        int percent = GetRealWatchPercent();
 
-        saved = true;
+        Debug.Log("[VideoWatchTracker] 關閉影片：" + videoID + "，本次觀看進度 = " + percent + "%");
 
-        if (FirestoreManager.Instance != null)
+        if (percent <= 0)
+            return percent;
+
+        // 關閉時補存目前實際進度，即使未達 5%
+        if (percent > lastSavedPercent)
         {
-            FirestoreManager.Instance.SaveVideoWatched(videoID);
-            FirestoreManager.Instance.CheckBasicAchievement(GetLevelNumber(videoID));
+            SaveProgress(percent);
+            lastSavedPercent = percent;
         }
 
-        Debug.Log("影片觀看完成：" + videoID);
+        if (!completedSaved && GetRealWatchRate() >= completeRate)
+        {
+            SaveCompleted(percent);
+        }
+
+        return percent;
+    }
+
+    double GetRealWatchRate()
+    {
+        if (videoPlayer == null || videoPlayer.length <= 0)
+            return 0;
+
+        return watchedSeconds / videoPlayer.length;
+    }
+
+    int GetRealWatchPercent()
+    {
+        return Mathf.Clamp(
+            Mathf.FloorToInt((float)(GetRealWatchRate() * 100)),
+            0,
+            100
+        );
+    }
+
+    void SaveProgress(int percent)
+    {
+        if (FirestoreManager.Instance == null)
+        {
+            Debug.LogWarning("FirestoreManager.Instance 是 null，無法儲存影片進度：" + videoID);
+            return;
+        }
+
+        FirestoreManager.Instance.SaveBasicVideoProgress(videoID, percent, watchedSeconds);
+        DebugLog("背後儲存影片進度：" + videoID + " = " + percent + "%");
+    }
+
+    void SaveCompleted(int percent)
+    {
+        if (completedSaved)
+            return;
+
+        completedSaved = true;
+
+        if (FirestoreManager.Instance == null)
+        {
+            Debug.LogWarning("FirestoreManager.Instance 是 null，影片無法儲存完成：" + videoID);
+            return;
+        }
+
+        FirestoreManager.Instance.SaveBasicVideoRecord(videoID, watchedSeconds, percent);
+        FirestoreManager.Instance.CheckBasicAchievement(GetLevelNumber(videoID));
+
+        Debug.Log("影片觀看達標並儲存：" + videoID + " / " + percent + "%");
+    }
+
+    public void ResetTracking()
+    {
+        completedSaved = false;
+        watchedSeconds = 0f;
+        lastVideoTime = 0;
+        hasStartedTracking = false;
+
+        lastSavedPercent = 0;
+        lastLoggedPercent = 0;
+
+        DebugLog("重置影片觀看進度：" + videoID);
     }
 
     int GetLevelNumber(string id)
@@ -55,5 +198,11 @@ public class VideoWatchTracker : MonoBehaviour
             return number;
 
         return 1;
+    }
+
+    void DebugLog(string message)
+    {
+        if (showDebugLog)
+            Debug.Log("[VideoWatchTracker] " + message);
     }
 }

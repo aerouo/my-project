@@ -15,74 +15,126 @@ public class QuestBestRecordDisplay : MonoBehaviour
 
         if (FirestoreManager.Instance == null)
         {
-            historyText.text = "歷史紀錄：尚無資料";
+            SetHistoryText("歷史紀錄：尚無資料");
             return;
         }
 
         FirestoreManager.Instance.LoadQuestRecord(levelID, data =>
         {
-            if (data == null || !data.ContainsKey("latest"))
+            if (data == null || data.Count == 0)
             {
-                historyText.text = "歷史紀錄：尚無資料";
+                SetHistoryText("歷史紀錄：尚無資料");
                 return;
             }
 
-            float bestTime = GetBestTime(data);
+            float bestTime = GetBestCompletedTime(data);
 
             if (bestTime <= 0)
             {
-                historyText.text = "歷史紀錄：尚無資料";
+                SetHistoryText("歷史紀錄：尚無完成紀錄");
                 return;
             }
 
-            historyText.text =
-                "歷史紀錄：" + FormatTime(bestTime);
+            SetHistoryText("歷史紀錄：" + FormatTime(bestTime));
         });
     }
 
-    float GetBestTime(Dictionary<string, object> data)
+    private float GetBestCompletedTime(Dictionary<string, object> data)
     {
-        float best = 999999f;
+        float best = float.MaxValue;
 
         if (data.TryGetValue("latest", out object latestObj))
         {
-            float t = GetTimeFromObj(latestObj);
-            if (t > 0 && t < best)
-                best = t;
+            TryUpdateBestTime(latestObj, ref best);
         }
 
         if (data.TryGetValue("history", out object historyObj))
         {
-            List<object> history = historyObj as List<object>;
+            List<object> history = ConvertToObjectList(historyObj);
 
-            if (history != null)
+            foreach (object item in history)
             {
-                foreach (object item in history)
-                {
-                    float t = GetTimeFromObj(item);
-                    if (t > 0 && t < best)
-                        best = t;
-                }
+                TryUpdateBestTime(item, ref best);
             }
         }
 
-        return best == 999999f ? 0f : best;
+        return best == float.MaxValue ? 0f : best;
     }
 
-    float GetTimeFromObj(object obj)
+    private void TryUpdateBestTime(object recordObj, ref float best)
     {
-        Dictionary<string, object> dict = obj as Dictionary<string, object>;
+        Dictionary<string, object> record = ConvertToDictionary(recordObj);
 
-        if (dict == null || !dict.ContainsKey("time"))
-            return 0f;
+        if (record == null)
+            return;
 
-        return Convert.ToSingle(dict["time"]);
+        int process = GetInt(record, "process");
+
+        // 重點：只有 100% 完成紀錄才算最佳紀錄
+        if (process < 100)
+            return;
+
+        float time = GetFloat(record, "time");
+
+        if (time > 0 && time < best)
+            best = time;
     }
 
-    string FormatTime(float seconds)
+    private Dictionary<string, object> ConvertToDictionary(object obj)
     {
-        int minutes = Mathf.FloorToInt(seconds / 60);
-        int secs = Mathf.FloorToInt(seconds % 60);
+        if (obj == null)
+            return null;
+
+        if (obj is Dictionary<string, object> dict)
+            return dict;
+
+        if (obj is IDictionary<string, object> iDict)
+            return new Dictionary<string, object>(iDict);
+
+        return null;
+    }
+
+    private List<object> ConvertToObjectList(object obj)
+    {
+        if (obj == null)
+            return new List<object>();
+
+        if (obj is List<object> list)
+            return list;
+
+        if (obj is IEnumerable<object> enumerable)
+            return new List<object>(enumerable);
+
+        return new List<object>();
+    }
+
+    private int GetInt(Dictionary<string, object> dict, string key)
+    {
+        if (dict != null && dict.TryGetValue(key, out object value))
+            return Convert.ToInt32(value);
+
+        return 0;
+    }
+
+    private float GetFloat(Dictionary<string, object> dict, string key)
+    {
+        if (dict != null && dict.TryGetValue(key, out object value))
+            return Convert.ToSingle(value);
+
+        return 0f;
+    }
+
+    private string FormatTime(float seconds)
+    {
+        int minutes = Mathf.FloorToInt(seconds / 60f);
+        int secs = Mathf.FloorToInt(seconds % 60f);
+
         return $"{minutes:00}:{secs:00}";
+    }
+
+    private void SetHistoryText(string text)
+    {
+        if (historyText != null)
+            historyText.text = text;
     }
 }

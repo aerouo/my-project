@@ -71,16 +71,23 @@ public class Level2Manager : MonoBehaviour
     // ═══════════════ 拼圖完成通知 ════════════════════
     // 由 Puzzle_Lvl2 的 CompleteGame() 呼叫
 
-    public void OnPuzzleComplete()
+    public void OnPuzzleComplete(float elapsedTime)
     {
         if (puzzleCompleted) return;
         puzzleCompleted = true;
 
-        // 隱藏拼圖
-        if (miniGameCanvas != null) miniGameCanvas.SetActive(false);
-        if (miniGameBackground != null) miniGameBackground.SetActive(false);
+        if (FirestoreManager.Instance != null)
+        {
+            FirestoreManager.Instance.SaveQuestProgress("Level2", 50, elapsedTime, 0);
+            Debug.Log("【第二關】拼圖完成，儲存 50%，目前時間：" + elapsedTime + " 秒");
+        }
 
-        Debug.Log("【劇情控制】拼圖完成，開始第二段劇情");
+        if (miniGameCanvas != null)
+            miniGameCanvas.SetActive(false);
+
+        if (miniGameBackground != null)
+            miniGameBackground.SetActive(false);
+
         StartCoroutine(PlayPart2());
     }
 

@@ -2446,6 +2446,9 @@ MonoBehaviour:
   endingPlotText: {fileID: 1590189519}
   continueButton: {fileID: 1965588173}
   nextGameUI: {fileID: 1800086089}
+  levelID: Level1
+  firstPartProgress: 50
+  printGameManager: {fileID: 0}
   yOffset: 70
   correctAnswers:
   - "\u7BAD\u982D (\u53F3)"
@@ -3275,8 +3278,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 841038502}
-        m_TargetAssemblyTypeName: BackToMap, Assembly-CSharp
-        m_MethodName: OnClick
+        m_TargetAssemblyTypeName: SceneBackController, Assembly-CSharp
+        m_MethodName: BackToQuestMap
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3333,10 +3336,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 841038497}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 94b178455eaa8c846a853f68db1fc4a1, type: 3}
+  m_Script: {fileID: 11500000, guid: 6d266fa428f15f24daaf663d6738690f, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackToMap
-  confirmPanel: {fileID: 399201559}
+  m_EditorClassIdentifier: Assembly-CSharp::SceneBackController
+  returnPanelName: 
+  questMapSceneName: quest-map
+  levelID: Level1
+  progressWhenQuit: 50
 --- !u!1 &844039232
 GameObject:
   m_ObjectHideFlags: 0
@@ -4331,6 +4337,10 @@ MonoBehaviour:
   block5_print: {fileID: 21300000, guid: 0c33d21a9e2bbeb4eaf851e9c1cf94f2, type: 3}
   block5_string: {fileID: 21300000, guid: 41f66dc8c0b62454788db6b6b6894625, type: 3}
   block5_num: {fileID: 21300000, guid: 30d6f624b3faa014484bbf93cff30655, type: 3}
+  levelID: Level1
+  rewardCoins: 200
+  returnSceneName: SampleScene
+  returnPanelName: Panel_Clue
 --- !u!1 &1027623261
 GameObject:
   m_ObjectHideFlags: 0
@@ -4616,6 +4626,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BackToMap
   returnPanelName: 
   questMapSceneName: quest-map
+  levelID: Level1
+  progressWhenQuit: 50
 --- !u!1 &1066388260
 GameObject:
   m_ObjectHideFlags: 0
@@ -5394,7 +5406,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1367779695
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6742,6 +6754,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BackToMap
   returnPanelName: 
   questMapSceneName: quest-map
+  levelID: Level1
+  progressWhenQuit: 50
 --- !u!1 &1886961068
 GameObject:
   m_ObjectHideFlags: 0
@@ -7050,6 +7064,8 @@ MonoBehaviour:
   miniGameCanvas: {fileID: 712135923}
   miniGameBackground: {fileID: 1612223805}
   printGameManager: {fileID: 974064104}
+  levelID: Level1
+  currentProgress: 0
 --- !u!1 &1965588173
 GameObject:
   m_ObjectHideFlags: 0

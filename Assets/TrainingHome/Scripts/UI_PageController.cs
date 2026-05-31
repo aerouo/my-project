@@ -319,6 +319,7 @@ public class UI_PageController : MonoBehaviour
         if (videoPlayer == null)
             return;
 
+        // ===== 取得對應影片 =====
         videoPlayer.clip = GetVideoClipByLesson(currentLessonName);
 
         if (videoPlayer.clip == null)
@@ -327,9 +328,47 @@ public class UI_PageController : MonoBehaviour
             return;
         }
 
+        // ===== 取得觀看追蹤器 =====
+        VideoWatchTracker tracker =
+            videoPlayer.GetComponent<VideoWatchTracker>();
+
+        if (tracker != null)
+        {
+            // 根據課程名稱設定ID
+            tracker.videoID = GetVideoIDByLesson(currentLessonName);
+
+            // 重置觀看進度
+            tracker.ResetTracking();
+        }
+
+        // ===== 播放影片 =====
         videoPlayer.Stop();
         videoPlayer.time = 0;
         videoPlayer.Play();
+    }
+
+    string GetVideoIDByLesson(string lessonName)
+    {
+        switch (lessonName)
+        {
+            case "基礎架構":
+                return "basic_01";
+
+            case "print":
+                return "basic_02";
+
+            case "if else":
+                return "basic_03";
+
+            case "for":
+                return "basic_04";
+
+            case "switch case":
+                return "basic_05";
+
+            default:
+                return "basic_00";
+        }
     }
 
     VideoClip GetVideoClipByLesson(string lessonName)
@@ -359,7 +398,14 @@ public class UI_PageController : MonoBehaviour
     public void CloseVideoPopup()
     {
         if (videoPlayer != null)
+        {
+            VideoWatchTracker tracker = videoPlayer.GetComponent<VideoWatchTracker>();
+
+            if (tracker != null)
+                tracker.ForceSaveProgress();
+
             videoPlayer.Stop();
+        }
 
         SetActiveSafe(Popup_Video, false);
     }

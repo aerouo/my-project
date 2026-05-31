@@ -1,7 +1,9 @@
 using UnityEngine;
 using TMPro;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Firebase.Auth;
 
 public class LearningRecordManager : MonoBehaviour
 {
@@ -63,10 +65,39 @@ public class LearningRecordManager : MonoBehaviour
     [Header("闖關課程 01~05")]
     public ChallengeLessonUI[] challengeLessons;
 
+    private Coroutine loadRoutine;
+
     private void OnEnable()
     {
+        if (loadRoutine != null)
+            StopCoroutine(loadRoutine);
+
+        loadRoutine = StartCoroutine(LoadAfterFirebaseReady());
+    }
+
+    private IEnumerator LoadAfterFirebaseReady()
+    {
+        yield return new WaitUntil(() =>
+            FirebaseAuth.DefaultInstance != null &&
+            FirebaseAuth.DefaultInstance.CurrentUser != null &&
+            FirestoreManager.Instance != null
+        );
+
+        yield return new WaitForSeconds(0.3f);
+
         ResetAllUI();
         LoadAllRecords();
+    }
+
+    public void RefreshRecords()
+    {
+        if (!gameObject.activeInHierarchy)
+            return;
+
+        if (loadRoutine != null)
+            StopCoroutine(loadRoutine);
+
+        loadRoutine = StartCoroutine(LoadAfterFirebaseReady());
     }
 
     private void ResetAllUI()
@@ -195,6 +226,8 @@ public class LearningRecordManager : MonoBehaviour
             return;
         }
 
+        bool isRowingRecord = debugID.Contains("advanced_05");
+
         if (data.TryGetValue("latest", out object latestObj))
         {
             Dictionary<string, object> latest = ConvertToDictionary(latestObj);
@@ -203,11 +236,16 @@ public class LearningRecordManager : MonoBehaviour
             {
                 int process = GetInt(latest, "process");
                 float time = GetFloat(latest, "time");
+                int score = GetInt(latest, "score");
                 string date = FormatDateOnly(GetString(latest, "date"));
 
                 SetText(ui.txtProgress, process + "%");
                 SetText(ui.txtLastDate, date);
-                SetText(ui.txtLastDuration, time > 0 ? time.ToString("0.0") + "秒" : "");
+
+                if (isRowingRecord)
+                    SetText(ui.txtLastDuration, "分數：" + score);
+                else
+                    SetText(ui.txtLastDuration, time > 0 ? time.ToString("0.0") + "秒" : "");
             }
         }
 
@@ -251,6 +289,7 @@ public class LearningRecordManager : MonoBehaviour
                 {
                     int process = GetInt(itemData, "process");
                     float time = GetFloat(itemData, "time");
+                    int score = GetInt(itemData, "score");
                     string date = FormatDateOnly(GetString(itemData, "date"));
 
                     if (target.root != null)
@@ -258,7 +297,11 @@ public class LearningRecordManager : MonoBehaviour
 
                     SetText(target.txtDate, date);
                     SetText(target.txtProgress, process + "%");
-                    SetText(target.txtDuration, time > 0 ? time.ToString("0.0") + "秒" : "");
+
+                    if (isRowingRecord)
+                        SetText(target.txtDuration, "分數：" + score);
+                    else
+                        SetText(target.txtDuration, time > 0 ? time.ToString("0.0") + "秒" : "");
                 }
                 else
                 {

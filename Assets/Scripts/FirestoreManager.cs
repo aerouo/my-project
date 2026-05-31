@@ -43,15 +43,28 @@ public class FirestoreManager : MonoBehaviour
             db = FirebaseFirestore.DefaultInstance;
 
         userID = FirebaseAuth.DefaultInstance.CurrentUser?.UserId;
+
+        Debug.Log("目前 Firebase UserID = " + userID);
     }
 
     private bool CheckReady()
     {
-        RefreshUser();
+        if (db == null)
+            db = FirebaseFirestore.DefaultInstance;
 
-        if (db == null || string.IsNullOrEmpty(userID))
+        FirebaseUser user = FirebaseAuth.DefaultInstance.CurrentUser;
+
+        if (user == null)
         {
-            Debug.LogWarning("FirestoreManager 還沒準備好！");
+            Debug.LogWarning("Firebase Auth 尚未登入，暫時不能讀寫資料");
+            return false;
+        }
+
+        userID = user.UserId;
+
+        if (string.IsNullOrEmpty(userID))
+        {
+            Debug.LogWarning("Firebase UserID 是空的");
             return false;
         }
 
@@ -73,7 +86,7 @@ public class FirestoreManager : MonoBehaviour
     };
     }
 
-    private void SaveRecordWithHistory(DocumentReference docRef, Dictionary<string, object> latestRecord)
+    private void SaveRecordWithHistoryAndBest(DocumentReference docRef, Dictionary<string, object> latestRecord)
     {
         docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
@@ -84,25 +97,42 @@ public class FirestoreManager : MonoBehaviour
             }
 
             List<object> history = new List<object>();
+            Dictionary<string, object> bestRecord = null;
 
             if (task.Result.Exists)
             {
                 Dictionary<string, object> oldData = task.Result.ToDictionary();
 
                 if (oldData.TryGetValue("latest", out object oldLatestObj))
-                {
                     history.Insert(0, oldLatestObj);
-                }
 
                 if (oldData.TryGetValue("history", out object oldHistoryObj))
-                {
-                    List<object> oldHistory = ConvertToObjectList(oldHistoryObj);
-                    history.AddRange(oldHistory);
-                }
+                    history.AddRange(ConvertToObjectList(oldHistoryObj));
+
+                if (oldData.TryGetValue("best", out object oldBestObj))
+                    bestRecord = oldBestObj as Dictionary<string, object>;
             }
 
             if (history.Count > 5)
                 history.RemoveRange(5, history.Count - 5);
+
+            int process = GetDictInt(latestRecord, "process");
+            float newTime = GetDictFloat(latestRecord, "time");
+
+            if (process == 100)
+            {
+                if (bestRecord == null)
+                {
+                    bestRecord = latestRecord;
+                }
+                else
+                {
+                    float oldBestTime = GetDictFloat(bestRecord, "time");
+
+                    if (newTime < oldBestTime || oldBestTime <= 0)
+                        bestRecord = latestRecord;
+                }
+            }
 
             Dictionary<string, object> updates = new Dictionary<string, object>
         {
@@ -110,12 +140,15 @@ public class FirestoreManager : MonoBehaviour
             { "history", history }
         };
 
+            if (bestRecord != null)
+                updates["best"] = bestRecord;
+
             docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
             {
                 if (saveTask.IsCompletedSuccessfully)
-                    Debug.Log("學習紀錄儲存成功");
+                    Debug.Log("紀錄儲存成功");
                 else
-                    Debug.LogWarning("學習紀錄儲存失敗：" + saveTask.Exception);
+                    Debug.LogWarning("紀錄儲存失敗：" + saveTask.Exception);
             });
         });
     }
@@ -163,11 +196,12 @@ public class FirestoreManager : MonoBehaviour
     // 成就與 Learning 顯示都讀這份
     // =========================================================
 
-    public void SaveBasicVideoRecord(string basicID, float timeSeconds = 0f)
+    public void SaveBasicVideoRecord(string basicID, float timeSeconds = 0f, int process = 100)
     {
         if (!CheckReady()) return;
 
         string date = DateTime.Now.ToString("yyyy/MM/dd");
+        process = Mathf.Clamp(process, 0, 100);
 
         db.Collection("users").Document(userID)
           .Collection("learning").Document("videos")
@@ -175,16 +209,55 @@ public class FirestoreManager : MonoBehaviour
           {
           { basicID + "_watched", true },
           { basicID + "_date", date },
-          { basicID + "_process", 100 },
+          { basicID + "_process", process },
           { basicID + "_time", timeSeconds }
           }, SetOptions.MergeAll)
           .ContinueWithOnMainThread(task =>
           {
               if (task.IsCompletedSuccessfully)
-                  Debug.Log("基礎影片紀錄儲存成功：" + basicID);
+                  Debug.Log("基礎影片完成紀錄儲存成功：" + basicID + " / " + process + "%");
               else
-                  Debug.LogWarning("基礎影片紀錄儲存失敗：" + task.Exception);
+                  Debug.LogWarning("基礎影片完成紀錄儲存失敗：" + task.Exception);
           });
+    }
+
+    public void SaveBasicVideoProgress(string basicID, int process, float timeSeconds = 0f)
+    {
+        if (!CheckReady()) return;
+
+        process = Mathf.Clamp(process, 0, 100);
+
+        var docRef = db.Collection("users").Document(userID)
+                       .Collection("learning").Document("videos");
+
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            Dictionary<string, object> data = task.Result.Exists
+                ? task.Result.ToDictionary()
+                : new Dictionary<string, object>();
+
+            int oldBestProcess = 0;
+
+            if (data.ContainsKey(basicID + "_best_process"))
+                oldBestProcess = GetDictInt(data, basicID + "_best_process");
+
+            Dictionary<string, object> updates = new Dictionary<string, object>
+        {
+            { basicID + "_watched", process >= 100 },
+            { basicID + "_date", DateTime.Now.ToString("yyyy/MM/dd") },
+            { basicID + "_process", process },
+            { basicID + "_time", timeSeconds }
+        };
+
+            if (process > oldBestProcess)
+            {
+                updates[basicID + "_best_process"] = process;
+                updates[basicID + "_best_date"] = DateTime.Now.ToString("yyyy/MM/dd");
+                updates[basicID + "_best_time"] = timeSeconds;
+            }
+
+            docRef.SetAsync(updates, SetOptions.MergeAll);
+        });
     }
 
     public void LoadBasicVideoRecord(string basicID, Action<Dictionary<string, object>> onLoaded)
@@ -208,17 +281,23 @@ public class FirestoreManager : MonoBehaviour
 
               Dictionary<string, object> data = task.Result.ToDictionary();
 
-              if (!data.ContainsKey(basicID + "_watched"))
+              bool hasProcess = data.ContainsKey(basicID + "_process");
+              bool hasWatched = data.ContainsKey(basicID + "_watched");
+
+              if (!hasProcess && !hasWatched)
               {
                   onLoaded?.Invoke(new Dictionary<string, object>());
                   return;
               }
 
-              bool watched = Convert.ToBoolean(data[basicID + "_watched"]);
+              bool watched = false;
+
+              if (hasWatched)
+                  watched = Convert.ToBoolean(data[basicID + "_watched"]);
 
               int process = 0;
 
-              if (data.ContainsKey(basicID + "_process"))
+              if (hasProcess)
                   process = GetDictInt(data, basicID + "_process");
               else if (watched)
                   process = 100;
@@ -383,7 +462,7 @@ public class FirestoreManager : MonoBehaviour
             .Collection("learningRecords").Document("advanced")
             .Collection(gameID).Document(difficulty);
 
-        SaveRecordWithHistory(docRef, latestRecord);
+        SaveRecordWithHistoryAndBest(docRef, latestRecord);
     }
 
     public void LoadAdvancedRecord(string gameID, string difficulty, Action<Dictionary<string, object>> onLoaded)
@@ -416,6 +495,36 @@ public class FirestoreManager : MonoBehaviour
     // 欄位格式：Level1_latest、Level1_history
     // =========================================================
 
+    public void SaveQuestProgress(string levelID, int process, float timeSeconds = 0f, int score = 0)
+{
+    if (!CheckReady()) return;
+
+    process = Mathf.Clamp(process, 0, 100);
+    float roundedTime = Mathf.Round(timeSeconds * 100f) / 100f;
+
+    Dictionary<string, object> latestRecord = new Dictionary<string, object>
+    {
+        { "time", roundedTime },
+        { "score", score },
+        { "process", process },
+        { "date", DateTime.Now.ToString("yyyy/MM/dd") }
+    };
+
+    db.Collection("users").Document(userID)
+      .Collection("learningRecords").Document("quest")
+      .SetAsync(new Dictionary<string, object>
+      {
+          { levelID + "_latest", latestRecord }
+      }, SetOptions.MergeAll)
+      .ContinueWithOnMainThread(task =>
+      {
+          if (task.IsCompletedSuccessfully)
+              Debug.Log("闖關進度儲存成功：" + levelID + " = " + process + "%");
+          else
+              Debug.LogWarning("闖關進度儲存失敗：" + task.Exception);
+      });
+}
+
     public void SaveQuestRecord(string levelID, float timeSeconds, int score)
     {
         if (!CheckReady()) return;
@@ -442,35 +551,71 @@ public class FirestoreManager : MonoBehaviour
             }
 
             List<object> history = new List<object>();
+            Dictionary<string, object> bestRecord = null;
 
             if (task.Result.Exists)
             {
                 Dictionary<string, object> oldData = task.Result.ToDictionary();
 
+                // 舊 latest 推進 history
                 if (oldData.TryGetValue(levelID + "_latest", out object oldLatest))
                     history.Insert(0, oldLatest);
 
+                // 舊 history 接在後面
                 if (oldData.TryGetValue(levelID + "_history", out object oldHistory))
                     history.AddRange(ConvertToObjectList(oldHistory));
+
+                // 讀取舊 best
+                if (oldData.TryGetValue(levelID + "_best", out object oldBest))
+                    bestRecord = ConvertToDictionary(oldBest);
             }
 
+            // history 最多保留 5 筆
             if (history.Count > 5)
                 history.RemoveRange(5, history.Count - 5);
+
+            // best 只會在 100% 完成時更新
+            if (bestRecord == null)
+            {
+                bestRecord = latestRecord;
+            }
+            else
+            {
+                float oldBestTime = GetDictFloat(bestRecord, "time");
+
+                if (roundedTime < oldBestTime || oldBestTime <= 0)
+                    bestRecord = latestRecord;
+            }
 
             Dictionary<string, object> updates = new Dictionary<string, object>
         {
             { levelID + "_latest", latestRecord },
-            { levelID + "_history", history }
+            { levelID + "_history", history },
+            { levelID + "_best", bestRecord }
         };
 
             docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
             {
                 if (saveTask.IsCompletedSuccessfully)
-                    Debug.Log("闖關紀錄儲存成功：" + levelID);
+                    Debug.Log("闖關紀錄儲存成功：" + levelID + "，最佳紀錄已檢查");
                 else
                     Debug.LogWarning("闖關紀錄儲存失敗：" + saveTask.Exception);
             });
         });
+    }
+
+    private Dictionary<string, object> ConvertToDictionary(object obj)
+    {
+        if (obj == null)
+            return null;
+
+        if (obj is Dictionary<string, object> dict)
+            return dict;
+
+        if (obj is IDictionary<string, object> iDict)
+            return new Dictionary<string, object>(iDict);
+
+        return null;
     }
 
     public void LoadQuestRecord(string levelID, Action<Dictionary<string, object>> onLoaded)
@@ -689,12 +834,35 @@ public class FirestoreManager : MonoBehaviour
     {
         if (!CheckReady()) return;
 
-        db.Collection("users").Document(userID)
-          .SetAsync(new Dictionary<string, object>
-          {
-              { "username", username },
-              { "coins", 10000 }
-          }, SetOptions.MergeAll);
+        var userRef = db.Collection("users").Document(userID);
+
+        userRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogWarning("初始化使用者失敗：" + task.Exception);
+                return;
+            }
+
+            if (task.Result.Exists)
+            {
+                Debug.Log("使用者資料已存在，不重新初始化：" + userID);
+                return;
+            }
+
+            userRef.SetAsync(new Dictionary<string, object>
+        {
+            { "username", string.IsNullOrWhiteSpace(username) ? "user" : username },
+            { "coins", 10000 }
+        }, SetOptions.MergeAll)
+            .ContinueWithOnMainThread(saveTask =>
+            {
+                if (saveTask.IsCompletedSuccessfully)
+                    Debug.Log("新使用者初始化成功：" + username);
+                else
+                    Debug.LogWarning("新使用者初始化失敗：" + saveTask.Exception);
+            });
+        });
     }
 
     public void SaveUsername(string username)
