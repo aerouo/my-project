@@ -11,12 +11,19 @@ public class DropSlot : MonoBehaviour, IDropHandler
     public Sprite sprite_class;
     public Sprite sprite_main;
     public Sprite sprite_print;
-    public Sprite sprite_string;        // 原本的 string（""）
-    public Sprite sprite_string_marks;  // 新的 string marks
-    public Sprite sprite_name_num;      // name num
-    public Sprite sprite_string_num;    // string num
-    public Sprite sprite_equals;        // =
-    public Sprite sprite_hum001;        // hum-001（原本的 num）
+    public Sprite sprite_string_marks;
+    public Sprite sprite_0;
+    public Sprite sprite_1;
+    public Sprite sprite_equals; //=
+    public Sprite sprite_equalsequals;  // ==
+    public Sprite sprite_int;
+    public Sprite sprite_int_name;
+    public Sprite sprite_int_see;
+    public Sprite sprite_if;
+    public Sprite sprite_else;
+    public Sprite sprite_yes;
+    public Sprite sprite_no;
+
     public Sprite defaultSprite;
 
     private DragBlock currentBlock;
@@ -57,13 +64,19 @@ public class DropSlot : MonoBehaviour, IDropHandler
         {
             case "class": return sprite_class;
             case "main": return sprite_main;
-            case "print": return sprite_print;
-            case "string": return sprite_string;
-            case "string marks": return sprite_string_marks;
-            case "name num": return sprite_name_num;
-            case "string num": return sprite_string_num;
-            case "=": return sprite_equals;
-            case "hum-001": return sprite_hum001;
+            case "print": return sprite_print;            
+            case "string marks": return sprite_string_marks;            
+            case "=": return sprite_equals;            
+            case "0": return sprite_0;
+            case "1": return sprite_1;
+            case "==": return sprite_equalsequals;
+            case "int": return sprite_int;
+            case "int name": return sprite_int_name;
+            case "int see": return sprite_int_see;
+            case "if": return sprite_if;
+            case "else": return sprite_else;
+            case "yes": return sprite_yes;
+            case "no": return sprite_no;
             default:
                 Debug.Log("找不到對應的 blockID: " + blockID);
                 return defaultSprite;
