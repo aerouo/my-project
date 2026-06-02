@@ -57,7 +57,7 @@ public class FindClues_lvl2 : MonoBehaviour
 
     [Header("Slot 顏色設定")]
     public Color slotNormalColor = Color.white;
-    public Color slotActiveColor = new Color(0.6f, 0.6f, 0.6f, 1f); // 變深
+    public Color slotActiveColor = new Color(0.6f, 0.6f, 0.6f, 1f);
 
     [Header("提示文字")]
     public TextMeshProUGUI failHintText;
@@ -102,10 +102,10 @@ public class FindClues_lvl2 : MonoBehaviour
     private string[] correctDirs = new string[6];
 
     private static readonly Vector2Int[] DIRS = {
-        new Vector2Int(-1, 0),  // up
-        new Vector2Int( 1, 0),  // down
-        new Vector2Int( 0,-1),  // left
-        new Vector2Int( 0, 1)   // right
+        new Vector2Int(-1,  0),  // up
+        new Vector2Int( 1,  0),  // down
+        new Vector2Int( 0, -1),  // left
+        new Vector2Int( 0,  1)   // right
     };
     private static readonly string[] DIR_NAMES = { "up", "down", "left", "right" };
 
@@ -225,6 +225,8 @@ public class FindClues_lvl2 : MonoBehaviour
         {
             gamePaused = false;
             if (txtTimer) txtTimer.gameObject.SetActive(true);
+            confirmButton?.gameObject.SetActive(true);  
+            javaHintPanel?.SetActive(true);             
         }
     }
 
@@ -287,7 +289,7 @@ public class FindClues_lvl2 : MonoBehaviour
     }
 
     // ─────────────────────────────────────────────
-    //  CONFIRM ANSWER
+    //  SLOT HIGHLIGHT
     // ─────────────────────────────────────────────
 
     void UpdateSlotHighlight(int currentStep)
@@ -298,6 +300,10 @@ public class FindClues_lvl2 : MonoBehaviour
             slotImages[i].color = (i == currentStep) ? slotActiveColor : slotNormalColor;
         }
     }
+
+    // ─────────────────────────────────────────────
+    //  CONFIRM ANSWER
+    // ─────────────────────────────────────────────
 
     void OnClickConfirmAnswer()
     {
@@ -319,20 +325,39 @@ public class FindClues_lvl2 : MonoBehaviour
         for (int i = 0; i < 7; i++)
             isCorrect[i] = (playerChoices[i] == true) == correctOnLeft[i];
 
+        // Q6(left) 選錯 → 直接提示，畫面不動
+        if (!isCorrect[5])
+        {
+            FillSlots(isCorrect);
+            StartCoroutine(FailDirectionHint("Left"));
+            return;
+        }
+
         FillSlots(isCorrect);
         StartCoroutine(RunWithPlayerLogic(isCorrect));
+    }
+
+    IEnumerator FailDirectionHint(string dirLabel)
+    {
+        isRunning = true;
+        confirmButton.interactable = false;
+        SetAllOptionsInteractable(false);
+
+        ShowHint(dirLabel + " 方向指令錯誤，程式無法執行！", Color.red);
+        yield return new WaitForSeconds(2f);
+        failHintText?.gameObject.SetActive(false);
+        ResetAndUnlock();
     }
 
     // ─────────────────────────────────────────────
     //  FILL SLOTS
     //  Q1 錯 → 全清
     //  Q2 錯 → 只顯示第 1 格
-    //  Q4-Q7 對應方向錯 → 那格不顯示
+    //  Q4-Q7 對應方向錯 → 那格留空，位置不往前補
     // ─────────────────────────────────────────────
 
     void FillSlots(bool[] isCorrect)
     {
-        // Q1 選錯：全清
         if (!isCorrect[0])
         {
             ClearAllSlots();
@@ -340,18 +365,16 @@ public class FindClues_lvl2 : MonoBehaviour
         }
 
         var dirToQ = new Dictionary<string, int>
-        { { "up", 3 }, { "down", 4 }, { "left", 5 }, { "right", 6 } };
+            { { "up", 3 }, { "down", 4 }, { "left", 5 }, { "right", 6 } };
         var dirToRot = new Dictionary<string, float>
-        { { "up", 180f }, { "down", 0f }, { "left", 270f }, { "right", 90f } };
+            { { "up", 180f }, { "down", 0f }, { "left", 270f }, { "right", 90f } };
 
-        // Q2 選錯：最多顯示 1 格
         int maxSlots = isCorrect[1] ? slotImages.Length : 1;
 
         for (int step = 0; step < path.Count - 1; step++)
         {
             if (step >= slotImages.Length) break;
 
-            // 超過 maxSlots 的格子清空
             if (step >= maxSlots)
             {
                 if (slotImages[step] != null)
@@ -363,8 +386,6 @@ public class FindClues_lvl2 : MonoBehaviour
             }
 
             string dir = DeltaToDir(path[step + 1] - path[step]);
-
-            // 對應方向選錯 → 這格留空，不往前補
             bool dirCorrect = !dirToQ.ContainsKey(dir) || isCorrect[dirToQ[dir]];
 
             if (slotImages[step] != null)
@@ -406,20 +427,17 @@ public class FindClues_lvl2 : MonoBehaviour
         confirmButton.interactable = false;
         SetAllOptionsInteractable(false);
 
-        // ── Q1 選錯：不動、不提示 ──
+        // Q1 選錯：不動、不提示
         if (!isCorrect[0])
         {
-            ShowHint("a變數宣告錯誤，程式無法執行！", Color.red);
-            yield return new WaitForSeconds(2f);
-            failHintText?.gameObject.SetActive(false);
             ResetAndUnlock();
             yield break;
         }
 
-        // ── Q2 選錯：不動、提示 ──
+        // Q2 選錯：不動、提示
         if (!isCorrect[1])
         {
-            ShowHint("b陣列大小錯誤，無法存取步驟！", Color.red);
+            ShowHint("陣列大小錯誤，無法存取步驟！", Color.red);
             yield return new WaitForSeconds(2f);
             failHintText?.gameObject.SetActive(false);
             ResetAndUnlock();
@@ -430,7 +448,7 @@ public class FindClues_lvl2 : MonoBehaviour
         Vector2Int curCell = startCell;
         bool failed = false;
 
-        // ── 正常走 6 步 ──
+        // 正常走 6 步
         for (int step = 0; step < normalSteps; step++)
         {
             string correctDir = DeltaToDir(path[step + 1] - path[step]);
@@ -439,7 +457,7 @@ public class FindClues_lvl2 : MonoBehaviour
             // Q4-Q7 對應方向選錯 → 停住
             if (playerDir == "none")
             {
-                ShowHint("c方向指令錯誤，角色無法移動！", Color.red);
+                ShowHint("方向指令錯誤，角色無法移動！", Color.red);
                 yield return new WaitForSeconds(2f);
                 failHintText?.gameObject.SetActive(false);
                 failed = true;
@@ -450,22 +468,21 @@ public class FindClues_lvl2 : MonoBehaviour
 
             if (!InBounds(nextCell))
             {
-                ShowHint("d走出邊界了！", Color.red);
+                ShowHint("走出邊界了！", Color.red);
                 yield return new WaitForSeconds(1.5f);
                 failHintText?.gameObject.SetActive(false);
                 failed = true;
                 break;
             }
 
-            UpdateSlotHighlight(step);                          // ← 先變色
-            yield return StartCoroutine(MovePlayer(nextCell));  // ← 再移動
+            UpdateSlotHighlight(step);
+            yield return StartCoroutine(MovePlayer(nextCell));
             curCell = nextCell;
-            
 
             // 提早踩到終點（還未走完）→ 失敗
             if (curCell == endCell && step < normalSteps - 1)
             {
-                ShowHint("e路徑不完整，需要走完所有格子！", Color.red);
+                ShowHint("路徑不完整，需要走完所有格子！", Color.red);
                 yield return new WaitForSeconds(1.5f);
                 failHintText?.gameObject.SetActive(false);
                 failed = true;
@@ -475,7 +492,7 @@ public class FindClues_lvl2 : MonoBehaviour
             // 走到不在路徑上的格子 → 失敗
             if (!path.Contains(curCell) && curCell != endCell)
             {
-                ShowHint("f走錯路了！", Color.red);
+                ShowHint("走錯路了！", Color.red);
                 yield return new WaitForSeconds(1.5f);
                 failHintText?.gameObject.SetActive(false);
                 failed = true;
@@ -483,7 +500,7 @@ public class FindClues_lvl2 : MonoBehaviour
             }
         }
 
-        // ── Q3 選錯：走完 6 步後，最後方向再多走一步 ──
+        // Q3 選錯：走完 6 步後，最後方向再多走一步
         if (!failed && !isCorrect[2])
         {
             string lastDir = DeltaToDir(path[normalSteps] - path[normalSteps - 1]);
@@ -491,8 +508,7 @@ public class FindClues_lvl2 : MonoBehaviour
 
             if (playerDir == "none")
             {
-                // 對應方向題也選錯，停在原地提示
-                ShowHint("g迴圈判斷錯誤，多執行了一次！", Color.red);
+                ShowHint("迴圈判斷錯誤，多執行了一次！", Color.red);
                 yield return new WaitForSeconds(2f);
                 failHintText?.gameObject.SetActive(false);
                 failed = true;
@@ -503,21 +519,18 @@ public class FindClues_lvl2 : MonoBehaviour
 
                 if (InBounds(extraCell))
                 {
-                    // 在界內：正常播動畫走過去
-                    UpdateSlotHighlight(normalSteps);                   // ← 先變色
+                    UpdateSlotHighlight(normalSteps);
                     yield return StartCoroutine(MovePlayer(extraCell));
                     curCell = extraCell;
-                    
-                    ShowHint("h迴圈判斷錯誤，多走了一步！", Color.red);
+                    ShowHint("迴圈判斷錯誤，多走了一步！", Color.red);
                     yield return new WaitForSeconds(2f);
                     failHintText?.gameObject.SetActive(false);
                     failed = true;
                 }
                 else
                 {
-                    // 走出界：計算出界外世界座標，播動畫後提示
                     yield return StartCoroutine(MovePlayerOutOfBounds(curCell, playerDir));
-                    ShowHint("i迴圈判斷錯誤，走出邊界！", Color.red);
+                    ShowHint("迴圈判斷錯誤，走出邊界！", Color.red);
                     yield return new WaitForSeconds(2f);
                     failHintText?.gameObject.SetActive(false);
                     failed = true;
@@ -525,7 +538,7 @@ public class FindClues_lvl2 : MonoBehaviour
             }
         }
 
-        // ── 最終判斷 ──
+        // 最終判斷
         if (!failed)
         {
             if (curCell == endCell)
@@ -535,7 +548,7 @@ public class FindClues_lvl2 : MonoBehaviour
             }
             else
             {
-                ShowHint("j沒有到達終點！", Color.red);
+                ShowHint("沒有到達終點！", Color.red);
                 yield return new WaitForSeconds(1.5f);
                 failHintText?.gameObject.SetActive(false);
                 ResetAndUnlock();
@@ -550,7 +563,7 @@ public class FindClues_lvl2 : MonoBehaviour
     }
 
     // ─────────────────────────────────────────────
-    //  HELPER：走出界外的動畫
+    //  走出界外的動畫
     // ─────────────────────────────────────────────
 
     IEnumerator MovePlayerOutOfBounds(Vector2Int fromCell, string dir)
@@ -560,70 +573,41 @@ public class FindClues_lvl2 : MonoBehaviour
         GameObject fromObj = GameObject.Find((fromCell.x + 1) + "_" + (fromCell.y + 1));
         if (fromObj == null) yield break;
 
-        // 找任意鄰格算出格子間距
-        Vector3 cellOffset = Vector3.zero;
-        for (int d = 0; d < 4; d++)
-        {
-            Vector2Int neighbor = fromCell + DIRS[d];
-            if (!InBounds(neighbor)) continue;
-            GameObject neighborObj = GameObject.Find((neighbor.x + 1) + "_" + (neighbor.y + 1));
-            if (neighborObj != null)
-            {
-                cellOffset = neighborObj.transform.position - fromObj.transform.position;
-                break;
-            }
-        }
-
-        // 把格子間距投影到移動方向
         Vector2Int dirVec = GetDirVector(dir);
-        // dirVec.x = row 變化（對應 world Y），dirVec.y = col 變化（對應 world X）
-        // 用已知鄰格間距推算單軸位移
         Vector3 moveWorld = Vector3.zero;
 
-        // 找一個在同 row 或同 col 的鄰格來精確取對應軸的間距
-        // 否則直接用 cellOffset 的 x/y 分量
-        // row 方向（up/down）→ 用 cellOffset.y
-        // col 方向（left/right）→ 用 cellOffset.x
-        if (dirVec.x != 0) // up or down：row 改變
+        if (dirVec.x != 0) // up / down
         {
-            // 找上或下方向的鄰格間距
-            Vector2Int rowNeighbor = fromCell + new Vector2Int(dirVec.x, 0);
-            if (InBounds(rowNeighbor))
+            Vector2Int neighbor = fromCell + new Vector2Int(dirVec.x, 0);
+            if (InBounds(neighbor))
             {
-                GameObject rObj = GameObject.Find((rowNeighbor.x + 1) + "_" + (rowNeighbor.y + 1));
-                if (rObj != null)
-                    moveWorld = rObj.transform.position - fromObj.transform.position;
-                else
-                    moveWorld = new Vector3(0, dirVec.x * Mathf.Abs(cellOffset.y), 0);
+                GameObject nObj = GameObject.Find((neighbor.x + 1) + "_" + (neighbor.y + 1));
+                if (nObj != null)
+                    moveWorld = nObj.transform.position - fromObj.transform.position;
             }
-            else
+
+            if (moveWorld == Vector3.zero)
             {
-                // 用反方向鄰格取絕對間距，再反向
                 Vector2Int opposite = fromCell + new Vector2Int(-dirVec.x, 0);
                 if (InBounds(opposite))
                 {
                     GameObject oObj = GameObject.Find((opposite.x + 1) + "_" + (opposite.y + 1));
                     if (oObj != null)
                         moveWorld = fromObj.transform.position - oObj.transform.position;
-                    else
-                        moveWorld = new Vector3(0, dirVec.x * Mathf.Abs(cellOffset.y), 0);
                 }
-                else
-                    moveWorld = new Vector3(0, dirVec.x * Mathf.Abs(cellOffset.y), 0);
             }
         }
-        else // left or right：col 改變
+        else // left / right
         {
-            Vector2Int colNeighbor = fromCell + new Vector2Int(0, dirVec.y);
-            if (InBounds(colNeighbor))
+            Vector2Int neighbor = fromCell + new Vector2Int(0, dirVec.y);
+            if (InBounds(neighbor))
             {
-                GameObject cObj = GameObject.Find((colNeighbor.x + 1) + "_" + (colNeighbor.y + 1));
-                if (cObj != null)
-                    moveWorld = cObj.transform.position - fromObj.transform.position;
-                else
-                    moveWorld = new Vector3(dirVec.y * Mathf.Abs(cellOffset.x), 0, 0);
+                GameObject nObj = GameObject.Find((neighbor.x + 1) + "_" + (neighbor.y + 1));
+                if (nObj != null)
+                    moveWorld = nObj.transform.position - fromObj.transform.position;
             }
-            else
+
+            if (moveWorld == Vector3.zero)
             {
                 Vector2Int opposite = fromCell + new Vector2Int(0, -dirVec.y);
                 if (InBounds(opposite))
@@ -631,11 +615,7 @@ public class FindClues_lvl2 : MonoBehaviour
                     GameObject oObj = GameObject.Find((opposite.x + 1) + "_" + (opposite.y + 1));
                     if (oObj != null)
                         moveWorld = fromObj.transform.position - oObj.transform.position;
-                    else
-                        moveWorld = new Vector3(dirVec.y * Mathf.Abs(cellOffset.x), 0, 0);
                 }
-                else
-                    moveWorld = new Vector3(dirVec.y * Mathf.Abs(cellOffset.x), 0, 0);
             }
         }
 
@@ -847,7 +827,6 @@ public class FindClues_lvl2 : MonoBehaviour
         isRunning = false;
         if (player != null) player.transform.position = playerStartPos;
 
-        // 重置所有 slot 顏色
         for (int i = 0; i < slotImages.Length; i++)
             if (slotImages[i] != null)
                 slotImages[i].color = slotNormalColor;
