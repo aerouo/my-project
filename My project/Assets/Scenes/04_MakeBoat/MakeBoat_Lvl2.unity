@@ -256,6 +256,82 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!1 &41502963
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 41502964}
+  - component: {fileID: 41502966}
+  - component: {fileID: 41502965}
+  m_Layer: 6
+  m_Name: hinttxt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &41502964
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41502963}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 961458152}
+  m_Father: {fileID: 744723600}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 15.966919, y: 360.53003}
+  m_SizeDelta: {x: 827.423, y: 214.52}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &41502965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41502963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.4867924, g: 0.4867924, b: 0.4867924, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &41502966
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41502963}
+  m_CullTransparentMesh: 1
 --- !u!1 &52566306
 GameObject:
   m_ObjectHideFlags: 0
@@ -494,7 +570,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5982\u679C\u662F\u6709\u86C7\u7684\u8DEF\u2026"
+  m_text: "\u5982\u679C\u9078\u4E86\u6A39\u5E79"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1088,11 +1164,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'for (int i = 5; i <= 1; i++){}
-
-    
-
-'
+  m_text: for (int i = 5; i <= 1; i++){}
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1287,7 +1359,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 132d93f5cbb0ca24083e3c20ea1d557c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1576,7 +1648,7 @@ GameObject:
   - component: {fileID: 272522942}
   - component: {fileID: 272522941}
   m_Layer: 6
-  m_Name: (123)
+  m_Name: '"stone"'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1678,8 +1750,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5741a413f0bd08b4eb4675f51255bbec, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1779,7 +1851,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 417180720}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MakeBoat_Lvl1, Assembly-CSharp
         m_MethodName: OnClickConfirm
         m_Mode: 1
@@ -1854,8 +1926,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 417180718}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -102.66505, y: -100.56455, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -102.66504, y: -100.564575, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1870,33 +1942,137 @@ MonoBehaviour:
   m_GameObject: {fileID: 417180718}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82c0fc276cc694f46bfc722e5c974a96, type: 3}
+  m_Script: {fileID: 11500000, guid: c6527823c8793bb41ad8405f49ea707e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MakeBoat_Lvl1
+  m_EditorClassIdentifier: Assembly-CSharp::MakeBoat_Lvl2
   foxImage: {fileID: 2142236962}
-  spriteOut1: {fileID: 21300000, guid: 2991a13ce8f047e4d89feb51e6f52e95, type: 3}
-  spriteOut2: {fileID: 21300000, guid: 862ea3ab1f40f1e4fb0ea1b298b8969c, type: 3}
-  spriteIn1: {fileID: 21300000, guid: 081fb78ce6ec06048be23f6763e3e635, type: 3}
-  spriteIn2: {fileID: 21300000, guid: 0c412e91fa98ffe4ba89e4f0cb4f18eb, type: 3}
+  spriteOut1: {fileID: 21300000, guid: 081fb78ce6ec06048be23f6763e3e635, type: 3}
+  spriteOut2: {fileID: 21300000, guid: 0c412e91fa98ffe4ba89e4f0cb4f18eb, type: 3}
+  spriteIn1: {fileID: 21300000, guid: 2991a13ce8f047e4d89feb51e6f52e95, type: 3}
+  spriteIn2: {fileID: 21300000, guid: 862ea3ab1f40f1e4fb0ea1b298b8969c, type: 3}
   foxIdleObject: {fileID: 615392231}
   crawlDuration: 1
   frameSwitchInterval: 0.15
-  itemPool:
-  - {fileID: 11400000, guid: c7113cd1f13f2ab43b9db637ebb8d62b, type: 2}
-  - {fileID: 11400000, guid: cd56f02f065dceb459babda3a26b1dc4, type: 2}
-  - {fileID: 11400000, guid: 8f276e5d3922df740a671e6c6230bbb6, type: 2}
-  - {fileID: 11400000, guid: b99a22fa3c3a7a64482120f7ee2642c7, type: 2}
-  buttons:
-  - {fileID: 1365727547}
-  - {fileID: 2050564617}
-  - {fileID: 2046299925}
-  buttonImages:
-  - {fileID: 1365727548}
-  - {fileID: 2050564618}
-  - {fileID: 2046299926}
+  questions:
+  - label: "\u5148\u4F86\u5BA3\u544A\u8B8A\u6578\u5427\uFF01"
+    leftButton: {fileID: 194124506}
+    rightButton: {fileID: 465501800}
+    leftImage: {fileID: 194124507}
+    rightImage: {fileID: 465501801}
+    normalSprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+    glowSprite: {fileID: 21300000, guid: a23fb530eb53e364cbd1c774914e03e7, type: 3}
+    leftText: {fileID: 138809148}
+    rightText: {fileID: 1588308847}
+    correctCode: 'int log = 1;
+
+      int branch = 2;
+
+      int stone = 3;
+
+      int
+      go ;
+
+      int score = 0;'
+    wrongCode: 'string log = 1;
+
+      string branch = 2;
+
+      string stone = 3;
+
+      string
+      go ;
+
+      string score = 0;
+
+'
+    scoreValue: 0
+    wrongHintMessage: "\u8B8A\u6578\u578B\u5225\u5BA3\u544A\u932F\u8AA4\uFF0C\u7A0B\u5F0F\u7121\u6CD5\u57F7\u884C\uFF01"
+    showPenaltyAnim: 0
+    correctOnLeft: 0
+  - label: "\u6A58\u5B50\u76AE\u64BF\u4E86\u4E94\u6B21\uFF0C\u5225\u8F9C\u8CA0\u4ED6\u7684\u671F\u5F85\uFF01"
+    leftButton: {fileID: 1973821122}
+    rightButton: {fileID: 451761699}
+    leftImage: {fileID: 1973821123}
+    rightImage: {fileID: 451761700}
+    normalSprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+    glowSprite: {fileID: 21300000, guid: a23fb530eb53e364cbd1c774914e03e7, type: 3}
+    leftText: {fileID: 1216130693}
+    rightText: {fileID: 175084463}
+    correctCode: for (int i = 5; i >= 1; i--){}
+    wrongCode: for (int i = 5; i <= 1; i++){}
+    scoreValue: 0
+    wrongHintMessage: "\u8FF4\u5708\u932F\u8AA4\uFF0C\u7121\u6CD5\u5224\u65B7\uFF01"
+    showPenaltyAnim: 0
+    correctOnLeft: 0
+  - label: "\u5982\u679C\u9078\u4E86\u6A39\u5E79"
+    leftButton: {fileID: 669445785}
+    rightButton: {fileID: 456938217}
+    leftImage: {fileID: 669445786}
+    rightImage: {fileID: 456938218}
+    normalSprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+    glowSprite: {fileID: 21300000, guid: a23fb530eb53e364cbd1c774914e03e7, type: 3}
+    leftText: {fileID: 1020703987}
+    rightText: {fileID: 668947514}
+    correctCode: if (go == log) { score+=10; }
+    wrongCode: "if (go == \u201Clog\u201D) { score+=10; }"
+    scoreValue: 10
+    wrongHintMessage: "\u6A39\u5E79\u5224\u65B7\u932F\u8AA4"
+    showPenaltyAnim: 1
+    correctOnLeft: 0
+  - label: "\u5982\u679C\u9078\u4E86\u6A39\u679D"
+    leftButton: {fileID: 477365611}
+    rightButton: {fileID: 873582447}
+    leftImage: {fileID: 477365612}
+    rightImage: {fileID: 873582448}
+    normalSprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+    glowSprite: {fileID: 21300000, guid: a23fb530eb53e364cbd1c774914e03e7, type: 3}
+    leftText: {fileID: 744307484}
+    rightText: {fileID: 1441931689}
+    correctCode: else if (go == branch) { score+=5; }
+    wrongCode: "else if (go == \u201Cbranch\u201D) { score+=5; }"
+    scoreValue: 5
+    wrongHintMessage: "\u6A39\u679D\u5224\u65B7\u932F\u8AA4"
+    showPenaltyAnim: 1
+    correctOnLeft: 0
+  - label: "\u5982\u679C\u9078\u4E86\u77F3\u982D"
+    leftButton: {fileID: 1446438532}
+    rightButton: {fileID: 272522941}
+    leftImage: {fileID: 1446438533}
+    rightImage: {fileID: 272522942}
+    normalSprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+    glowSprite: {fileID: 21300000, guid: a23fb530eb53e364cbd1c774914e03e7, type: 3}
+    leftText: {fileID: 1190106499}
+    rightText: {fileID: 1705495820}
+    correctCode: else if (go == stone) { score-=5; }
+    wrongCode: "else if (go == \u201Cstone\u201D) { score-=5; }"
+    scoreValue: -5
+    wrongHintMessage: "\u5224\u65B7\u932F\u8AA4"
+    showPenaltyAnim: 1
+    correctOnLeft: 0
+  - label: "\u5982\u679C\u751A\u9EBC\u90FD\u4E0D\u9078"
+    leftButton: {fileID: 1163788132}
+    rightButton: {fileID: 1846834515}
+    leftImage: {fileID: 1163788133}
+    rightImage: {fileID: 1846834516}
+    normalSprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+    glowSprite: {fileID: 21300000, guid: a23fb530eb53e364cbd1c774914e03e7, type: 3}
+    leftText: {fileID: 1712168227}
+    rightText: {fileID: 1975626899}
+    correctCode: else{ score+=0; }
+    wrongCode: else { score = 0; }
+    scoreValue: 0
+    wrongHintMessage: "\u4EC0\u9EBC\u90FD\u4E0D\u9078\u5224\u65B7\u932F\u8AA4"
+    showPenaltyAnim: 1
+    correctOnLeft: 0
+  confirmButton: {fileID: 1345373925}
   scoreText: {fileID: 1668879732}
   txtTimer: {fileID: 1503534105}
   hintPanel: {fileID: 736933593}
+  javaPanel: {fileID: 659342837}
+  btnJavaHint: {fileID: 1701280099}
+  wrongHintText: {fileID: 961458154}
+  wrongHintBg: {fileID: 0}
+  wrongHintDuration: 3
   quitConfirmPanel: {fileID: 1223023463}
   btnQuitConfirm: {fileID: 608013823}
   btnQuitCancel: {fileID: 1859758566}
@@ -2158,7 +2334,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 132d93f5cbb0ca24083e3c20ea1d557c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2189,7 +2365,7 @@ GameObject:
   - component: {fileID: 456938218}
   - component: {fileID: 456938217}
   m_Layer: 6
-  m_Name: '!='
+  m_Name: '"log"'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2291,7 +2467,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 132d93f5cbb0ca24083e3c20ea1d557c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2424,7 +2600,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 132d93f5cbb0ca24083e3c20ea1d557c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2592,7 +2768,7 @@ GameObject:
   - component: {fileID: 477365612}
   - component: {fileID: 477365611}
   m_Layer: 6
-  m_Name: ==
+  m_Name: branch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2694,7 +2870,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 132d93f5cbb0ca24083e3c20ea1d557c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2913,7 +3089,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 417180720}
-        m_TargetAssemblyTypeName: MakeBoat_Lvl1, Assembly-CSharp
+        m_TargetAssemblyTypeName: MakeBoat_Lvl2, Assembly-CSharp
         m_MethodName: OnClickHint
         m_Mode: 1
         m_Arguments:
@@ -3064,7 +3240,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 417180720}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MakeBoat_Lvl1, Assembly-CSharp
         m_MethodName: OnQuitConfirm
         m_Mode: 1
@@ -3322,7 +3498,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: if (yourchoice != snakePath) { player.getBittenBySnake(); }
+  m_text: "if (go == \u201Clog\u201D) { score+=10; }"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3415,7 +3591,7 @@ GameObject:
   - component: {fileID: 669445786}
   - component: {fileID: 669445785}
   m_Layer: 6
-  m_Name: ==
+  m_Name: log
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3517,7 +3693,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 132d93f5cbb0ca24083e3c20ea1d557c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -3624,7 +3800,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: else if (yourchoice == pitPath) { player.fallIntoPit(); }
+  m_text: else if (go == branch) { score+=5; }
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3744,6 +3920,7 @@ RectTransform:
   - {fileID: 1365727546}
   - {fileID: 2050564616}
   - {fileID: 2046299924}
+  - {fileID: 41502964}
   - {fileID: 1668879731}
   - {fileID: 1503534104}
   - {fileID: 1223023464}
@@ -3908,7 +4085,7 @@ GameObject:
   - component: {fileID: 873582448}
   - component: {fileID: 873582447}
   m_Layer: 6
-  m_Name: '!='
+  m_Name: '"branch"'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4010,7 +4187,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 132d93f5cbb0ca24083e3c20ea1d557c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -4028,6 +4205,143 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 873582445}
   m_CullTransparentMesh: 1
+--- !u!1 &961458151
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 961458152}
+  - component: {fileID: 961458153}
+  - component: {fileID: 961458154}
+  m_Layer: 6
+  m_Name: hinttxt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &961458152
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961458151}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 41502964}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -0.0012026, y: 0.000025749}
+  m_SizeDelta: {x: 684.14, y: 214.52}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &961458153
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961458151}
+  m_CullTransparentMesh: 1
+--- !u!114 &961458154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 961458151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: "\u8ACB\u586B\u5B8C\u6240\u6709\u7BAD\u982D\uFF01"
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4278190080
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 40
+  m_fontSizeBase: 40
+  m_fontWeight: 400
+  m_enableAutoSizing: 0
+  m_fontSizeMin: 18
+  m_fontSizeMax: 72
+  m_fontStyle: 0
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_characterHorizontalScale: 1
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1020703985
 GameObject:
   m_ObjectHideFlags: 0
@@ -4085,7 +4399,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: if (yourchoice == snakePath) { player.getBittenBySnake(); }
+  m_text: if (go == log) { score+=10; }
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -4905,7 +5219,7 @@ GameObject:
   - component: {fileID: 1163788133}
   - component: {fileID: 1163788132}
   m_Layer: 6
-  m_Name: ()
+  m_Name: +=
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5007,8 +5321,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5741a413f0bd08b4eb4675f51255bbec, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5349,7 +5663,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: else { player.moveForward(); }
+  m_text: else if (go == stone) { score-=5; }
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5576,7 +5890,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: for (int i = 5; i <= 1; i--){}
+  m_text: for (int i = 5; i >= 1; i--){}
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6034,9 +6348,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Forestexploration_lvl2, Assembly-CSharp
-        m_MethodName: OnClickConfirm
+      - m_Target: {fileID: 417180720}
+        m_TargetAssemblyTypeName: MakeBoat_Lvl2, Assembly-CSharp
+        m_MethodName: OnClickConfirmAnswer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6446,7 +6760,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: else if (yourchoice != pitPath) { player.fallIntoPit(); }
+  m_text: "else if (go == \u201Cbranch\u201D) { score+=5; }"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6676,7 +6990,7 @@ GameObject:
   - component: {fileID: 1446438533}
   - component: {fileID: 1446438532}
   m_Layer: 6
-  m_Name: ()
+  m_Name: stone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6778,8 +7092,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5741a413f0bd08b4eb4675f51255bbec, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -7409,7 +7723,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5982\u679C\u662F\u6709\u6D1E\u7684\u8DEF\u2026"
+  m_text: "\u5982\u679C\u9078\u4E86\u6A39\u679D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7866,8 +8180,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Forestexploration_lvl2, Assembly-CSharp
+      - m_Target: {fileID: 417180720}
+        m_TargetAssemblyTypeName: MakeBoat_Lvl2, Assembly-CSharp
         m_MethodName: OnClickJavaHint
         m_Mode: 1
         m_Arguments:
@@ -7973,7 +8287,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: else { player.moveForward(123); }
+  m_text: "else if (go == \u201Cstone\u201D) { score-=5; }"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8110,7 +8424,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: else { player.moveForward(); }
+  m_text: else{ score+=0; }
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -8479,7 +8793,7 @@ GameObject:
   - component: {fileID: 1846834516}
   - component: {fileID: 1846834515}
   m_Layer: 6
-  m_Name: (123)
+  m_Name: =
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8581,8 +8895,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5741a413f0bd08b4eb4675f51255bbec, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 5ad9b7a50c75ac84aa373e3a1972f810, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -8682,7 +8996,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 417180720}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MakeBoat_Lvl1, Assembly-CSharp
         m_MethodName: OnQuitCancel
         m_Mode: 1
@@ -8816,7 +9130,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 417180720}
-        m_TargetAssemblyTypeName: MakeBoat_Lvl1, Assembly-CSharp
+        m_TargetAssemblyTypeName: MakeBoat_Lvl2, Assembly-CSharp
         m_MethodName: OnClickConfirm
         m_Mode: 1
         m_Arguments:
@@ -8943,7 +9257,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5982\u679C\u662F\u6C92\u6709\u5371\u96AA\u7684\u8DEF\u2026"
+  m_text: "\u5982\u679C\u9078\u4E86\u77F3\u982D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -9101,7 +9415,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u5982\u679C\u662F\u6C92\u6709\u5371\u96AA\u7684\u8DEF\u2026"
+  m_text: "\u5982\u679C\u751A\u9EBC\u90FD\u4E0D\u9078"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -9666,7 +9980,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: else { player.moveForward(123); }
+  m_text: else { score = 0; }
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -10391,7 +10705,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 417180720}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: MakeBoat_Lvl1, Assembly-CSharp
         m_MethodName: OnClickBack
         m_Mode: 1
