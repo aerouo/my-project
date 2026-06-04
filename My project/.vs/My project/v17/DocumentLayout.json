@@ -3,32 +3,20 @@
   "WorkspaceRootPath": "C:\\Users\\a0903\\my-project\\My project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\level1manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\level1manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\dragarrow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\dragarrow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|c:\\users\\a0903\\my-project\\my project\\assets\\scripts\\printgamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\printgamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\Level1Manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\Level1Manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\computerinteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\computerinteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|c:\\users\\a0903\\my-project\\my project\\assets\\scripts\\dropslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\dropslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|c:\\users\\a0903\\my-project\\my project\\assets\\scripts\\backtomap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\backtomap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\backtomap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|c:\\users\\a0903\\my-project\\my project\\assets\\scripts\\dragblock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\dragblock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\dragblock.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\dragarrow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\dragarrow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\arrowmovemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -44,6 +32,18 @@
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\VisualFakeFill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\VisualFakeFill.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\PrintGameManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\PrintGameManager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DropSlot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\DropSlot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\ComputerInteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\ComputerInteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -57,20 +57,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "PrintGameManager.cs",
-              "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\PrintGameManager.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\PrintGameManager.cs",
-              "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\PrintGameManager.cs",
-              "RelativeToolTip": "Assets\\Scripts\\PrintGameManager.cs",
-              "ViewState": "AgIAAGgAAAAAAAAAAAAAAHcAAAApAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-10T17:46:33.774Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 9,
               "Title": "DropSlot.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DropSlot.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DropSlot.cs",
@@ -78,12 +65,11 @@
               "RelativeToolTip": "Assets\\Scripts\\DropSlot.cs",
               "ViewState": "AgIAAD0AAAAAAAAAAAAqwEsAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-10T12:36:07.088Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-10T12:36:07.088Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "BackToMap.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\BackToMap.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\BackToMap.cs",
@@ -91,12 +77,11 @@
               "RelativeToolTip": "Assets\\Scripts\\BackToMap.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-07T03:07:36.602Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-07T03:07:36.602Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 3,
               "Title": "DragBlock.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DragBlock.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DragBlock.cs",
@@ -104,12 +89,11 @@
               "RelativeToolTip": "Assets\\Scripts\\DragBlock.cs",
               "ViewState": "AgIAACMAAAAAAAAAAAAmwDYAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-05T15:51:13.486Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-05-05T15:51:13.486Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 7,
               "Title": "VisualFakeFill.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\VisualFakeFill.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\VisualFakeFill.cs",
@@ -121,7 +105,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 10,
               "Title": "ComputerInteraction.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\ComputerInteraction.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ComputerInteraction.cs",
@@ -129,12 +113,11 @@
               "RelativeToolTip": "Assets\\Scripts\\ComputerInteraction.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-04-09T16:00:49.878Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-09T16:00:49.878Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 4,
               "Title": "ArrowMoveManager.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\ArrowMoveManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ArrowMoveManager.cs",
@@ -146,36 +129,43 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Level1Manager.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\Level1Manager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Level1Manager.cs",
               "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\Level1Manager.cs",
               "RelativeToolTip": "Assets\\Scripts\\Level1Manager.cs",
-              "ViewState": "AgIAAEMAAAAAAAAAAAAqwGAAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-30T16:46:53.376Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+              "WhenOpened": "2025-12-30T16:46:53.376Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 0,
               "Title": "DragArrow.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DragArrow.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DragArrow.cs",
               "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DragArrow.cs",
               "RelativeToolTip": "Assets\\Scripts\\DragArrow.cs",
-              "ViewState": "AQIAAEkAAAAAAAAAAAAUwFgAAAABAAAA",
+              "ViewState": "AgIAAEkAAAAAAAAAAAAUwFgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-30T16:27:19.859Z"
+              "WhenOpened": "2025-12-30T16:27:19.859Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 8,
+              "Title": "PrintGameManager.cs",
+              "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\PrintGameManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\PrintGameManager.cs",
+              "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\PrintGameManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\PrintGameManager.cs",
+              "ViewState": "AgIAAGgAAAAAAAAAAAAAAHcAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T17:46:33.774Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "NewEmptyCSharpScript.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\NewEmptyCSharpScript.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\NewEmptyCSharpScript.cs",
@@ -186,7 +176,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 5,
               "Title": "Test.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\My project\\Assets\\Scripts\\Systems\\Test.cs",
               "RelativeDocumentMoniker": "..\\..\\My project\\Assets\\Scripts\\Systems\\Test.cs",
