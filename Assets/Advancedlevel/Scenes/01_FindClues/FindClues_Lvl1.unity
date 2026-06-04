@@ -134,7 +134,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6087774
 Transform:
   m_ObjectHideFlags: 0
@@ -1191,6 +1191,8 @@ MonoBehaviour:
   finalTimeText: {fileID: 1902883349}
   coinRewardText: {fileID: 476020678}
   btnEndConfirm: {fileID: 398896018}
+  advancedID: advanced_01
+  difficulty: easy
   coinComplete: 50
   coinRecord: 150
 --- !u!1 &428734960
@@ -2121,7 +2123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::AdvancedLevelBack
   returnPanelName: Panel_Clue
-  questMapSceneName: quest-map
+  questMapSceneName: 
 --- !u!1 &736933593
 GameObject:
   m_ObjectHideFlags: 0

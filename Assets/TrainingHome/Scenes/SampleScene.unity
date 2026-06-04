@@ -418,7 +418,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &76037543
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1672,7 +1672,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &201726536
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6057,7 +6057,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &796561399
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7221,7 +7221,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &948725048
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12111,6 +12111,10 @@ MonoBehaviour:
   videoPlayer: {fileID: 1634075539}
   videoID: basic_01
   completeRate: 0.9
+  maxValidTimeJump: 5
+  saveStepPercent: 5
+  showDebugLog: 1
+  logEveryPercent: 1
 --- !u!1 &1652050329
 GameObject:
   m_ObjectHideFlags: 0
@@ -12470,7 +12474,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1698433916
 RectTransform:
   m_ObjectHideFlags: 0
@@ -14877,7 +14881,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1950256550
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15869,6 +15873,21 @@ MonoBehaviour:
   video_For: {fileID: 32900000, guid: 32bac3cb5c39a694ba4f7ce9b22dc527, type: 3}
   video_SwitchCase: {fileID: 32900000, guid: b4b7a13cc8117e44ca492e077916eeb9, type: 3}
   Popup_Video: {fileID: 1767566394}
+  Clue_Level1Date: {fileID: 1149475650}
+  Clue_Level2Date: {fileID: 1119577452}
+  Clue_Level3Date: {fileID: 1885868295}
+  Puzzle_Level1Date: {fileID: 1862604041}
+  Puzzle_Level2Date: {fileID: 1509261672}
+  Puzzle_Level3Date: {fileID: 1767751314}
+  Forest_Level1Date: {fileID: 2075212276}
+  Forest_Level2Date: {fileID: 869021551}
+  Forest_Level3Date: {fileID: 278115030}
+  MakeBoat_Level1Date: {fileID: 1725285359}
+  MakeBoat_Level2Date: {fileID: 550736103}
+  MakeBoat_Level3Date: {fileID: 1180648224}
+  Boating_Level1Date: {fileID: 2009268262}
+  Boating_Level2Date: {fileID: 1941345996}
+  Boating_Level3Date: {fileID: 711575292}
 --- !u!1 &2030235576
 GameObject:
   m_ObjectHideFlags: 0

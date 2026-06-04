@@ -222,8 +222,59 @@ public class ClosetPreviewManager : MonoBehaviour
     {
         selectedItem = item;
 
+        bool isAchievementOnly = item != null && item.achievementOnly;
+
+        string itemType = "服飾";
+
+        switch (item.part)
+        {
+            case ClosetPart.Top:
+                itemType = "上衣";
+                break;
+
+            case ClosetPart.Bottom:
+                itemType = "下衣";
+                break;
+
+            case ClosetPart.Hair:
+                itemType = "髮型";
+                break;
+
+            case ClosetPart.Accessory:
+                itemType = "配件";
+                break;
+        }
+
         if (txtBuyMessage != null)
-            txtBuyMessage.text = "是否花費 " + item.price + "\n紙鶴購買？";
+        {
+            if (isAchievementOnly)
+            {
+                txtBuyMessage.text =
+                    "此" + itemType +
+                    "為成就獎勵\n\n完成指定成就後\n即可解鎖";
+            }
+            else
+            {
+                txtBuyMessage.text =
+                    "是否花費 " +
+                    item.price +
+                    " 紙鶴\n購買此" +
+                    itemType +
+                    "？";
+            }
+        }
+
+        if (btnBuyYes != null)
+        {
+            btnBuyYes.gameObject.SetActive(true);
+
+            TMP_Text btnText = btnBuyYes.GetComponentInChildren<TMP_Text>();
+            if (btnText != null)
+                btnText.text = isAchievementOnly ? "確認" : "購買";
+        }
+
+        if (btnBuyNo != null)
+            btnBuyNo.gameObject.SetActive(!isAchievementOnly);
 
         if (panelBuyConfirm != null)
             panelBuyConfirm.SetActive(true);
@@ -234,10 +285,24 @@ public class ClosetPreviewManager : MonoBehaviour
         if (selectedItem == null)
             return;
 
+        if (selectedItem.achievementOnly)
+        {
+            selectedItem = null;
+
+            if (btnBuyNo != null)
+                btnBuyNo.gameObject.SetActive(true);
+
+            if (panelBuyConfirm != null)
+                panelBuyConfirm.SetActive(false);
+
+            return;
+        }
+
         if (coins < selectedItem.price)
         {
             if (txtBuyMessage != null)
-                txtBuyMessage.text = "紙鶴不足\n無法購買";
+                txtBuyMessage.text = "紙鶴不足\n\n無法解鎖此服飾";
+
             return;
         }
 
@@ -253,6 +318,12 @@ public class ClosetPreviewManager : MonoBehaviour
         if (panelBuyConfirm != null)
             panelBuyConfirm.SetActive(false);
 
+        if (btnBuyYes != null)
+            btnBuyYes.gameObject.SetActive(true);
+
+        if (btnBuyNo != null)
+            btnBuyNo.gameObject.SetActive(true);
+
         EquipItem(selectedItem);
         ApplyOutfit();
 
@@ -266,6 +337,12 @@ public class ClosetPreviewManager : MonoBehaviour
     void CancelBuy()
     {
         selectedItem = null;
+
+        if (btnBuyYes != null)
+            btnBuyYes.gameObject.SetActive(true);
+
+        if (btnBuyNo != null)
+            btnBuyNo.gameObject.SetActive(true);
 
         if (panelBuyConfirm != null)
             panelBuyConfirm.SetActive(false);
@@ -320,34 +397,31 @@ public class ClosetPreviewManager : MonoBehaviour
         ApplyItemTransform(target, item);
     }
 
-void HandleSpecialOutfitRule(ClosetPreviewItem item)
-{
-    if (item == null)
-        return;
-
-    // 換上連身衣：清掉下衣，避免疊穿
-    if (item.part == ClosetPart.Top && IsOnePieceTop(item))
+    void HandleSpecialOutfitRule(ClosetPreviewItem item)
     {
-        ClearEquippedImage(equippedBottom);
-        return;
-    }
+        if (item == null)
+            return;
 
-    // 從連身衣換成一般上衣：補回預設下衣
-    if (item.part == ClosetPart.Top && !IsOnePieceTop(item))
-    {
-        if (equippedBottom != null && equippedBottom.sprite == null && defaultBottomItem != null)
-            ForceEquipItem(defaultBottomItem);
+        if (item.part == ClosetPart.Top && IsOnePieceTop(item))
+        {
+            ClearEquippedImage(equippedBottom);
+            return;
+        }
 
-        return;
-    }
+        if (item.part == ClosetPart.Top && !IsOnePieceTop(item))
+        {
+            if (equippedBottom != null && equippedBottom.sprite == null && defaultBottomItem != null)
+                ForceEquipItem(defaultBottomItem);
 
-    // 穿下衣時，如果目前上衣是連身衣：改回預設上衣
-    if (item.part == ClosetPart.Bottom && IsCurrentTopOnePiece())
-    {
-        if (defaultTopItem != null)
-            ForceEquipItem(defaultTopItem);
+            return;
+        }
+
+        if (item.part == ClosetPart.Bottom && IsCurrentTopOnePiece())
+        {
+            if (defaultTopItem != null)
+                ForceEquipItem(defaultTopItem);
+        }
     }
-}
 
     bool IsOnePieceTop(ClosetPreviewItem item)
     {
@@ -501,11 +575,9 @@ void HandleSpecialOutfitRule(ClosetPreviewItem item)
         LoadEquippedPart("shoes", equippedDict, accessoryItems);
         LoadEquippedPart("handItem", equippedDict, accessoryItems);
 
-        // 如果沒有穿上衣，自動套預設上衣
         if (equippedTop != null && equippedTop.sprite == null && defaultTopItem != null)
             ForceEquipItem(defaultTopItem);
 
-        // 如果沒有穿下衣，自動套預設下衣
         if (equippedBottom != null && equippedBottom.sprite == null && defaultBottomItem != null)
             ForceEquipItem(defaultBottomItem);
     }

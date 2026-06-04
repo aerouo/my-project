@@ -1264,7 +1264,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &736933594
 Transform:
   m_ObjectHideFlags: 0
@@ -2660,9 +2660,11 @@ MonoBehaviour:
   backPanel: {fileID: 315442872}
   btnBackConfirm: {fileID: 1599179093}
   btnBackCancel: {fileID: 163203210}
+  advancedID: advanced_05
+  difficulty: easy
   hitRange: 5
   missX: -18.5
-  gameDuration: 180
+  gameDuration: 60
   scoreThreshold: 200
   coinPass: 50
   coinRecord: 150

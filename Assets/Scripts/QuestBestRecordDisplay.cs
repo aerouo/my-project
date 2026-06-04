@@ -43,6 +43,11 @@ public class QuestBestRecordDisplay : MonoBehaviour
     {
         float best = float.MaxValue;
 
+        if (data.TryGetValue("best", out object bestObj))
+        {
+            TryUpdateBestTime(bestObj, ref best);
+        }
+
         if (data.TryGetValue("latest", out object latestObj))
         {
             TryUpdateBestTime(latestObj, ref best);
@@ -70,7 +75,6 @@ public class QuestBestRecordDisplay : MonoBehaviour
 
         int process = GetInt(record, "process");
 
-        // 重點：只有 100% 完成紀錄才算最佳紀錄
         if (process < 100)
             return;
 

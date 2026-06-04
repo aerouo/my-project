@@ -496,13 +496,13 @@ public class FirestoreManager : MonoBehaviour
     // =========================================================
 
     public void SaveQuestProgress(string levelID, int process, float timeSeconds = 0f, int score = 0)
-{
-    if (!CheckReady()) return;
+    {
+        if (!CheckReady()) return;
 
-    process = Mathf.Clamp(process, 0, 100);
-    float roundedTime = Mathf.Round(timeSeconds * 100f) / 100f;
+        process = Mathf.Clamp(process, 0, 99);
+        float roundedTime = Mathf.Round(timeSeconds * 100f) / 100f;
 
-    Dictionary<string, object> latestRecord = new Dictionary<string, object>
+        Dictionary<string, object> latestRecord = new Dictionary<string, object>
     {
         { "time", roundedTime },
         { "score", score },
@@ -510,21 +510,48 @@ public class FirestoreManager : MonoBehaviour
         { "date", DateTime.Now.ToString("yyyy/MM/dd") }
     };
 
-    db.Collection("users").Document(userID)
-      .Collection("learningRecords").Document("quest")
-      .SetAsync(new Dictionary<string, object>
-      {
-          { levelID + "_latest", latestRecord }
-      }, SetOptions.MergeAll)
-      .ContinueWithOnMainThread(task =>
-      {
-          if (task.IsCompletedSuccessfully)
-              Debug.Log("闖關進度儲存成功：" + levelID + " = " + process + "%");
-          else
-              Debug.LogWarning("闖關進度儲存失敗：" + task.Exception);
-      });
-}
+        DocumentReference docRef = db.Collection("users").Document(userID)
+            .Collection("learningRecords").Document("quest");
 
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogWarning("讀取闖關進度失敗：" + task.Exception);
+                return;
+            }
+
+            List<object> history = new List<object>();
+
+            if (task.Result.Exists)
+            {
+                Dictionary<string, object> oldData = task.Result.ToDictionary();
+
+                if (oldData.TryGetValue(levelID + "_latest", out object oldLatest))
+                    history.Insert(0, oldLatest);
+
+                if (oldData.TryGetValue(levelID + "_history", out object oldHistory))
+                    history.AddRange(ConvertToObjectList(oldHistory));
+            }
+
+            if (history.Count > 5)
+                history.RemoveRange(5, history.Count - 5);
+
+            Dictionary<string, object> updates = new Dictionary<string, object>
+        {
+            { levelID + "_latest", latestRecord },
+            { levelID + "_history", history }
+        };
+
+            docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
+            {
+                if (saveTask.IsCompletedSuccessfully)
+                    Debug.Log("闖關進度儲存成功：" + levelID + " = " + process + "%，舊 latest 已推進 history");
+                else
+                    Debug.LogWarning("闖關進度儲存失敗：" + saveTask.Exception);
+            });
+        });
+    }
     public void SaveQuestRecord(string levelID, float timeSeconds, int score)
     {
         if (!CheckReady()) return;
@@ -557,24 +584,19 @@ public class FirestoreManager : MonoBehaviour
             {
                 Dictionary<string, object> oldData = task.Result.ToDictionary();
 
-                // 舊 latest 推進 history
                 if (oldData.TryGetValue(levelID + "_latest", out object oldLatest))
                     history.Insert(0, oldLatest);
 
-                // 舊 history 接在後面
                 if (oldData.TryGetValue(levelID + "_history", out object oldHistory))
                     history.AddRange(ConvertToObjectList(oldHistory));
 
-                // 讀取舊 best
                 if (oldData.TryGetValue(levelID + "_best", out object oldBest))
                     bestRecord = ConvertToDictionary(oldBest);
             }
 
-            // history 最多保留 5 筆
             if (history.Count > 5)
                 history.RemoveRange(5, history.Count - 5);
 
-            // best 只會在 100% 完成時更新
             if (bestRecord == null)
             {
                 bestRecord = latestRecord;
@@ -597,9 +619,9 @@ public class FirestoreManager : MonoBehaviour
             docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
             {
                 if (saveTask.IsCompletedSuccessfully)
-                    Debug.Log("闖關紀錄儲存成功：" + levelID + "，最佳紀錄已檢查");
+                    Debug.Log("闖關 100% 儲存成功：" + levelID + "，已更新 history / best");
                 else
-                    Debug.LogWarning("闖關紀錄儲存失敗：" + saveTask.Exception);
+                    Debug.LogWarning("闖關 100% 儲存失敗：" + saveTask.Exception);
             });
         });
     }
@@ -645,6 +667,9 @@ public class FirestoreManager : MonoBehaviour
 
               if (data.TryGetValue(levelID + "_history", out object history))
                   result["history"] = history;
+
+              if (data.TryGetValue(levelID + "_best", out object best))
+                  result["best"] = best;
 
               onLoaded?.Invoke(result);
           });

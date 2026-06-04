@@ -40,7 +40,7 @@ public class Rowing_Lvl1 : MonoBehaviour
     [Header("判定設定")]
     public float hitRange = 5f;
     public float missX = -18.5f;
-    public float gameDuration = 180f;
+    public float gameDuration = 60f;
 
     [Header("結算設定")]
     public int scoreThreshold = 60;
@@ -62,16 +62,26 @@ public class Rowing_Lvl1 : MonoBehaviour
 
     void Start()
     {
+        Debug.Log("【划船】目前 gameDuration = " + gameDuration);
+
         timeLeft = gameDuration;
 
-        resultPanel.SetActive(false);
-        hintPanel.SetActive(true);
-        backPanel?.SetActive(false);
+        if (resultPanel != null)
+            resultPanel.SetActive(false);
+
+        if (hintPanel != null)
+            hintPanel.SetActive(true);
+
+        if (backPanel != null)
+            backPanel.SetActive(false);
 
         gameOver = true;
 
-        txtScore.gameObject.SetActive(false);
-        txtTimer.gameObject.SetActive(false);
+        if (txtScore != null)
+            txtScore.gameObject.SetActive(false);
+
+        if (txtTimer != null)
+            txtTimer.gameObject.SetActive(false);
 
         UpdateScoreUI();
 
@@ -137,17 +147,24 @@ public class Rowing_Lvl1 : MonoBehaviour
 
     public void OnClickHintConfirm()
     {
-        hintPanel.SetActive(false);
+        if (hintPanel != null)
+            hintPanel.SetActive(false);
+
         StartCoroutine(CountdownStart());
     }
 
     public void OnClickHint()
     {
         gamePaused = true;
-        hintPanel.SetActive(true);
 
-        txtScore.gameObject.SetActive(false);
-        txtTimer.gameObject.SetActive(false);
+        if (hintPanel != null)
+            hintPanel.SetActive(true);
+
+        if (txtScore != null)
+            txtScore.gameObject.SetActive(false);
+
+        if (txtTimer != null)
+            txtTimer.gameObject.SetActive(false);
     }
 
     public void OnClickBack()
@@ -155,22 +172,31 @@ public class Rowing_Lvl1 : MonoBehaviour
         if (gameOver) return;
 
         gamePaused = true;
-        backPanel?.SetActive(true);
+
+        if (backPanel != null)
+            backPanel.SetActive(true);
     }
 
     public void OnBackCancel()
     {
         gamePaused = false;
-        backPanel?.SetActive(false);
+
+        if (backPanel != null)
+            backPanel.SetActive(false);
     }
 
     public void OnClickConfirm()
     {
         gamePaused = false;
-        hintPanel.SetActive(false);
 
-        txtScore.gameObject.SetActive(true);
-        txtTimer.gameObject.SetActive(true);
+        if (hintPanel != null)
+            hintPanel.SetActive(false);
+
+        if (txtScore != null)
+            txtScore.gameObject.SetActive(true);
+
+        if (txtTimer != null)
+            txtTimer.gameObject.SetActive(true);
     }
 
     IEnumerator CountdownStart()
@@ -191,8 +217,11 @@ public class Rowing_Lvl1 : MonoBehaviour
             txtCountdown.gameObject.SetActive(false);
         }
 
-        txtScore.gameObject.SetActive(true);
-        txtTimer.gameObject.SetActive(true);
+        if (txtScore != null)
+            txtScore.gameObject.SetActive(true);
+
+        if (txtTimer != null)
+            txtTimer.gameObject.SetActive(true);
 
         gamePaused = false;
         gameOver = false;
@@ -282,8 +311,11 @@ public class Rowing_Lvl1 : MonoBehaviour
 
         int coinEarned = 0;
 
-        if (isPass) coinEarned += coinPass;
-        if (isNewRecord) coinEarned += coinRecord;
+        if (isPass)
+            coinEarned += coinPass;
+
+        if (isNewRecord)
+            coinEarned += coinRecord;
 
         int newHighScore = isPass && score > savedHighScore
             ? score
@@ -298,19 +330,27 @@ public class Rowing_Lvl1 : MonoBehaviour
             if (FirestoreManager.Instance != null)
             {
                 FirestoreManager.Instance.AddCoins(coinEarned);
-                FirestoreManager.Instance.SaveAdvancedRecord(advancedID, difficulty, elapsedTime, coinEarned);
+
+                // 這裡存真正分數，不是金幣
+                FirestoreManager.Instance.SaveAdvancedRecord(
+                    advancedID,
+                    difficulty,
+                    elapsedTime,
+                    score
+                );
             }
         }
 
-        resultPanel.SetActive(true);
+        if (resultPanel != null)
+            resultPanel.SetActive(true);
 
-        if (titleText)
+        if (titleText != null)
             titleText.text = isPass ? "恭喜通關！" : "未通關";
 
-        if (txtResult)
+        if (txtResult != null)
             txtResult.text = "最終分數：" + score;
 
-        if (txtMoney)
+        if (txtMoney != null)
         {
             string rewardMsg;
 
@@ -329,7 +369,7 @@ public class Rowing_Lvl1 : MonoBehaviour
             txtMoney.text = rewardMsg;
         }
 
-        if (txtTime)
+        if (txtTime != null)
         {
             int elapsed = (int)elapsedTime;
             int min = elapsed / 60;

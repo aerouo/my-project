@@ -1,9 +1,9 @@
-using UnityEngine;
-using TMPro;
+using Firebase.Auth;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Firebase.Auth;
+using TMPro;
+using UnityEngine;
 
 public class LearningRecordManager : MonoBehaviour
 {
@@ -227,6 +227,7 @@ public class LearningRecordManager : MonoBehaviour
         }
 
         bool isRowingRecord = debugID.Contains("advanced_05");
+        bool isQuestRecord = debugID.Contains("_challenge");
 
         if (data.TryGetValue("latest", out object latestObj))
         {
@@ -243,9 +244,17 @@ public class LearningRecordManager : MonoBehaviour
                 SetText(ui.txtLastDate, date);
 
                 if (isRowingRecord)
+                {
                     SetText(ui.txtLastDuration, "分數：" + score);
+                }
+                else if (isQuestRecord)
+                {
+                    SetText(ui.txtLastDuration, FormatQuestTime(time));
+                }
                 else
+                {
                     SetText(ui.txtLastDuration, time > 0 ? time.ToString("0.0") + "秒" : "");
+                }
             }
         }
 
@@ -299,9 +308,17 @@ public class LearningRecordManager : MonoBehaviour
                     SetText(target.txtProgress, process + "%");
 
                     if (isRowingRecord)
+                    {
                         SetText(target.txtDuration, "分數：" + score);
+                    }
+                    else if (isQuestRecord)
+                    {
+                        SetText(target.txtDuration, FormatQuestTime(time));
+                    }
                     else
+                    {
                         SetText(target.txtDuration, time > 0 ? time.ToString("0.0") + "秒" : "");
+                    }
                 }
                 else
                 {
@@ -315,6 +332,17 @@ public class LearningRecordManager : MonoBehaviour
                     target.root.SetActive(false);
             }
         }
+    }
+
+    private string FormatQuestTime(float seconds)
+    {
+        if (seconds <= 0)
+            return "";
+
+        int minutes = Mathf.FloorToInt(seconds / 60f);
+        int secs = Mathf.FloorToInt(seconds % 60f);
+
+        return $"{minutes:00}分{secs:00}秒";
     }
 
     private string FormatDateOnly(string date)

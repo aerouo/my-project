@@ -1,8 +1,9 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Video;
-using UnityEngine.SceneManagement;
 
 public class UI_PageController : MonoBehaviour
 {
@@ -41,6 +42,31 @@ public class UI_PageController : MonoBehaviour
 
     [Header("Popups")]
     public GameObject Popup_Video;
+
+    [Header("Clue 日期")]
+    public TextMeshProUGUI Clue_Level1Date;
+    public TextMeshProUGUI Clue_Level2Date;
+    public TextMeshProUGUI Clue_Level3Date;
+
+    [Header("Puzzle 日期")]
+    public TextMeshProUGUI Puzzle_Level1Date;
+    public TextMeshProUGUI Puzzle_Level2Date;
+    public TextMeshProUGUI Puzzle_Level3Date;
+
+    [Header("Forest 日期")]
+    public TextMeshProUGUI Forest_Level1Date;
+    public TextMeshProUGUI Forest_Level2Date;
+    public TextMeshProUGUI Forest_Level3Date;
+
+    [Header("MakeBoat 日期")]
+    public TextMeshProUGUI MakeBoat_Level1Date;
+    public TextMeshProUGUI MakeBoat_Level2Date;
+    public TextMeshProUGUI MakeBoat_Level3Date;
+
+    [Header("Boating 日期")]
+    public TextMeshProUGUI Boating_Level1Date;
+    public TextMeshProUGUI Boating_Level2Date;
+    public TextMeshProUGUI Boating_Level3Date;
 
     private string currentLessonName = "";
 
@@ -179,6 +205,13 @@ public class UI_PageController : MonoBehaviour
         HideAllPages();
         HideAllPopups();
         SetActiveSafe(Panel_Clue, true);
+
+        LoadAdvancedPanelDates(
+            "advanced_01",
+            Clue_Level1Date,
+            Clue_Level2Date,
+            Clue_Level3Date
+        );
     }
 
     public void OpenPuzzle()
@@ -186,6 +219,13 @@ public class UI_PageController : MonoBehaviour
         HideAllPages();
         HideAllPopups();
         SetActiveSafe(Panel_Puzzle, true);
+
+        LoadAdvancedPanelDates(
+            "advanced_02",
+            Puzzle_Level1Date,
+            Puzzle_Level2Date,
+            Puzzle_Level3Date
+        );
     }
 
     public void OpenForest()
@@ -193,6 +233,13 @@ public class UI_PageController : MonoBehaviour
         HideAllPages();
         HideAllPopups();
         SetActiveSafe(Panel_Forest, true);
+
+        LoadAdvancedPanelDates(
+            "advanced_03",
+            Forest_Level1Date,
+            Forest_Level2Date,
+            Forest_Level3Date
+        );
     }
 
     public void OpenMakeboat()
@@ -200,6 +247,13 @@ public class UI_PageController : MonoBehaviour
         HideAllPages();
         HideAllPopups();
         SetActiveSafe(Panel_Makeboat, true);
+
+        LoadAdvancedPanelDates(
+            "advanced_04",
+            MakeBoat_Level1Date,
+            MakeBoat_Level2Date,
+            MakeBoat_Level3Date
+        );
     }
 
     public void OpenBoating()
@@ -207,6 +261,49 @@ public class UI_PageController : MonoBehaviour
         HideAllPages();
         HideAllPopups();
         SetActiveSafe(Panel_Boating, true);
+
+        LoadAdvancedPanelDates(
+            "advanced_05",
+            Boating_Level1Date,
+            Boating_Level2Date,
+            Boating_Level3Date
+        );
+    }
+
+    void LoadAdvancedPanelDates(
+        string gameID,
+        TextMeshProUGUI level1Text,
+        TextMeshProUGUI level2Text,
+        TextMeshProUGUI level3Text)
+    {
+        LoadAdvancedDate(gameID, "easy", level1Text);
+        LoadAdvancedDate(gameID, "normal", level2Text);
+        LoadAdvancedDate(gameID, "hard", level3Text);
+    }
+
+    void LoadAdvancedDate(string gameID, string difficulty, TextMeshProUGUI targetText)
+    {
+        if (targetText == null)
+            return;
+
+        targetText.text = "";
+
+        if (FirestoreManager.Instance == null)
+            return;
+
+        FirestoreManager.Instance.LoadAdvancedRecord(gameID, difficulty, data =>
+        {
+            if (data == null || !data.ContainsKey("latest"))
+                return;
+
+            Dictionary<string, object> latest =
+                data["latest"] as Dictionary<string, object>;
+
+            if (latest == null || !latest.ContainsKey("date"))
+                return;
+
+            targetText.text = latest["date"].ToString();
+        });
     }
 
     public void GoToRowingLevel1()

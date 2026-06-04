@@ -31,6 +31,10 @@ public class ClosetPreviewItem : MonoBehaviour
     public int price = 500;
     public bool isOwned = false;
 
+    [Header("成就解鎖限定")]
+    public bool achievementOnly = false;
+    public string achievementLockText = "成就解鎖";
+
     [Header("UI")]
     public Image imgIcon;
 
@@ -75,7 +79,12 @@ public class ClosetPreviewItem : MonoBehaviour
 
     public void RefreshPriceText()
     {
-        if (txtPrice != null)
+        if (txtPrice == null)
+            return;
+
+        if (achievementOnly && !isOwned)
+            txtPrice.text = achievementLockText;
+        else
             txtPrice.text = price.ToString();
     }
 
