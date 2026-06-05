@@ -2004,7 +2004,7 @@ MonoBehaviour:
   coinRewardText: {fileID: 476020678}
   finalTimeText: {fileID: 1902883349}
   btnEndConfirm: {fileID: 398896018}
-  coinComplete: 50
+  coinComplete: 100
   coinRecord: 150
 --- !u!1 &428734960
 GameObject:
@@ -7405,7 +7405,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1c82ed04721dfe2488547535e78bb6c9, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 61e34fcb3b856b249af6bf8ec17d35dd, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
