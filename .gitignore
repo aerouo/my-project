@@ -1,6 +1,8 @@
-# =========================
-# Unity generated folders
-# =========================
+# =========================================================================
+# Unity Standard Gitignore (Optimized)
+# =========================================================================
+
+# 絕對不要進 Git 的主要快取與暫存資料夾
 [Ll]ibrary/
 [Tt]emp/
 [Oo]bj/
@@ -8,10 +10,20 @@
 [Bb]uilds/
 [Ll]ogs/
 [Uu]ser[Ss]ettings/
+.utmp/
 
-# =========================
-# Unity generated files
-# =========================
+# 記憶體與錄影檔案
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# IDE 產生的快取與設定檔
+.vs/
+.gradle/
+.idea/
+.vsconfig
+.vscode/
+
+# Unity/Visual Studio 自動產生的專案檔
 *.csproj
 *.unityproj
 *.sln
@@ -27,29 +39,34 @@
 *.opendb
 *.VC.db
 
-# =========================
-# OS generated files
-# =========================
+# Unity 自動產生的 Meta 雜訊與崩潰報告
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta
+sysinfo.txt
+crashlytics-build.properties
+
+# 建置出來的產物 (Builds)
+*.apk
+*.aab
+*.unitypackage
+*.unitypackage.meta
+*.app
+
+# Addressables 暫存
+[Aa]ssets/[Aa]ddressable[Aa]ssets[Dd]ata/*/*.bin*
+[Aa]ssets/[Ss]treamingAssets/aa.meta
+[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# OS 產生的雜訊
 .DS_Store
 Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-# =========================
-# IDE / Editor
-# =========================
-.vscode/
-.idea/
-
-# =========================
-# Unity meta handling
-# =========================
+# =========================================================================
+# Unity Meta 檔案核心防護（絕對不可以忽略 meta 檔案）
+# =========================================================================
 !/[Aa]ssets/**/*.meta
 !/[Pp]ackages/**/*.meta
 !/[Pp]roject[Ss]ettings/**/*.meta
-
-# =========================
-# Crash reports
-# =========================
-sysinfo.txt
-.vs/
