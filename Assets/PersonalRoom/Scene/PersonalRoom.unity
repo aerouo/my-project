@@ -435,6 +435,7 @@ GameObject:
   - component: {fileID: 6474812}
   - component: {fileID: 6474814}
   - component: {fileID: 6474813}
+  - component: {fileID: 6474815}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -499,6 +500,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6474811}
   m_CullTransparentMesh: 1
+--- !u!114 &6474815
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6474811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11cd149ace1252c47bf27c8bbe192885, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardHoverEffect
+  hoverMoveY: 10
+  hoverScale: 1.02
+  speed: 8
+  enableGlow: 0
+  glowImage: {fileID: 0}
+  glowAlpha: 0.18
 --- !u!1 &7197502
 GameObject:
   m_ObjectHideFlags: 0
@@ -4285,6 +4304,7 @@ GameObject:
   - component: {fileID: 61901504}
   - component: {fileID: 61901506}
   - component: {fileID: 61901505}
+  - component: {fileID: 61901507}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -4349,6 +4369,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 61901503}
   m_CullTransparentMesh: 1
+--- !u!114 &61901507
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 61901503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11cd149ace1252c47bf27c8bbe192885, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardHoverEffect
+  hoverMoveY: 10
+  hoverScale: 1.02
+  speed: 8
+  enableGlow: 0
+  glowImage: {fileID: 0}
+  glowAlpha: 0.18
 --- !u!1 &70079662
 GameObject:
   m_ObjectHideFlags: 0
@@ -15774,6 +15812,7 @@ GameObject:
   - component: {fileID: 250597640}
   - component: {fileID: 250597642}
   - component: {fileID: 250597641}
+  - component: {fileID: 250597643}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -15838,6 +15877,24 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 250597639}
   m_CullTransparentMesh: 1
+--- !u!114 &250597643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 250597639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 11cd149ace1252c47bf27c8bbe192885, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CardHoverEffect
+  hoverMoveY: 10
+  hoverScale: 1.02
+  speed: 8
+  enableGlow: 0
+  glowImage: {fileID: 0}
+  glowAlpha: 0.18
 --- !u!1 &255672452
 GameObject:
   m_ObjectHideFlags: 0
