@@ -12,7 +12,7 @@ public class ForGameManager : MonoBehaviour
     public TextMeshProUGUI resultText;
     public TextMeshProUGUI wrongText;
 
-    [Header("放置槽（依順序拉入 kuang1~9）")]
+    [Header("放置槽（依順序拉入 kuang1~15）")]
     public DropSlot[] slots;
 
     [Header("結果展示方塊")]
@@ -21,41 +21,48 @@ public class ForGameManager : MonoBehaviour
     public Color wrongColor = Color.red;
     public float highlightDuration = 0.5f;
 
-    [Header("背景圖動畫")]
-    public Image backgroundImage;   // 拉入 Background (string) 的 Image
-    public GameObject puaper;       // 拉入 puaper 物件
-    public Sprite background1;      // 原本的背景圖（圖1）
-    public Sprite background2;      // 要換的背景圖（圖2）
-    public float bgSwitchDelay = 1f; // 換圖等待時間（可調）
-    public Sprite puaperSprite2;    // puaper 顯示時換成的新圖
+    [Header("完成後換圖")]
+    public Image backgroundForImage;  // 拉入 Background (for) 的 Image
+    public Sprite backgroundSprite2;  // 換成的新圖
+    public GameObject boatGogo;       // 拉入 Boat gogo 物件
 
-    // 每個 slot 對應的各 blockID Sprite（9組）
-    [Header("Block 1 圖片")]
-    public Sprite block1_class, block1_main, block1_print, block1_string, block1_string_marks, block1_name_num, block1_string_num, block1_equals, block1_hum001;
+    [System.Serializable]
+    public class BlockSpriteGroup
+    {
+        public Sprite class_, main, for_, int_, int_name, equals, one,
+                      int_count, lessEqual, ten, plusplus, print,
+                      string_marks, paddle_hard;
+    }
 
-    [Header("Block 2 圖片")]
-    public Sprite block2_class, block2_main, block2_print, block2_string, block2_string_marks, block2_name_num, block2_string_num, block2_equals, block2_hum001;
+    [Header("Block 圖片分組")]
+    public BlockSpriteGroup groupA; // 框1
+    public BlockSpriteGroup groupB; // 框2
+    public BlockSpriteGroup groupC; // 框3
+    public BlockSpriteGroup groupD; // 框4~12
+    public BlockSpriteGroup groupE; // 框13
+    public BlockSpriteGroup groupF; // 框14~15
 
-    [Header("Block 3 圖片")]
-    public Sprite block3_class, block3_main, block3_print, block3_string, block3_string_marks, block3_name_num, block3_string_num, block3_equals, block3_hum001;
-
-    [Header("Block 4 圖片")]
-    public Sprite block4_class, block4_main, block4_print, block4_string, block4_string_marks, block4_name_num, block4_string_num, block4_equals, block4_hum001;
-
-    [Header("Block 5 圖片")]
-    public Sprite block5_class, block5_main, block5_print, block5_string, block5_string_marks, block5_name_num, block5_string_num, block5_equals, block5_hum001;
-
-    [Header("Block 6 圖片")]
-    public Sprite block6_class, block6_main, block6_print, block6_string, block6_string_marks, block6_name_num, block6_string_num, block6_equals, block6_hum001;
-
-    [Header("Block 7 圖片")]
-    public Sprite block7_class, block7_main, block7_print, block7_string, block7_string_marks, block7_name_num, block7_string_num, block7_equals, block7_hum001;
-
-    [Header("Block 8 圖片")]
-    public Sprite block8_class, block8_main, block8_print, block8_string, block8_string_marks, block8_name_num, block8_string_num, block8_equals, block8_hum001;
-
-    [Header("Block 9 圖片")]
-    public Sprite block9_class, block9_main, block9_print, block9_string, block9_string_marks, block9_name_num, block9_string_num, block9_equals, block9_hum001;
+    private BlockSpriteGroup GetGroupByIndex(int i)
+    {
+        switch (i)
+        {
+            case 0: return groupA;
+            case 1: return groupB;
+            case 2: return groupC;
+            case 3:
+            case 4:
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+            case 10:
+            case 11: return groupD;
+            case 12: return groupE;
+            case 13: case 14: return groupF;
+            default: return null;
+        }
+    }
 
     private float startTime;
 
@@ -71,55 +78,26 @@ public class ForGameManager : MonoBehaviour
 
     Sprite GetBlockSprite(int blockIndex, string blockID)
     {
-        Sprite[] sprites;
-        switch (blockIndex)
-        {
-            case 0: sprites = new Sprite[] { block1_class, block1_main, block1_print, block1_string, block1_string_marks, block1_name_num, block1_string_num, block1_equals, block1_hum001 }; break;
-            case 1: sprites = new Sprite[] { block2_class, block2_main, block2_print, block2_string, block2_string_marks, block2_name_num, block2_string_num, block2_equals, block2_hum001 }; break;
-            case 2: sprites = new Sprite[] { block3_class, block3_main, block3_print, block3_string, block3_string_marks, block3_name_num, block3_string_num, block3_equals, block3_hum001 }; break;
-            case 3: sprites = new Sprite[] { block4_class, block4_main, block4_print, block4_string, block4_string_marks, block4_name_num, block4_string_num, block4_equals, block4_hum001 }; break;
-            case 4: sprites = new Sprite[] { block5_class, block5_main, block5_print, block5_string, block5_string_marks, block5_name_num, block5_string_num, block5_equals, block5_hum001 }; break;
-            case 5: sprites = new Sprite[] { block6_class, block6_main, block6_print, block6_string, block6_string_marks, block6_name_num, block6_string_num, block6_equals, block6_hum001 }; break;
-            case 6: sprites = new Sprite[] { block7_class, block7_main, block7_print, block7_string, block7_string_marks, block7_name_num, block7_string_num, block7_equals, block7_hum001 }; break;
-            case 7: sprites = new Sprite[] { block8_class, block8_main, block8_print, block8_string, block8_string_marks, block8_name_num, block8_string_num, block8_equals, block8_hum001 }; break;
-            case 8: sprites = new Sprite[] { block9_class, block9_main, block9_print, block9_string, block9_string_marks, block9_name_num, block9_string_num, block9_equals, block9_hum001 }; break;
-            default: return null;
-        }
-
+        BlockSpriteGroup b = GetGroupByIndex(blockIndex);
+        if (b == null) return null;
         switch (blockID)
         {
-            case "class": return sprites[0];
-            case "main": return sprites[1];
-            case "print": return sprites[2];
-            case "string": return sprites[3];
-            case "string marks": return sprites[4];
-            case "name num": return sprites[5];
-            case "string num": return sprites[6];
-            case "=": return sprites[7];
-            case "hum-001": return sprites[8];
+            case "class": return b.class_;
+            case "main": return b.main;
+            case "for": return b.for_;
+            case "int": return b.int_;
+            case "int name": return b.int_name;
+            case "=": return b.equals;
+            case "1": return b.one;
+            case "int count": return b.int_count;
+            case "<=": return b.lessEqual;
+            case "10": return b.ten;
+            case "++": return b.plusplus;
+            case "print": return b.print;
+            case "string marks": return b.string_marks;
+            case "paddle hard": return b.paddle_hard;
             default: return null;
         }
-    }
-
-    IEnumerator PlayBackgroundAnimation()
-    {
-        // 1. 隱藏 puaper
-        if (puaper != null) puaper.SetActive(false);
-
-        // 2. 換成背景圖2
-        if (backgroundImage != null) backgroundImage.sprite = background2;
-
-        yield return new WaitForSeconds(bgSwitchDelay);
-
-        // 3. 換回背景圖1
-        if (backgroundImage != null) backgroundImage.sprite = background1;
-
-        yield return new WaitForSeconds(bgSwitchDelay);
-
-        // 4. 顯示 puaper，同時換圖
-        if (puaper != null && puaperSprite2 != null)
-            puaper.GetComponent<Image>().sprite = puaperSprite2;
-        if (puaper != null) puaper.SetActive(true);
     }
 
     IEnumerator ExecuteBlocks(DropSlot[] slots)
@@ -154,16 +132,18 @@ public class ForGameManager : MonoBehaviour
             }
 
             blockImages[i].color = original;
-
-            // 最後一個槽（string num）全對後執行背景動畫 + 輸出文字
-            if (slots[i].acceptID == "string num")
-            {
-                // 先播背景動畫（隱藏puaper → 換圖2 → 換回圖1 → 顯示puaper）
-                yield return StartCoroutine(PlayBackgroundAnimation());
-            }
         }
 
-        yield return new WaitForSeconds(0.5f);
+        // 全部答對：隱藏 block
+        foreach (Image img in blockImages)
+            if (img != null) img.gameObject.SetActive(false);
+
+        // 隱藏 Boat gogo，換背景圖
+        if (boatGogo != null) boatGogo.SetActive(false);
+        if (backgroundForImage != null && backgroundSprite2 != null)
+            backgroundForImage.sprite = backgroundSprite2;
+
+        yield return new WaitForSeconds(3f);
         ShowResult(Time.time - startTime);
     }
 

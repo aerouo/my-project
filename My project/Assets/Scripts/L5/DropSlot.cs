@@ -10,13 +10,18 @@ public class DropSlot : MonoBehaviour, IDropHandler
     [Header("各 BlockID 對應的 Sprite")]
     public Sprite sprite_class;
     public Sprite sprite_main;
+    public Sprite sprite_for;
+    public Sprite sprite_int;
+    public Sprite sprite_int_name;
+    public Sprite sprite_equals;
+    public Sprite sprite_one;
+    public Sprite sprite_int_count;
+    public Sprite sprite_lessEqual;
+    public Sprite sprite_ten;
+    public Sprite sprite_plusplus;
     public Sprite sprite_print;
-    public Sprite sprite_string;        // 原本的 string（""）
-    public Sprite sprite_string_marks;  // 新的 string marks
-    public Sprite sprite_name_num;      // name num
-    public Sprite sprite_string_num;    // string num
-    public Sprite sprite_equals;        // =
-    public Sprite sprite_hum001;        // hum-001（原本的 num）
+    public Sprite sprite_string_marks;
+    public Sprite sprite_paddle_hard;
     public Sprite defaultSprite;
 
     private DragBlock currentBlock;
@@ -57,13 +62,18 @@ public class DropSlot : MonoBehaviour, IDropHandler
         {
             case "class": return sprite_class;
             case "main": return sprite_main;
-            case "print": return sprite_print;
-            case "string": return sprite_string;
-            case "string marks": return sprite_string_marks;
-            case "name num": return sprite_name_num;
-            case "string num": return sprite_string_num;
+            case "for": return sprite_for;
+            case "int": return sprite_int;
+            case "int name": return sprite_int_name;
             case "=": return sprite_equals;
-            case "hum-001": return sprite_hum001;
+            case "1": return sprite_one;
+            case "int count": return sprite_int_count;
+            case "<=": return sprite_lessEqual;
+            case "10": return sprite_ten;
+            case "++": return sprite_plusplus;
+            case "print": return sprite_print;
+            case "string marks": return sprite_string_marks;
+            case "paddle hard": return sprite_paddle_hard;
             default:
                 Debug.Log("找不到對應的 blockID: " + blockID);
                 return defaultSprite;

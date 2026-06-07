@@ -3,16 +3,28 @@
   "WorkspaceRootPath": "C:\\Users\\a0903\\my-project\\My project\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|c:\\users\\a0903\\my-project\\my project\\assets\\scripts\\l5\\puaperinteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:assets\\scripts\\l5\\puaperinteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\l5\\forgamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\l5\\forgamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\l5\\dropslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\l5\\dropslot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E8A91009-7186-A382-4FE4-3C21BA335F00}|Assembly-CSharp-Editor.csproj|c:\\users\\a0903\\my-project\\my project\\assets\\editor\\copyforslotsprites.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E8A91009-7186-A382-4FE4-3C21BA335F00}|Assembly-CSharp-Editor.csproj|solutionrelative:assets\\editor\\copyforslotsprites.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\l5\\level5manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\l5\\level5manager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\l5\\forgamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\l5\\forgamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|C:\\Users\\a0903\\my-project\\My project\\assets\\scripts\\l5\\choiceboatgame.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{32C3BDE6-E125-3128-82C1-25D0441455A3}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\l5\\choiceboatgame.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\PuaperInteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Assets\\Scripts\\L5\\PuaperInteraction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\a0903\\my-project\\My project\\Assets\\Editor\\CopyDropSlotSprites.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -62,48 +74,85 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "PuaperInteraction.cs",
-              "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\PuaperInteraction.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\L5\\PuaperInteraction.cs",
-              "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\PuaperInteraction.cs",
-              "RelativeToolTip": "Assets\\Scripts\\L5\\PuaperInteraction.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAARAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "CopyForSlotSprites.cs",
+              "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Editor\\CopyForSlotSprites.cs",
+              "RelativeDocumentMoniker": "Assets\\Editor\\CopyForSlotSprites.cs",
+              "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Editor\\CopyForSlotSprites.cs",
+              "RelativeToolTip": "Assets\\Editor\\CopyForSlotSprites.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFUAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-05T02:18:26.091Z",
+              "WhenOpened": "2026-06-07T13:02:43.577Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "DropSlot.cs",
+              "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\DropSlot.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\L5\\DropSlot.cs",
+              "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\DropSlot.cs",
+              "RelativeToolTip": "Assets\\Scripts\\L5\\DropSlot.cs",
+              "ViewState": "AgIAAEwAAAAAAAAAAAAswGIAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-07T12:56:27.466Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ChoiceBoatGame.cs",
+              "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\ChoiceBoatGame.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\L5\\ChoiceBoatGame.cs",
+              "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\ChoiceBoatGame.cs",
+              "RelativeToolTip": "Assets\\Scripts\\L5\\ChoiceBoatGame.cs",
+              "ViewState": "AgIAAGsAAAAAAAAAAAAswIEAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-06T17:16:14.632Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "PuaperInteraction.cs",
+              "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\PuaperInteraction.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\L5\\PuaperInteraction.cs",
+              "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\PuaperInteraction.cs",
+              "RelativeToolTip": "Assets\\Scripts\\L5\\PuaperInteraction.cs",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-06-05T02:18:26.091Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Level5Manager.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\Level5Manager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\L5\\Level5Manager.cs",
               "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\Level5Manager.cs",
               "RelativeToolTip": "Assets\\Scripts\\L5\\Level5Manager.cs",
-              "ViewState": "AgIAAH8AAAAAAAAAAAAAAH8AAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAswI4AAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-06-04T18:50:14.095Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "ForGameManager.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\ForGameManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\L5\\ForGameManager.cs",
               "ToolTip": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L5\\ForGameManager.cs",
               "RelativeToolTip": "Assets\\Scripts\\L5\\ForGameManager.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAJwAAAAAAAAAAAAswLIAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-04T18:49:19.292Z"
+              "WhenOpened": "2026-06-04T18:49:19.292Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "CopyDropSlotSprites.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Editor\\CopyDropSlotSprites.cs",
               "RelativeDocumentMoniker": "Assets\\Editor\\CopyDropSlotSprites.cs",
@@ -114,7 +163,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 14,
               "Title": "AxeInteraction.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\AxeInteraction.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\AxeInteraction.cs",
@@ -126,7 +175,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "DraftInteraction.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DraftInteraction.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DraftInteraction.cs",
@@ -137,7 +186,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "DragBlock.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DragBlock.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DragBlock.cs",
@@ -149,7 +198,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "L4_DropSlot.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\L4_DropSlot.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\L4_DropSlot.cs",
@@ -161,7 +210,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 15,
               "Title": "DropSlot.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\DropSlot.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DropSlot.cs",
@@ -173,7 +222,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "WoodChop.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\WoodChop.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\WoodChop.cs",
@@ -185,7 +234,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "WoodChopManager.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\WoodChopManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\WoodChopManager.cs",
@@ -197,7 +246,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 12,
               "Title": "Level4Manager.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\Level4Manager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\Level4Manager.cs",
@@ -209,7 +258,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 13,
               "Title": "SwitchcaseGameManager.cs",
               "DocumentMoniker": "C:\\Users\\a0903\\my-project\\My project\\Assets\\Scripts\\SwitchcaseGameManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\SwitchcaseGameManager.cs",
