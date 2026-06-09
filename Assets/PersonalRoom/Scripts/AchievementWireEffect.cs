@@ -34,12 +34,18 @@ public class AchievementWireEffect : MonoBehaviour
     {
         if (wireOn != null)
             wireRect = wireOn.GetComponent<RectTransform>();
+
+        if (wireOff != null)
+            wireOff.SetActive(true);
+
+        if (wireOn != null)
+            wireOn.SetActive(false);
+
+        if (electricPulse != null)
+            electricPulse.gameObject.SetActive(false);
     }
 
-    void Start()
-    {
-        SetPowered(isPowered);
-    }
+
 
     public void SetPowered(bool powered)
     {

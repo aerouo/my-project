@@ -52,6 +52,7 @@ public class AchievementManager : MonoBehaviour
         }
 
         RefreshNodeList();
+        RefreshWireList();
 
         if (FirestoreManager.Instance != null && FirestoreManager.Instance.AchievementLoaded)
         {
@@ -132,8 +133,32 @@ public class AchievementManager : MonoBehaviour
         RefreshAchievementWires();
     }
 
+
+    void RefreshWireList()
+    {
+        AchievementWireEffect[] wires = FindObjectsByType<AchievementWireEffect>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
+
+        newbieToAdvancedWire = null;
+        advancedToQuestWire = null;
+
+        foreach (AchievementWireEffect wire in wires)
+        {
+            if (wire == null) continue;
+
+            if (wire.name == "Line_Newbie_To_Advanced")
+                newbieToAdvancedWire = wire;
+
+            if (wire.name == "Line_Advanced_To_Quest")
+                advancedToQuestWire = wire;
+        }
+    }
     void RefreshAchievementWires()
     {
+        RefreshWireList();
+
         bool basicCompleted = false;
         bool advancedCompleted = false;
 
@@ -243,12 +268,18 @@ public class AchievementManager : MonoBehaviour
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         RefreshNodeList();
+        RefreshWireList();
         CheckPendingToast();
 
         if (FirestoreManager.Instance != null && FirestoreManager.Instance.AchievementLoaded)
+        {
             ApplyAchievementData(FirestoreManager.Instance.GetAchievementCache());
+        }
+        else
+        {
+            LoadAchievementStates();
+        }
     }
-
     public void TestToast()
     {
         ShowAchievementToast("成就達成！", "菜鳥新兵，報到！");

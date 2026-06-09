@@ -105,6 +105,9 @@ public class ClosetPreviewManager : MonoBehaviour
     void OnDisable()
     {
         CancelBuy();
+
+        if (firebaseLoaded)
+            CancelPreview();
     }
 
     IEnumerator InitClosetFromFirebase()
@@ -324,8 +327,7 @@ public class ClosetPreviewManager : MonoBehaviour
         if (btnBuyNo != null)
             btnBuyNo.gameObject.SetActive(true);
 
-        EquipItem(selectedItem);
-        ApplyOutfit();
+        PreviewItem(selectedItem);
 
         UpdateCoinsUI();
         UpdateAllStatus();
@@ -467,6 +469,13 @@ public class ClosetPreviewManager : MonoBehaviour
         RestoreSavedOutfit();
         HideEmptyEquippedImages();
         UpdateAllStatus();
+    }
+    public void CloseCloset()
+    {
+        if (firebaseLoaded)
+            CancelPreview();
+
+        CancelBuy();
     }
 
     void SaveEquippedToFirebase()

@@ -9,6 +9,9 @@ public class PersonalRoomPopupController : MonoBehaviour
     public GameObject panelCloset;
     public GameObject panelLearning;
 
+    [Header("Closet")]
+    public ClosetPreviewManager closetPreviewManager;
+
     [Header("Button Images")]
     public Image btnAchievement;
     public Image btnCloset;
@@ -32,19 +35,20 @@ public class PersonalRoomPopupController : MonoBehaviour
 
     public void BackToHome()
     {
+        CloseClosetPreview();
         SceneManager.LoadScene("home");
     }
 
     public void ShowAchievement()
     {
+        CloseClosetPreview();
+
         OpenOnly(panelAchievement);
         SelectButton(btnAchievement);
         ResetAchievementView();
 
         if (AchievementManager.Instance != null)
-        {
             AchievementManager.Instance.RefreshAchievements();
-        }
     }
 
     public void ShowCloset()
@@ -55,8 +59,16 @@ public class PersonalRoomPopupController : MonoBehaviour
 
     public void ShowLearning()
     {
+        CloseClosetPreview();
+
         OpenOnly(panelLearning);
         SelectButton(btnLearning);
+    }
+
+    private void CloseClosetPreview()
+    {
+        if (closetPreviewManager != null)
+            closetPreviewManager.CloseCloset();
     }
 
     private void OpenOnly(GameObject target)
@@ -81,18 +93,14 @@ public class PersonalRoomPopupController : MonoBehaviour
     {
         Canvas.ForceUpdateCanvases();
 
-        // ScrollRect 回中心
         if (achievementScrollRect != null)
         {
             achievementScrollRect.horizontalNormalizedPosition = 0.5f;
             achievementScrollRect.verticalNormalizedPosition = 0.5f;
         }
 
-        // Content 回指定位置
         if (achievementContent != null)
-        {
             achievementContent.anchoredPosition = centerPosition;
-        }
 
         Canvas.ForceUpdateCanvases();
     }
