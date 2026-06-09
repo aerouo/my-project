@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: f933ee3b255764344865cc1c280a99c0
+guid: a4afcf33e9d212e44b0c1a8f09529cdc
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,13 +97,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u5B78\u7FD2button_0"
+      name: "\u7D00\u9304button_0"
       rect:
         serializedVersion: 2
-        x: 996
-        y: 1652
+        x: 32
+        y: 129
         width: 700
-        height: 490
+        height: 600
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -112,8 +112,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 457a57623784ff44e849e48c4f43a9d9
-      internalID: 521809781
+      spriteID: 61b006bd0198dd84fb0e81083eba52f3
+      internalID: 646061334
       vertices: []
       indices: 
       edges: []
@@ -122,7 +122,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: f3bcf0fb00f4a7d43b7c21613b0367c7
+    spriteID: 387f6a155af741f42a8c1a2867fcab06
     internalID: 0
     vertices: []
     indices: 
@@ -132,7 +132,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\u5B78\u7FD2button_0": 521809781
+      "\u7D00\u9304button_0": 646061334
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
