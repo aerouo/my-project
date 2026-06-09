@@ -1923,7 +1923,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 314691695}
-  - component: {fileID: 314691696}
   - component: {fileID: 314691697}
   m_Layer: 0
   m_Name: 'WoodGameManager '
@@ -1947,33 +1946,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &314691696
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 314691694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11a0ba0758c33b94ba9eabfecad492c6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Puzzle
-  txtTimer: {fileID: 0}
-  hintPanel: {fileID: 0}
-  quitConfirmPanel: {fileID: 0}
-  btnQuitConfirm: {fileID: 0}
-  btnQuitCancel: {fileID: 0}
-  endScreen: {fileID: 0}
-  titleText: {fileID: 0}
-  finalTimeText: {fileID: 0}
-  coinRewardText: {fileID: 0}
-  btnEndConfirm: {fileID: 0}
-  advancedID: advanced_02
-  difficulty: easy
-  coinComplete: 50
-  coinRecord: 150
-  totalPieces: 9
 --- !u!114 &314691697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5750,6 +5722,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d299545f64d200649b24a73ecef2e30d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PrintGameManager
+  level4Manager: {fileID: 1915700029}
   SwitchcaseGroupPanel: {fileID: 529406753}
   resultPanel: {fileID: 1894174615}
   draftPanel: {fileID: 1367779694}
@@ -12092,7 +12065,11 @@ MonoBehaviour:
   scene2: {fileID: 21300000, guid: 0cc4641c019cb7d4fabc080bff5a9f13, type: 3}
   miniGameCanvas: {fileID: 712135923}
   miniGameBackground: {fileID: 928986167}
+  woodChopManager: {fileID: 0}
   nextGameUI: {fileID: 1800086089}
+  questLevelID: Level4
+  clearScore: 0
+  rewardCoins: 200
 --- !u!1 &1937403619
 GameObject:
   m_ObjectHideFlags: 0

@@ -88,7 +88,10 @@ public class Quiz05_UIManager : MonoBehaviour
         {
             FirestoreManager.Instance.SaveQuizDone("basic_05", () =>
             {
-                SceneManager.LoadScene("SampleScene");
+                FirestoreManager.Instance.CheckBasicAchievement(1, completed =>
+                {
+                    SceneManager.LoadScene("SampleScene");
+                });
             });
         }
         else

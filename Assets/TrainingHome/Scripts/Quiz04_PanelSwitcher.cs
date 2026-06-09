@@ -112,7 +112,10 @@ public class Quiz04_PanelSwitcher : MonoBehaviour
         {
             FirestoreManager.Instance.SaveQuizDone("basic_04", () =>
             {
-                SceneManager.LoadScene("SampleScene");
+                FirestoreManager.Instance.CheckBasicAchievement(1, completed =>
+                {
+                    SceneManager.LoadScene("SampleScene");
+                });
             });
         }
         else

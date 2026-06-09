@@ -40,6 +40,18 @@ public class VideoWatchTracker : MonoBehaviour
             videoPlayer = GetComponent<VideoPlayer>();
     }
 
+    void OnEnable()
+    {
+        if (videoPlayer != null)
+            videoPlayer.loopPointReached += OnVideoFinished;
+    }
+
+    void OnDisable()
+    {
+        if (videoPlayer != null)
+            videoPlayer.loopPointReached -= OnVideoFinished;
+    }
+
     void Start()
     {
         ResetTracking();
@@ -103,6 +115,18 @@ public class VideoWatchTracker : MonoBehaviour
         {
             SaveCompleted(percent);
         }
+    }
+    void OnVideoFinished(VideoPlayer vp)
+    {
+        watchedSeconds = (float)videoPlayer.length;
+
+        SaveProgress(100);
+        lastSavedPercent = 100;
+
+        if (!completedSaved)
+            SaveCompleted(100);
+
+        DebugLog(videoID + " 影片自然播放結束，進度 = 100%");
     }
 
     public int ForceSaveProgress()

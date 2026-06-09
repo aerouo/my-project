@@ -27,23 +27,12 @@ public class Quiz01_SceneController : MonoBehaviour
     {
         if (FirestoreManager.Instance != null)
         {
-            // 儲存測驗完成
             FirestoreManager.Instance.SaveQuizDone("basic_01", () =>
             {
-                // 檢查是否達成成就
-                FirestoreManager.Instance.CheckBasicAchievement(1, (completed) =>
+                FirestoreManager.Instance.CheckBasicAchievement(1, completed =>
                 {
-                    if (completed)
-                    {
-                        PlayerPrefs.SetInt("ShowAchievementToast", 1);
-                        PlayerPrefs.SetString("ToastTitle", "成就達成！");
-                        PlayerPrefs.SetString("ToastDesc", "新手上路");
-                    }
-
-                    // 返回 LessonHome
                     PlayerPrefs.SetString("OpenPanelAfterLoad", "LessonHome");
                     PlayerPrefs.SetString("ReturnLessonName", "基礎架構");
-
                     SceneManager.LoadScene("SampleScene");
                 });
             });

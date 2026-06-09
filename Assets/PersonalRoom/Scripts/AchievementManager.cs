@@ -11,6 +11,10 @@ public class AchievementManager : MonoBehaviour
     [Header("所有成就節點")]
     public AchievementNodeTooltip[] achievementNodes;
 
+    [Header("成就連線")]
+    public AchievementWireEffect newbieToAdvancedWire;
+    public AchievementWireEffect advancedToQuestWire;
+
     [Header("Toast")]
     public GameObject toastPanel;
     public TMP_Text txtToastTitle;
@@ -24,7 +28,6 @@ public class AchievementManager : MonoBehaviour
 
     public Vector2 hiddenPos = new Vector2(1140, 340);
     public Vector2 showPos = new Vector2(800, 340);
-
     public float slideSpeed = 8f;
 
     void Awake()
@@ -32,8 +35,6 @@ public class AchievementManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-
-            // 讓最外層 Canvas 常駐
             DontDestroyOnLoad(transform.root.gameObject);
         }
         else
@@ -44,11 +45,13 @@ public class AchievementManager : MonoBehaviour
 
     void Start()
     {
-        if (toastPanel != null)
+        if (toastPanel != null && toastRect != null)
         {
             toastPanel.SetActive(true);
             toastRect.anchoredPosition = hiddenPos;
         }
+
+        RefreshNodeList();
 
         if (FirestoreManager.Instance != null && FirestoreManager.Instance.AchievementLoaded)
         {
@@ -58,98 +61,58 @@ public class AchievementManager : MonoBehaviour
         {
             LoadAchievementStates();
         }
+
         CheckPendingToast();
+        CheckBasicLearningAchievementOnStart();
+        CheckAdvancedAchievementOnStart();
     }
 
-    // ===== 從 Firestore 載入成就狀態 =====
-    public void LoadAchievementStates()
+    void CheckBasicLearningAchievementOnStart()
     {
-        if (FirestoreManager.Instance == null)
-            return;
+        if (FirestoreManager.Instance == null) return;
 
-        FirestoreManager.Instance.LoadAchievements((data) =>
+        FirestoreManager.Instance.CheckBasicAchievement(1, completed =>
         {
-            foreach (AchievementNodeTooltip node in achievementNodes)
-            {
-                bool unlocked = false;
-                bool completed = false;
+            Debug.Log("【AchievementManager】菜鳥新兵成就檢查結果：" + completed);
 
-                if (data.ContainsKey(node.achievementID + "_unlocked"))
-                    unlocked = (bool)data[node.achievementID + "_unlocked"];
-
-                if (data.ContainsKey(node.achievementID + "_completed"))
-                    completed = (bool)data[node.achievementID + "_completed"];
-
-                if (node.achievementID == "achievement_basic_01")
-                    unlocked = true;
-
-                node.SetAchievementState(unlocked, completed);
-            }
-
-            // Firebase 讀完、狀態更新完，才顯示
-            foreach (AchievementNodeTooltip node in achievementNodes)
-            {
-                node.gameObject.SetActive(true);
-            }
+            if (completed)
+                RefreshAchievements();
+            else
+                LoadAchievementStates();
         });
     }
 
-    public void ShowAchievementToast(string title, string desc)
+    void CheckAdvancedAchievementOnStart()
     {
-        StartCoroutine(ShowToastRoutine(title, desc));
+        if (FirestoreManager.Instance == null) return;
+
+        FirestoreManager.Instance.CheckAdvancedLevelAchievement(completed =>
+        {
+            Debug.Log("【AchievementManager】菜鳥的逆襲成就檢查結果：" + completed);
+            LoadAchievementStates();
+        });
     }
 
-    IEnumerator DelayedToast(string title, string desc)
+    public void LoadAchievementStates()
     {
-        yield return new WaitForSeconds(1f);
+        if (FirestoreManager.Instance == null) return;
 
-        ShowAchievementToast(title, desc);
-    }
+        RefreshNodeList();
 
-    // ===== Toast 顯示流程 =====
-    IEnumerator ShowToastRoutine(string title, string desc)
-    {
-        txtToastTitle.text = title;
-        txtToastDesc.text = desc;
-
-        // ===== 滑入 =====
-        while (Vector2.Distance(toastRect.anchoredPosition, showPos) > 1f)
+        FirestoreManager.Instance.LoadAchievements(data =>
         {
-            toastRect.anchoredPosition =
-                Vector2.Lerp(
-                    toastRect.anchoredPosition,
-                    showPos,
-                    Time.deltaTime * slideSpeed
-                );
-
-            yield return null;
-        }
-
-        toastRect.anchoredPosition = showPos;
-
-        // 停留
-        yield return new WaitForSeconds(3f);
-
-        // ===== 滑出 =====
-        while (Vector2.Distance(toastRect.anchoredPosition, hiddenPos) > 1f)
-        {
-            toastRect.anchoredPosition =
-                Vector2.Lerp(
-                    toastRect.anchoredPosition,
-                    hiddenPos,
-                    Time.deltaTime * slideSpeed
-                );
-
-            yield return null;
-        }
-
-        toastRect.anchoredPosition = hiddenPos;
+            ApplyAchievementData(data);
+        });
     }
 
     public void ApplyAchievementData(Dictionary<string, object> data)
     {
+        RefreshNodeList();
+
         foreach (AchievementNodeTooltip node in achievementNodes)
         {
+            if (node == null) continue;
+
             bool unlocked = false;
             bool completed = false;
 
@@ -163,7 +126,77 @@ public class AchievementManager : MonoBehaviour
                 unlocked = true;
 
             node.SetAchievementState(unlocked, completed);
+            node.gameObject.SetActive(true);
         }
+
+        RefreshAchievementWires();
+    }
+
+    void RefreshAchievementWires()
+    {
+        bool basicCompleted = false;
+        bool advancedCompleted = false;
+
+        foreach (AchievementNodeTooltip node in achievementNodes)
+        {
+            if (node == null) continue;
+
+            if (node.achievementID == "achievement_basic_01")
+                basicCompleted = node.completed;
+
+            if (node.achievementID == "achievement_advanced_01")
+                advancedCompleted = node.completed;
+        }
+
+        if (newbieToAdvancedWire != null)
+            newbieToAdvancedWire.SetPowered(basicCompleted);
+
+        if (advancedToQuestWire != null)
+            advancedToQuestWire.SetPowered(advancedCompleted);
+    }
+
+    public void ShowAchievementToast(string title, string desc)
+    {
+        StartCoroutine(ShowToastRoutine(title, desc));
+    }
+
+    IEnumerator DelayedToast(string title, string desc)
+    {
+        yield return new WaitForSeconds(1f);
+        ShowAchievementToast(title, desc);
+    }
+
+    IEnumerator ShowToastRoutine(string title, string desc)
+    {
+        if (toastRect == null) yield break;
+
+        if (txtToastTitle != null)
+            txtToastTitle.text = title;
+
+        if (txtToastDesc != null)
+            txtToastDesc.text = desc;
+
+        while (Vector2.Distance(toastRect.anchoredPosition, showPos) > 1f)
+        {
+            toastRect.anchoredPosition =
+                Vector2.Lerp(toastRect.anchoredPosition, showPos, Time.deltaTime * slideSpeed);
+
+            yield return null;
+        }
+
+        toastRect.anchoredPosition = showPos;
+
+        yield return new WaitForSeconds(3f);
+
+        while (Vector2.Distance(toastRect.anchoredPosition, hiddenPos) > 1f)
+        {
+            toastRect.anchoredPosition =
+                Vector2.Lerp(toastRect.anchoredPosition, hiddenPos, Time.deltaTime * slideSpeed);
+
+            yield return null;
+        }
+
+        toastRect.anchoredPosition = hiddenPos;
     }
 
     void CheckPendingToast()
@@ -173,26 +206,28 @@ public class AchievementManager : MonoBehaviour
             PlayerPrefs.DeleteKey("ShowAchievementToast");
 
             string title = PlayerPrefs.GetString("ToastTitle", "成就達成！");
-            string desc = PlayerPrefs.GetString("ToastDesc", "");
+            string desc = PlayerPrefs.GetString("ToastDesc", "菜鳥新兵，報到！");
 
             PlayerPrefs.DeleteKey("ToastTitle");
             PlayerPrefs.DeleteKey("ToastDesc");
 
             RefreshAchievements();
-
             StartCoroutine(DelayedToast(title, desc));
-            
         }
     }
 
     public void RefreshAchievements()
     {
+        RefreshNodeList();
+        LoadAchievementStates();
+    }
+
+    void RefreshNodeList()
+    {
         achievementNodes = FindObjectsByType<AchievementNodeTooltip>(
             FindObjectsInactive.Include,
             FindObjectsSortMode.None
         );
-
-        LoadAchievementStates();
     }
 
     void OnEnable()
@@ -207,11 +242,15 @@ public class AchievementManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        RefreshNodeList();
         CheckPendingToast();
+
+        if (FirestoreManager.Instance != null && FirestoreManager.Instance.AchievementLoaded)
+            ApplyAchievementData(FirestoreManager.Instance.GetAchievementCache());
     }
 
     public void TestToast()
     {
-        ShowAchievementToast("成就達成！", "新手上路");
+        ShowAchievementToast("成就達成！", "菜鳥新兵，報到！");
     }
 }

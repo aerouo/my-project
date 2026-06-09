@@ -25,7 +25,7 @@ public class Level5Manager : MonoBehaviour
     [Header("背景圖片庫")]
     public Sprite scene1;
     public Sprite scene2;
-    public Sprite scene3; // 第二段劇情換圖用
+    public Sprite scene3;
 
     [Header("小遊戲銜接")]
     public GameObject miniGameCanvas;
@@ -35,13 +35,26 @@ public class Level5Manager : MonoBehaviour
     [Header("第二段劇情結束後銜接")]
     public GameObject nextGameUI;
 
+    [Header("闖關紀錄")]
+    public string questLevelID = "Level5";
+    public int clearScore = 0;
+    public int rewardCoins = 200;
+
     private bool boatCompleted = false;
-    private int currentScene = 1;
+    private bool progress50Saved = false;
+    private bool progress100Saved = false;
+
     private bool inPart2 = false;
+
+    private float elapsedTime = 0f;
+    private float timerStartTime = 0f;
+    private bool isTimerRunning = false;
 
     void Start()
     {
-        if (backgroundImage != null && scene1 != null) backgroundImage.sprite = scene1;
+        if (backgroundImage != null && scene1 != null)
+            backgroundImage.sprite = scene1;
+
         if (miniGameCanvas != null) miniGameCanvas.SetActive(false);
         if (miniGameBackground != null) miniGameBackground.SetActive(false);
         if (nextGameUI != null) nextGameUI.SetActive(false);
@@ -54,17 +67,51 @@ public class Level5Manager : MonoBehaviour
         }
     }
 
+    public void StartQuestTimer()
+    {
+        if (isTimerRunning) return;
+
+        timerStartTime = Time.time;
+        isTimerRunning = true;
+
+        Debug.Log("【Level5 計時】開始 / 繼續計時");
+    }
+
+    public void PauseQuestTimer()
+    {
+        if (!isTimerRunning) return;
+
+        elapsedTime += Time.time - timerStartTime;
+        isTimerRunning = false;
+
+        Debug.Log("【Level5 計時】暫停，目前累積：" + elapsedTime);
+    }
+
+    public float GetElapsedTime()
+    {
+        if (isTimerRunning)
+            return elapsedTime + (Time.time - timerStartTime);
+
+        return elapsedTime;
+    }
+
     IEnumerator PlayPart1()
     {
         yield return new WaitForSeconds(waitBeforeStory);
         yield return StartCoroutine(PlayStory(storyPart1));
 
-        dialogueText.text = "";
+        if (dialogueText != null)
+            dialogueText.text = "";
+
         if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
         if (miniGameBackground != null) miniGameBackground.SetActive(true);
-        if (choiceBoatGame != null) choiceBoatGame.StartGame();
 
-        Debug.Log("【劇情控制】第一段結束，等待海盜船完成...");
+        StartQuestTimer();
+
+        if (choiceBoatGame != null)
+            choiceBoatGame.StartGame();
+
+        Debug.Log("【劇情控制】第一段結束，開始海盜船並計時");
     }
 
     public void OnChoiceBoat()
@@ -72,25 +119,78 @@ public class Level5Manager : MonoBehaviour
         if (boatCompleted) return;
         boatCompleted = true;
 
+        PauseQuestTimer();
+
+        if (!progress50Saved)
+        {
+            progress50Saved = true;
+
+            if (FirestoreManager.Instance != null)
+            {
+                FirestoreManager.Instance.SaveQuestProgress(
+                    questLevelID,
+                    50,
+                    GetElapsedTime(),
+                    clearScore
+                );
+            }
+
+            Debug.Log("【Level5】海盜船完成，存 50%");
+        }
+
         if (miniGameCanvas != null) miniGameCanvas.SetActive(false);
         if (miniGameBackground != null) miniGameBackground.SetActive(false);
 
         if (backgroundImage != null && scene2 != null)
             backgroundImage.sprite = scene2;
 
-        Debug.Log("【劇情控制】海盜船完成，開始第二段劇情");
         StartCoroutine(PlayPart2());
     }
 
     IEnumerator PlayPart2()
     {
         inPart2 = true;
-        if (dialogueText != null) dialogueText.text = "";
+
+        if (dialogueText != null)
+            dialogueText.text = "";
+
         yield return StartCoroutine(PlayStory(storyPart2));
 
-        dialogueText.text = "";
-        if (nextGameUI != null) nextGameUI.SetActive(true);
-        Debug.Log("【劇情控制】第二段結束，開啟程式方塊");
+        if (dialogueText != null)
+            dialogueText.text = "";
+
+        if (nextGameUI != null)
+            nextGameUI.SetActive(true);
+
+        Debug.Log("【劇情控制】第二段結束，開啟 For 程式方塊，不計時");
+    }
+
+    public void OnForGameStart()
+    {
+        StartQuestTimer();
+    }
+
+    public void OnForGameComplete()
+    {
+        if (progress100Saved) return;
+        progress100Saved = true;
+
+        PauseQuestTimer();
+
+        float elapsed = GetElapsedTime();
+
+        if (FirestoreManager.Instance != null)
+        {
+            FirestoreManager.Instance.SaveQuestRecord(
+                questLevelID,
+                elapsed,
+                clearScore
+            );
+
+            FirestoreManager.Instance.AddCoins(rewardCoins);
+        }
+
+        Debug.Log("【Level5】完成關卡，存 100%，獎勵紙鶴：" + rewardCoins);
     }
 
     IEnumerator PlayStory(string content)
@@ -108,18 +208,25 @@ public class Level5Manager : MonoBehaviour
             if (currentLine.Contains("[換圖]"))
             {
                 Sprite next = inPart2 ? scene3 : scene2;
+
                 if (backgroundImage != null && next != null)
                     backgroundImage.sprite = next;
+
                 Debug.Log("【劇情控制】背景切換");
                 continue;
             }
 
-            if (dialogueText != null) dialogueText.text = "";
+            if (dialogueText != null)
+                dialogueText.text = "";
+
             foreach (char letter in currentLine.ToCharArray())
             {
-                if (dialogueText != null) dialogueText.text += letter;
+                if (dialogueText != null)
+                    dialogueText.text += letter;
+
                 yield return new WaitForSeconds(typingSpeed);
             }
+
             yield return new WaitForSeconds(timeBetweenLines);
         }
     }
@@ -127,17 +234,24 @@ public class Level5Manager : MonoBehaviour
     public void SkipStory()
     {
         StopAllCoroutines();
-        if (dialogueText != null) dialogueText.text = "";
+
+        if (dialogueText != null)
+            dialogueText.text = "";
 
         if (!boatCompleted)
         {
             if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
             if (miniGameBackground != null) miniGameBackground.SetActive(true);
-            if (choiceBoatGame != null) choiceBoatGame.StartGame();
+
+            StartQuestTimer();
+
+            if (choiceBoatGame != null)
+                choiceBoatGame.StartGame();
         }
         else
         {
-            if (nextGameUI != null) nextGameUI.SetActive(true);
+            if (nextGameUI != null)
+                nextGameUI.SetActive(true);
         }
     }
 }

@@ -153,9 +153,9 @@ public class LearningRecordManager : MonoBehaviour
                 ApplyRecordData(lesson.easyRecord, data, true, id + "_easy");
             });
 
-            FirestoreManager.Instance.LoadAdvancedRecord(id, "normal", data =>
+            FirestoreManager.Instance.LoadAdvancedRecord(id, "medium", data =>
             {
-                ApplyRecordData(lesson.normalRecord, data, true, id + "_normal");
+                ApplyRecordData(lesson.normalRecord, data, true, id + "_medium");
             });
 
             FirestoreManager.Instance.LoadAdvancedRecord(id, "hard", data =>
@@ -226,7 +226,7 @@ public class LearningRecordManager : MonoBehaviour
             return;
         }
 
-        bool isRowingRecord = debugID.Contains("advanced_05");
+        bool isRowingLevel1Record = debugID.Contains("advanced_05_easy");
         bool isQuestRecord = debugID.Contains("_challenge");
 
         if (data.TryGetValue("latest", out object latestObj))
@@ -243,7 +243,7 @@ public class LearningRecordManager : MonoBehaviour
                 SetText(ui.txtProgress, process + "%");
                 SetText(ui.txtLastDate, date);
 
-                if (isRowingRecord)
+                if (isRowingLevel1Record)
                 {
                     SetText(ui.txtLastDuration, "分數：" + score);
                 }
@@ -307,7 +307,7 @@ public class LearningRecordManager : MonoBehaviour
                     SetText(target.txtDate, date);
                     SetText(target.txtProgress, process + "%");
 
-                    if (isRowingRecord)
+                    if (isRowingLevel1Record)
                     {
                         SetText(target.txtDuration, "分數：" + score);
                     }

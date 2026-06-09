@@ -86,7 +86,10 @@ public class FirestoreManager : MonoBehaviour
     };
     }
 
-    private void SaveRecordWithHistoryAndBest(DocumentReference docRef, Dictionary<string, object> latestRecord)
+    private void SaveRecordWithHistoryAndBest(
+        DocumentReference docRef,
+        Dictionary<string, object> latestRecord,
+        System.Action onSaved = null)
     {
         docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
@@ -110,7 +113,7 @@ public class FirestoreManager : MonoBehaviour
                     history.AddRange(ConvertToObjectList(oldHistoryObj));
 
                 if (oldData.TryGetValue("best", out object oldBestObj))
-                    bestRecord = oldBestObj as Dictionary<string, object>;
+                    bestRecord = ConvertToDictionary(oldBestObj);
             }
 
             if (history.Count > 5)
@@ -146,9 +149,14 @@ public class FirestoreManager : MonoBehaviour
             docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
             {
                 if (saveTask.IsCompletedSuccessfully)
+                {
                     Debug.Log("紀錄儲存成功");
+                    onSaved?.Invoke();
+                }
                 else
+                {
                     Debug.LogWarning("紀錄儲存失敗：" + saveTask.Exception);
+                }
             });
         });
     }
@@ -243,7 +251,7 @@ public class FirestoreManager : MonoBehaviour
 
             Dictionary<string, object> updates = new Dictionary<string, object>
         {
-            { basicID + "_watched", process >= 100 },
+            { basicID + "_watched", process >= 90 },
             { basicID + "_date", DateTime.Now.ToString("yyyy/MM/dd") },
             { basicID + "_process", process },
             { basicID + "_time", timeSeconds }
@@ -462,7 +470,10 @@ public class FirestoreManager : MonoBehaviour
             .Collection("learningRecords").Document("advanced")
             .Collection(gameID).Document(difficulty);
 
-        SaveRecordWithHistoryAndBest(docRef, latestRecord);
+        SaveRecordWithHistoryAndBest(docRef, latestRecord, () =>
+        {
+            CheckAdvancedLevelAchievement();
+        });
     }
 
     public void LoadAdvancedRecord(string gameID, string difficulty, Action<Dictionary<string, object>> onLoaded)
@@ -513,45 +524,20 @@ public class FirestoreManager : MonoBehaviour
         DocumentReference docRef = db.Collection("users").Document(userID)
             .Collection("learningRecords").Document("quest");
 
-        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
+        Dictionary<string, object> updates = new Dictionary<string, object>
+    {
+        { levelID + "_latest", latestRecord }
+    };
+
+        docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
         {
-            if (task.IsFaulted || task.IsCanceled)
-            {
-                Debug.LogWarning("讀取闖關進度失敗：" + task.Exception);
-                return;
-            }
-
-            List<object> history = new List<object>();
-
-            if (task.Result.Exists)
-            {
-                Dictionary<string, object> oldData = task.Result.ToDictionary();
-
-                if (oldData.TryGetValue(levelID + "_latest", out object oldLatest))
-                    history.Insert(0, oldLatest);
-
-                if (oldData.TryGetValue(levelID + "_history", out object oldHistory))
-                    history.AddRange(ConvertToObjectList(oldHistory));
-            }
-
-            if (history.Count > 5)
-                history.RemoveRange(5, history.Count - 5);
-
-            Dictionary<string, object> updates = new Dictionary<string, object>
-        {
-            { levelID + "_latest", latestRecord },
-            { levelID + "_history", history }
-        };
-
-            docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
-            {
-                if (saveTask.IsCompletedSuccessfully)
-                    Debug.Log("闖關進度儲存成功：" + levelID + " = " + process + "%，舊 latest 已推進 history");
-                else
-                    Debug.LogWarning("闖關進度儲存失敗：" + saveTask.Exception);
-            });
+            if (saveTask.IsCompletedSuccessfully)
+                Debug.Log("闖關進度儲存成功：" + levelID + " = " + process + "%，只更新 latest，不推進 history");
+            else
+                Debug.LogWarning("闖關進度儲存失敗：" + saveTask.Exception);
         });
     }
+
     public void SaveQuestRecord(string levelID, float timeSeconds, int score)
     {
         if (!CheckReady()) return;
@@ -585,7 +571,12 @@ public class FirestoreManager : MonoBehaviour
                 Dictionary<string, object> oldData = task.Result.ToDictionary();
 
                 if (oldData.TryGetValue(levelID + "_latest", out object oldLatest))
-                    history.Insert(0, oldLatest);
+                {
+                    Dictionary<string, object> oldLatestDict = ConvertToDictionary(oldLatest);
+
+                    if (oldLatestDict != null && GetDictInt(oldLatestDict, "process") == 100)
+                        history.Insert(0, oldLatestDict);
+                }
 
                 if (oldData.TryGetValue(levelID + "_history", out object oldHistory))
                     history.AddRange(ConvertToObjectList(oldHistory));
@@ -619,7 +610,10 @@ public class FirestoreManager : MonoBehaviour
             docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
             {
                 if (saveTask.IsCompletedSuccessfully)
+                {
                     Debug.Log("闖關 100% 儲存成功：" + levelID + "，已更新 history / best");
+                    CheckQuestAllClearAchievement();
+                }
                 else
                     Debug.LogWarning("闖關 100% 儲存失敗：" + saveTask.Exception);
             });
@@ -1031,11 +1025,15 @@ public class FirestoreManager : MonoBehaviour
 
     public void CheckBasicAchievement(int levelNumber, System.Action<bool> onCompleted = null)
     {
+        CheckAllBasicLearningAchievement(onCompleted);
+    }
+
+    public void CheckAllBasicLearningAchievement(System.Action<bool> onCompleted = null)
+    {
         if (!CheckReady()) return;
 
-        string levelID = "basic_" + levelNumber.ToString("00");
-        string achievementID = "achievement_basic_" + levelNumber.ToString("00");
-        string nextAchievementID = "achievement_basic_" + (levelNumber + 1).ToString("00");
+        string achievementID = "achievement_basic_01";
+        string rewardItemID = "Top05"; // 橘子皮痛衣，上衣5；如果你的 itemID 不是 Top05，這裡要改
 
         var videoRef = db.Collection("users").Document(userID)
                          .Collection("learning").Document("videos");
@@ -1054,20 +1052,211 @@ public class FirestoreManager : MonoBehaviour
         {
             if (task.IsFaulted || task.IsCanceled)
             {
-                Debug.LogWarning("檢查成就失敗：" + task.Exception);
+                Debug.LogWarning("檢查菜鳥新兵成就失敗：" + task.Exception);
                 onCompleted?.Invoke(false);
                 return;
             }
 
-            bool videoDone =
-                videoTask.Result.Exists &&
-                videoTask.Result.ContainsField(levelID + "_watched") &&
-                videoTask.Result.GetValue<bool>(levelID + "_watched");
+            bool alreadyCompleted =
+                achievementTask.Result.Exists &&
+                achievementTask.Result.ContainsField(achievementID + "_completed") &&
+                achievementTask.Result.GetValue<bool>(achievementID + "_completed");
 
-            bool quizDone =
-                quizTask.Result.Exists &&
-                quizTask.Result.ContainsField(levelID + "_done") &&
-                quizTask.Result.GetValue<bool>(levelID + "_done");
+            if (alreadyCompleted)
+            {
+                SaveAchievementUnlocked("achievement_advanced_01");
+
+                Debug.Log("【成就檢查】菜鳥新兵已完成，補解鎖菜鳥的逆襲");
+
+                onCompleted?.Invoke(false);
+                return;
+            }
+
+            bool allDone = true;
+
+            for (int i = 1; i <= 5; i++)
+            {
+                string basicID = "basic_" + i.ToString("00");
+                int videoProcess = 0;
+
+                if (videoTask.Result.Exists &&
+                    videoTask.Result.ContainsField(basicID + "_process"))
+                {
+                    videoProcess = Convert.ToInt32(
+                        videoTask.Result.GetValue<object>(basicID + "_process")
+                    );
+                }
+
+                bool videoDone = videoProcess >= 90;
+
+                bool quizDone =
+                    quizTask.Result.Exists &&
+                    quizTask.Result.ContainsField(basicID + "_done") &&
+                    quizTask.Result.GetValue<bool>(basicID + "_done");
+
+                if (!videoDone || !quizDone)
+                {
+                    allDone = false;
+                    break;
+                }
+            }
+
+            if (!allDone)
+            {
+                onCompleted?.Invoke(false);
+                return;
+            }
+
+            SaveAchievementCompleted(achievementID);
+            SaveAchievementUnlocked("achievement_advanced_01");
+            SaveWardrobeItem(rewardItemID, true);
+
+            PlayerPrefs.SetInt("ShowAchievementToast", 1);
+            PlayerPrefs.SetString("ToastTitle", "成就達成！");
+            PlayerPrefs.SetString("ToastDesc", "菜鳥新兵，報到！");
+            PlayerPrefs.Save();
+
+            LoadAchievementCache(() =>
+            {
+                onCompleted?.Invoke(true);
+            });
+
+            Debug.Log("【成就完成】菜鳥新兵，報到！已解鎖橘子皮痛衣：" + rewardItemID);
+        });
+    }
+    public void CheckAdvancedLevelAchievement(System.Action<bool> onCompleted = null)
+    {
+        if (!CheckReady()) return;
+
+        string achievementID = "achievement_advanced_01";
+        string rewardItemID = "Bottom01";
+
+        var achievementRef = db.Collection("users").Document(userID)
+            .Collection("achievements").Document("data");
+
+        achievementRef.GetSnapshotAsync().ContinueWithOnMainThread(achievementTask =>
+        {
+            if (achievementTask.IsFaulted || achievementTask.IsCanceled)
+            {
+                onCompleted?.Invoke(false);
+                return;
+            }
+
+            bool alreadyCompleted =
+                achievementTask.Result.Exists &&
+                achievementTask.Result.ContainsField(achievementID + "_completed") &&
+                achievementTask.Result.GetValue<bool>(achievementID + "_completed");
+
+            if (alreadyCompleted)
+            {
+                SaveAchievementUnlocked("achievement_quest_01");
+
+                Debug.Log("【成就檢查】菜鳥的逆襲已完成，補解鎖大秘寶成就");
+
+                onCompleted?.Invoke(false);
+                return;
+            }
+
+            List<Task<DocumentSnapshot>> tasks = new List<Task<DocumentSnapshot>>();
+
+            for (int i = 1; i <= 5; i++)
+            {
+                string advancedID = "advanced_" + i.ToString("00");
+
+                tasks.Add(db.Collection("users").Document(userID)
+                    .Collection("learningRecords").Document("advanced")
+                    .Collection(advancedID).Document("easy")
+                    .GetSnapshotAsync());
+
+                tasks.Add(db.Collection("users").Document(userID)
+                    .Collection("learningRecords").Document("advanced")
+                    .Collection(advancedID).Document("medium")
+                    .GetSnapshotAsync());
+            }
+
+            Task.WhenAll(tasks).ContinueWithOnMainThread(task =>
+            {
+                if (task.IsFaulted || task.IsCanceled)
+                {
+                    Debug.LogWarning("檢查進階成就失敗：" + task.Exception);
+                    onCompleted?.Invoke(false);
+                    return;
+                }
+
+                bool allDone = true;
+
+                foreach (var recordTask in tasks)
+                {
+                    if (!recordTask.Result.Exists)
+                    {
+                        allDone = false;
+                        break;
+                    }
+
+                    Dictionary<string, object> data = recordTask.Result.ToDictionary();
+
+                    if (!data.TryGetValue("latest", out object latestObj))
+                    {
+                        allDone = false;
+                        break;
+                    }
+
+                    Dictionary<string, object> latest =
+                        ConvertToDictionary(latestObj);
+
+                    if (latest == null ||
+                        GetDictInt(latest, "process") < 100)
+                    {
+                        allDone = false;
+                        break;
+                    }
+                }
+
+                if (!allDone)
+                {
+                    onCompleted?.Invoke(false);
+                    return;
+                }
+
+                SaveAchievementCompleted(achievementID);
+                SaveAchievementUnlocked("achievement_quest_01");
+                SaveWardrobeItem(rewardItemID, true);
+
+                PlayerPrefs.SetInt("ShowAchievementToast", 1);
+                PlayerPrefs.SetString("ToastTitle", "成就達成！");
+                PlayerPrefs.SetString("ToastDesc", "菜鳥的逆襲");
+                PlayerPrefs.Save();
+
+                LoadAchievementCache(() =>
+                {
+                    onCompleted?.Invoke(true);
+                });
+
+                Debug.Log("【成就完成】菜鳥的逆襲，已解鎖橘子皮痛褲：" + rewardItemID);
+            });
+        });
+    }
+
+        public void CheckQuestAllClearAchievement(System.Action<bool> onCompleted = null)
+    {
+        if (!CheckReady()) return;
+
+        string achievementID = "achievement_quest_01";
+        string rewardItemID = "Hair07";
+
+        var achievementRef = db.Collection("users").Document(userID)
+            .Collection("achievements").Document("data");
+
+        var questRef = db.Collection("users").Document(userID)
+            .Collection("learningRecords").Document("quest");
+
+        achievementRef.GetSnapshotAsync().ContinueWithOnMainThread(achievementTask =>
+        {
+            if (achievementTask.IsFaulted || achievementTask.IsCanceled)
+            {
+                onCompleted?.Invoke(false);
+                return;
+            }
 
             bool alreadyCompleted =
                 achievementTask.Result.Exists &&
@@ -1080,22 +1269,60 @@ public class FirestoreManager : MonoBehaviour
                 return;
             }
 
-            if (videoDone && quizDone)
+            questRef.GetSnapshotAsync().ContinueWithOnMainThread(questTask =>
             {
-                SaveAchievementCompleted(achievementID);
+                if (questTask.IsFaulted || questTask.IsCanceled || !questTask.Result.Exists)
+                {
+                    onCompleted?.Invoke(false);
+                    return;
+                }
 
-                if (levelNumber < 5)
-                    SaveAchievementUnlocked(nextAchievementID);
+                Dictionary<string, object> data = questTask.Result.ToDictionary();
+
+                bool allDone = true;
+
+                for (int i = 1; i <= 5; i++)
+                {
+                    string levelID = "Level" + i;
+                    string bestKey = levelID + "_best";
+
+                    if (!data.TryGetValue(bestKey, out object bestObj))
+                    {
+                        allDone = false;
+                        break;
+                    }
+
+                    Dictionary<string, object> best = ConvertToDictionary(bestObj);
+
+                    if (best == null || GetDictInt(best, "process") < 100)
+                    {
+                        allDone = false;
+                        break;
+                    }
+                }
+
+                if (!allDone)
+                {
+                    onCompleted?.Invoke(false);
+                    return;
+                }
+
+                SaveAchievementCompleted(achievementID);
+                SaveWardrobeItem(rewardItemID, true);
+
+                PlayerPrefs.SetInt("ShowAchievementToast", 1);
+                PlayerPrefs.SetString("ToastTitle", "成就達成！");
+                PlayerPrefs.SetString("ToastDesc", "我把大秘寶都留在這了");
+                PlayerPrefs.Save();
 
                 LoadAchievementCache(() =>
                 {
                     onCompleted?.Invoke(true);
                 });
-            }
-            else
-            {
-                onCompleted?.Invoke(false);
-            }
+
+                Debug.Log("【成就完成】我把大秘寶都留在這了，已解鎖：" + rewardItemID);
+            });
         });
     }
 }
+

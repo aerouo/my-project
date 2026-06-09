@@ -5,6 +5,9 @@ using System.Collections;
 
 public class ForGameManager : MonoBehaviour
 {
+    [Header("Level5 Manager")]
+    public Level5Manager level5Manager;
+
     [Header("UI 連結")]
     public GameObject printGroupPanel;
     public GameObject resultPanel;
@@ -69,6 +72,9 @@ public class ForGameManager : MonoBehaviour
     public void StartGame()
     {
         startTime = Time.time;
+
+        if (level5Manager != null)
+            level5Manager.OnForGameStart();
     }
 
     public void CheckAnswer()
@@ -168,11 +174,18 @@ public class ForGameManager : MonoBehaviour
 
     void ShowResult(float elapsed)
     {
-        if (resultPanel != null) resultPanel.SetActive(true);
+        if (level5Manager != null)
+            level5Manager.OnForGameComplete();
+
+        float totalElapsed = level5Manager != null ? level5Manager.GetElapsedTime() : elapsed;
+
+        if (resultPanel != null)
+            resultPanel.SetActive(true);
+
         if (resultText != null)
         {
-            int minutes = (int)(elapsed / 60);
-            int seconds = (int)(elapsed % 60);
+            int minutes = (int)(totalElapsed / 60);
+            int seconds = (int)(totalElapsed % 60);
             resultText.text = $"恭喜通關\n耗時：{minutes:00}:{seconds:00}";
         }
     }

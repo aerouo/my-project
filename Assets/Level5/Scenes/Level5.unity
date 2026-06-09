@@ -3269,7 +3269,6 @@ GameObject:
   - component: {fileID: 841038501}
   - component: {fileID: 841038500}
   - component: {fileID: 841038499}
-  - component: {fileID: 841038502}
   m_Layer: 5
   m_Name: back map
   m_TagString: Untagged
@@ -3390,18 +3389,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 841038497}
   m_CullTransparentMesh: 1
---- !u!114 &841038502
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 841038497}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 40419d001d5bcfa4a92741699d144a7f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BackToMap
 --- !u!1 &844039232
 GameObject:
   m_ObjectHideFlags: 0
@@ -4710,6 +4697,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 155e5744cfa880148b55450322988abf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PrintGameManager
+  level5Manager: {fileID: 1915700029}
   printGroupPanel: {fileID: 529406753}
   resultPanel: {fileID: 1894174615}
   computerPanel: {fileID: 1367779694}
@@ -7787,6 +7775,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40419d001d5bcfa4a92741699d144a7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BackToMap
+  confirmPanel: {fileID: 0}
 --- !u!1 &1886961068
 GameObject:
   m_ObjectHideFlags: 0
@@ -8102,6 +8091,9 @@ MonoBehaviour:
   miniGameBackground: {fileID: 928986167}
   choiceBoatGame: {fileID: 314691697}
   nextGameUI: {fileID: 1800086089}
+  questLevelID: Level5
+  clearScore: 0
+  rewardCoins: 200
 --- !u!1 &1927058461
 GameObject:
   m_ObjectHideFlags: 0

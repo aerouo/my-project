@@ -5139,7 +5139,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 594915115}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2011355343}
+        m_TargetAssemblyTypeName: UI_PageController, Assembly-CSharp
+        m_MethodName: GoToMakeBoatLevel2
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &594915115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6114,7 +6126,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &796561399
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8405,7 +8417,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1096886215}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2011355343}
+        m_TargetAssemblyTypeName: UI_PageController, Assembly-CSharp
+        m_MethodName: GoToClueLevel2
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1096886215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8635,7 +8659,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/12/05
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -9118,7 +9142,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 2025/10/11
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
   m_sharedMaterial: {fileID: 6764981579543118195, guid: 64f3272cd7aa53e4a8499f9ea8721b02, type: 2}
@@ -10234,7 +10258,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1261170471}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2011355343}
+        m_TargetAssemblyTypeName: UI_PageController, Assembly-CSharp
+        m_MethodName: GoToRowingLevel2
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1261170471
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14526,7 +14562,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1876356864}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2011355343}
+        m_TargetAssemblyTypeName: UI_PageController, Assembly-CSharp
+        m_MethodName: GoToPuzzleLevel2
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1876356864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15893,7 +15941,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1987369956}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2011355343}
+        m_TargetAssemblyTypeName: UI_PageController, Assembly-CSharp
+        m_MethodName: GoToForestLevel2
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1987369956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16342,9 +16402,9 @@ MonoBehaviour:
   Icon_For: {fileID: 0}
   Icon_SwitchCase: {fileID: 0}
   videoPlayer: {fileID: 1634075539}
-  video_Basic: {fileID: 32900000, guid: d5ef90a06b483d1449b2099cd8a0b6c0, type: 3}
-  video_Print: {fileID: 32900000, guid: e652c55db5f976d4cbc71666a2a3712c, type: 3}
-  video_IfElse: {fileID: 32900000, guid: 70b3a821a441dac46a94870e67224159, type: 3}
+  video_Basic: {fileID: 32900000, guid: 041d4ff3ddca8ef46bccebde9d76fba3, type: 3}
+  video_Print: {fileID: 32900000, guid: b9cd74c929f97d6428d0bc148d7f9969, type: 3}
+  video_IfElse: {fileID: 32900000, guid: d84833a6990d0fc45a479dd5ace8d4bd, type: 3}
   video_For: {fileID: 32900000, guid: 32bac3cb5c39a694ba4f7ce9b22dc527, type: 3}
   video_SwitchCase: {fileID: 32900000, guid: b4b7a13cc8117e44ca492e077916eeb9, type: 3}
   Popup_Video: {fileID: 1767566394}

@@ -39,17 +39,32 @@ EditorBuildSettings:
     path: Assets/Advancedlevel/Scenes/01_FindClues/FindClues_Lvl1.unity
     guid: fd4955c41f547f34db5c3bf1c2e25e8c
   - enabled: 1
+    path: Assets/Advancedlevel/Scenes/01_FindClues/FindClues_Lvl2.unity
+    guid: 90c36b250011bb04c8421619d68cb164
+  - enabled: 1
     path: Assets/Advancedlevel/Scenes/02_Puzzle/Puzzle_Lvl1.unity
     guid: 4d4da6f3891dfca4094f9fee3aa12ed1
+  - enabled: 1
+    path: Assets/Advancedlevel/Scenes/02_Puzzle/Puzzle_Lvl2.unity
+    guid: e7be3b72a78a3964e9d6a0fbc4091687
   - enabled: 1
     path: Assets/Advancedlevel/Scenes/03_ForestExploration/ForestExploration_Lvl1.unity
     guid: 1345de562df5aef45a29506ac5ff9627
   - enabled: 1
+    path: Assets/Advancedlevel/Scenes/03_ForestExploration/ForestExploration_Lvl2.unity
+    guid: 1e79d329109d90d42abc352b9b9db38c
+  - enabled: 1
     path: Assets/Advancedlevel/Scenes/04_MakeBoat/MakeBoat_Lvl1.unity
     guid: 2a987e9896e28ef4e94325ac78f2cc06
   - enabled: 1
+    path: Assets/Advancedlevel/Scenes/04_MakeBoat/MakeBoat_Lvl2.unity
+    guid: 7cde2d90705b7354da352ddd1c95d409
+  - enabled: 1
     path: Assets/Advancedlevel/Scenes/05_RowingMaster/Rowing_Lvl1.unity
     guid: 08bad4aa3cc554e4ba2e704952b04c66
+  - enabled: 1
+    path: Assets/Advancedlevel/Scenes/05_RowingMaster/Rowing_Lvl2.unity
+    guid: ce2426692c300924bb307c9196a5f675
   - enabled: 1
     path: Assets/Level1/Scenes/Level1.unity
     guid: b72d09c428edd03459e01f269538d4b0
@@ -59,5 +74,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Level3/Scenes/Level3.unity
     guid: b47ef2116bbc60d41857c9ef883714c6
+  - enabled: 1
+    path: Assets/Level4/Scenes/Level4.unity
+    guid: 47574b9b0ac4a1d458fdece4c8c1d391
+  - enabled: 1
+    path: Assets/Level5/Scenes/Level5.unity
+    guid: d3a8c015060be1c4fb9e6928f24d6966
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

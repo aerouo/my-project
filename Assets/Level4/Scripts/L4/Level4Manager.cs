@@ -29,15 +29,29 @@ public class Level4Manager : MonoBehaviour
     [Header("小遊戲銜接")]
     public GameObject miniGameCanvas;
     public GameObject miniGameBackground;
+    public WoodChopManager woodChopManager;
 
     [Header("第二段劇情結束後銜接")]
     public GameObject nextGameUI;
 
+    [Header("闖關紀錄")]
+    public string questLevelID = "Level4";
+    public int clearScore = 0;
+    public int rewardCoins = 200;
+
     private bool woodCompleted = false;
+    private bool progress50Saved = false;
+    private bool progress100Saved = false;
+
+    private float elapsedTime = 0f;
+    private float timerStartTime = 0f;
+    private bool isTimerRunning = false;
 
     void Start()
     {
-        if (backgroundImage != null && scene1 != null) backgroundImage.sprite = scene1;
+        if (backgroundImage != null && scene1 != null)
+            backgroundImage.sprite = scene1;
+
         if (miniGameCanvas != null) miniGameCanvas.SetActive(false);
         if (miniGameBackground != null) miniGameBackground.SetActive(false);
         if (nextGameUI != null) nextGameUI.SetActive(false);
@@ -50,16 +64,48 @@ public class Level4Manager : MonoBehaviour
         }
     }
 
+    public void StartQuestTimer()
+    {
+        if (isTimerRunning) return;
+
+        timerStartTime = Time.time;
+        isTimerRunning = true;
+
+        Debug.Log("【Level4 計時】開始 / 繼續計時");
+    }
+
+    public void PauseQuestTimer()
+    {
+        if (!isTimerRunning) return;
+
+        elapsedTime += Time.time - timerStartTime;
+        isTimerRunning = false;
+
+        Debug.Log("【Level4 計時】暫停，目前累積：" + elapsedTime);
+    }
+
+    public float GetElapsedTime()
+    {
+        if (isTimerRunning)
+            return elapsedTime + (Time.time - timerStartTime);
+
+        return elapsedTime;
+    }
+
     IEnumerator PlayPart1()
     {
         yield return new WaitForSeconds(waitBeforeStory);
         yield return StartCoroutine(PlayStory(storyPart1));
 
-        dialogueText.text = "";
+        if (dialogueText != null)
+            dialogueText.text = "";
+
         if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
         if (miniGameBackground != null) miniGameBackground.SetActive(true);
 
-        Debug.Log("【劇情控制】第一段結束，等待挑木頭完成...");
+        StartQuestTimer();
+
+        Debug.Log("【劇情控制】第一段結束，開始挑木頭並計時");
     }
 
     public void OnWoodComplete()
@@ -67,25 +113,76 @@ public class Level4Manager : MonoBehaviour
         if (woodCompleted) return;
         woodCompleted = true;
 
+        PauseQuestTimer();
+
+        if (!progress50Saved)
+        {
+            progress50Saved = true;
+
+            if (FirestoreManager.Instance != null)
+            {
+                FirestoreManager.Instance.SaveQuestProgress(
+                    questLevelID,
+                    50,
+                    GetElapsedTime(),
+                    clearScore
+                );
+            }
+
+            Debug.Log("【Level4】挑木頭完成，存 50%");
+        }
+
         if (miniGameCanvas != null) miniGameCanvas.SetActive(false);
         if (miniGameBackground != null) miniGameBackground.SetActive(false);
 
-        // 換成第二張背景
         if (backgroundImage != null && scene2 != null)
             backgroundImage.sprite = scene2;
 
-        Debug.Log("【劇情控制】挑木頭完成，開始第二段劇情");
         StartCoroutine(PlayPart2());
     }
 
     IEnumerator PlayPart2()
     {
-        if (dialogueText != null) dialogueText.text = "";
+        if (dialogueText != null)
+            dialogueText.text = "";
+
         yield return StartCoroutine(PlayStory(storyPart2));
 
-        dialogueText.text = "";
-        if (nextGameUI != null) nextGameUI.SetActive(true);
-        Debug.Log("【劇情控制】第二段結束，開啟程式方塊");
+        if (dialogueText != null)
+            dialogueText.text = "";
+
+        if (nextGameUI != null)
+            nextGameUI.SetActive(true);
+
+        Debug.Log("【劇情控制】第二段結束，開啟 Switchcase 程式方塊，不計時");
+    }
+
+    public void OnSwitchcaseStart()
+    {
+        StartQuestTimer();
+    }
+
+    public void OnSwitchcaseComplete()
+    {
+        if (progress100Saved) return;
+        progress100Saved = true;
+
+        PauseQuestTimer();
+
+        float elapsed = GetElapsedTime();
+
+        if (FirestoreManager.Instance != null)
+        {
+            FirestoreManager.Instance.SaveQuestRecord(
+                questLevelID,
+                elapsed,
+                clearScore
+            );
+
+            FirestoreManager.Instance.AddCoins(rewardCoins);
+        }
+
+        Debug.Log("【Level4】完成關卡，存 100%，獎勵紙鶴：" + rewardCoins);
     }
 
     IEnumerator PlayStory(string content)
@@ -100,12 +197,17 @@ public class Level4Manager : MonoBehaviour
             string currentLine = line.Trim();
             if (string.IsNullOrEmpty(currentLine)) continue;
 
-            if (dialogueText != null) dialogueText.text = "";
+            if (dialogueText != null)
+                dialogueText.text = "";
+
             foreach (char letter in currentLine.ToCharArray())
             {
-                if (dialogueText != null) dialogueText.text += letter;
+                if (dialogueText != null)
+                    dialogueText.text += letter;
+
                 yield return new WaitForSeconds(typingSpeed);
             }
+
             yield return new WaitForSeconds(timeBetweenLines);
         }
     }
@@ -113,16 +215,21 @@ public class Level4Manager : MonoBehaviour
     public void SkipStory()
     {
         StopAllCoroutines();
-        if (dialogueText != null) dialogueText.text = "";
+
+        if (dialogueText != null)
+            dialogueText.text = "";
 
         if (!woodCompleted)
         {
             if (miniGameCanvas != null) miniGameCanvas.SetActive(true);
             if (miniGameBackground != null) miniGameBackground.SetActive(true);
+
+            StartQuestTimer();
         }
         else
         {
-            if (nextGameUI != null) nextGameUI.SetActive(true);
+            if (nextGameUI != null)
+                nextGameUI.SetActive(true);
         }
     }
 }

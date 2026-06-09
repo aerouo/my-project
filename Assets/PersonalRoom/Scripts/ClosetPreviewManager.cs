@@ -251,7 +251,7 @@ public class ClosetPreviewManager : MonoBehaviour
             {
                 txtBuyMessage.text =
                     "此" + itemType +
-                    "為成就獎勵\n\n完成指定成就後\n即可解鎖";
+                    "為成就獎勵\n完成指定成就後\n即可解鎖";
             }
             else
             {

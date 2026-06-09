@@ -277,7 +277,7 @@ public class UI_PageController : MonoBehaviour
         TextMeshProUGUI level3Text)
     {
         LoadAdvancedDate(gameID, "easy", level1Text);
-        LoadAdvancedDate(gameID, "normal", level2Text);
+        LoadAdvancedDate(gameID, "medium", level2Text);
         LoadAdvancedDate(gameID, "hard", level3Text);
     }
 
@@ -311,9 +311,19 @@ public class UI_PageController : MonoBehaviour
         SceneManager.LoadScene("Rowing_Lvl1");
     }
 
+    public void GoToRowingLevel2()
+    {
+        SceneManager.LoadScene("Rowing_Lvl2");
+    }
+
     public void GoToMakeBoatLevel1()
     {
         SceneManager.LoadScene("MakeBoat_Lvl1");
+    }
+
+    public void GoToMakeBoatLevel2()
+    {
+        SceneManager.LoadScene("MakeBoat_Lvl2");
     }
 
     public void GoToPuzzleLevel1()
@@ -321,14 +331,27 @@ public class UI_PageController : MonoBehaviour
         SceneManager.LoadScene("Puzzle_Lvl1");
     }
 
+    public void GoToPuzzleLevel2()
+    {
+        SceneManager.LoadScene("Puzzle_Lvl2");
+    }
     public void GoToForestLevel1()
     {
         SceneManager.LoadScene("ForestExploration_Lvl1");
     }
 
+    public void GoToForestLevel2()
+    {
+        SceneManager.LoadScene("ForestExploration_Lvl2");
+    }
     public void GoToClueLevel1()
     {
         SceneManager.LoadScene("FindClues_Lvl1");
+    }
+
+    public void GoToClueLevel2()
+    {
+        SceneManager.LoadScene("FindClues_Lvl2");
     }
 
     public void OpenLessonByName(string lessonName)

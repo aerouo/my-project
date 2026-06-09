@@ -5,6 +5,9 @@ using System.Collections;
 
 public class SwitchcaseGameManager : MonoBehaviour
 {
+    [Header("Level4 Manager")]
+    public Level4Manager level4Manager;
+
     [Header("UI 連結")]
     public GameObject SwitchcaseGroupPanel;
     public GameObject resultPanel;
@@ -78,6 +81,9 @@ public class SwitchcaseGameManager : MonoBehaviour
     public void StartGame()
     {
         startTime = Time.time;
+
+        if (level4Manager != null)
+            level4Manager.OnSwitchcaseStart();
     }
 
     public void CheckAnswer()
@@ -182,11 +188,18 @@ public class SwitchcaseGameManager : MonoBehaviour
 
     void ShowResult(float elapsed)
     {
-        if (resultPanel != null) resultPanel.SetActive(true);
+        if (level4Manager != null)
+            level4Manager.OnSwitchcaseComplete();
+
+        float totalElapsed = level4Manager != null ? level4Manager.GetElapsedTime() : elapsed;
+
+        if (resultPanel != null)
+            resultPanel.SetActive(true);
+
         if (resultText != null)
         {
-            int minutes = (int)(elapsed / 60);
-            int seconds = (int)(elapsed % 60);
+            int minutes = (int)(totalElapsed / 60);
+            int seconds = (int)(totalElapsed % 60);
             resultText.text = $"恭喜通關\n耗時：{minutes:00}:{seconds:00}";
         }
     }

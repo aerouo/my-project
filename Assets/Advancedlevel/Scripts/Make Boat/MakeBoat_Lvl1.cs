@@ -280,7 +280,7 @@ public class MakeBoat_Lvl1 : MonoBehaviour
         if (coinRewardText)
         {
             string rewardMsg = isPass ? "金幣 +" + coinPass : "未通關";
-            if (isNewRecord) rewardMsg += "\n🏆 破紀錄！+" + coinRecord;
+            if (isNewRecord) rewardMsg += "\n破紀錄！+" + coinRecord;
             coinRewardText.text = rewardMsg;
         }
 
