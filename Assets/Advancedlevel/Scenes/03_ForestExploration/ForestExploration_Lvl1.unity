@@ -134,7 +134,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6087774
 Transform:
   m_ObjectHideFlags: 0
@@ -985,6 +985,8 @@ MonoBehaviour:
   finalTimeText: {fileID: 1902883349}
   coinRewardText: {fileID: 476020678}
   btnEndConfirm: {fileID: 398896018}
+  advancedID: advanced_03
+  difficulty: easy
   coinPass: 50
   coinRecord: 150
 --- !u!1 &428734960
@@ -1184,7 +1186,7 @@ MonoBehaviour:
   m_text: "\u7372\u5F97\u7D19\u9DB4+100"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2393,7 +2395,7 @@ MonoBehaviour:
   m_text: "\u78BA\u8A8D"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2605,7 +2607,7 @@ MonoBehaviour:
   m_text: "\u606D\u559C\u901A\u95DC"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2898,7 +2900,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1390113262
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2941,7 +2943,7 @@ MonoBehaviour:
   m_text: "\u7372\u5F97\u7E3D\u5206\uFF1A"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3964,7 +3966,7 @@ MonoBehaviour:
   m_text: "\u8017\u6642\uFF1A"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 8895887367496798755, guid: a0e843e46125e8c45a572cac14f9fcc7, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
