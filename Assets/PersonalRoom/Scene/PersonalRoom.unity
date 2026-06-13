@@ -112301,8 +112301,8 @@ MonoBehaviour:
   - {fileID: 150469280}
   - {fileID: 982060048}
   - {fileID: 1574856399}
-  defaultCoins: 10000
-  coins: 10000
+  defaultCoins: 0
+  coins: 0
   txtMoney: {fileID: 980164550}
   panelBuyConfirm: {fileID: 909625601}
   txtBuyMessage: {fileID: 849617876}

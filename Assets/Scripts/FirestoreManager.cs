@@ -863,23 +863,166 @@ public class FirestoreManager : MonoBehaviour
                 return;
             }
 
-            if (task.Result.Exists)
+            string finalUsername = string.IsNullOrWhiteSpace(username) ? "User" : username;
+
+            Dictionary<string, object> userData = new Dictionary<string, object>();
+
+            if (!task.Result.Exists || !task.Result.ContainsField("username"))
+                userData["username"] = finalUsername;
+
+            if (!task.Result.Exists || !task.Result.ContainsField("coins"))
+                userData["coins"] = 0;
+
+            Dictionary<string, object> defaultItems = new Dictionary<string, object>
+        {
+            { "Top06", true },
+            { "Bottom03", true }
+        };
+
+            Dictionary<string, object> defaultEquipped = new Dictionary<string, object>
+        {
+            { "top", "Top06" },
+            { "bottom", "Bottom03" },
+            { "hair", "" },
+            { "glasses", "" },
+            { "gloves", "" },
+            { "shoes", "" },
+            { "handItem", "" }
+        };
+
+            Dictionary<string, object> defaultAchievements = new Dictionary<string, object>
+        {
+            { "achievement_basic_01_unlocked", true },
+            { "achievement_basic_01_completed", false },
+            { "achievement_basic_01_date", "" },
+
+            { "achievement_advanced_01_unlocked", false },
+            { "achievement_advanced_01_completed", false },
+            { "achievement_advanced_01_date", "" },
+
+            { "achievement_quest_01_unlocked", false },
+            { "achievement_quest_01_completed", false },
+            { "achievement_quest_01_date", "" }
+        };
+
+            Dictionary<string, object> defaultVideos = new Dictionary<string, object>();
+            Dictionary<string, object> defaultQuizzes = new Dictionary<string, object>();
+
+            for (int i = 1; i <= 5; i++)
             {
-                Debug.Log("使用者資料已存在，不重新初始化：" + userID);
-                return;
+                string basicID = "basic_" + i.ToString("00");
+
+                defaultVideos[basicID + "_watched"] = false;
+                defaultVideos[basicID + "_process"] = 0;
+                defaultVideos[basicID + "_best_process"] = 0;
+                defaultVideos[basicID + "_date"] = "";
+                defaultVideos[basicID + "_time"] = 0f;
+
+                defaultQuizzes[basicID + "_done"] = false;
+                defaultQuizzes[basicID + "_process"] = 0;
+                defaultQuizzes[basicID + "_date"] = "";
+                defaultQuizzes[basicID + "_time"] = 0f;
+                defaultQuizzes[basicID + "_history"] = new List<object>();
             }
 
-            userRef.SetAsync(new Dictionary<string, object>
-        {
-            { "username", string.IsNullOrWhiteSpace(username) ? "user" : username },
-            { "coins", 10000 }
-        }, SetOptions.MergeAll)
-            .ContinueWithOnMainThread(saveTask =>
+            Dictionary<string, object> defaultQuest = new Dictionary<string, object>();
+
+            for (int i = 1; i <= 5; i++)
             {
-                if (saveTask.IsCompletedSuccessfully)
-                    Debug.Log("新使用者初始化成功：" + username);
+                string levelID = "Level" + i;
+
+                defaultQuest[levelID + "_latest"] = new Dictionary<string, object>
+            {
+                { "time", 0f },
+                { "score", 0 },
+                { "process", 0 },
+                { "date", "" }
+            };
+
+                defaultQuest[levelID + "_history"] = new List<object>();
+
+                defaultQuest[levelID + "_best"] = new Dictionary<string, object>
+            {
+                { "time", 0f },
+                { "score", 0 },
+                { "process", 0 },
+                { "date", "" }
+            };
+            }
+
+            List<Task> initTasks = new List<Task>();
+
+            if (userData.Count > 0)
+            {
+                initTasks.Add(userRef.SetAsync(userData, SetOptions.MergeAll));
+            }
+
+            initTasks.Add(userRef.Collection("closet").Document("items")
+                .SetAsync(defaultItems, SetOptions.MergeAll));
+
+            initTasks.Add(userRef.Collection("closet").Document("equipped")
+                .SetAsync(defaultEquipped, SetOptions.MergeAll));
+
+            initTasks.Add(userRef.Collection("achievements").Document("data")
+                .SetAsync(defaultAchievements, SetOptions.MergeAll));
+
+            initTasks.Add(userRef.Collection("learning").Document("videos")
+                .SetAsync(defaultVideos, SetOptions.MergeAll));
+
+            initTasks.Add(userRef.Collection("learning").Document("quizzes")
+                .SetAsync(defaultQuizzes, SetOptions.MergeAll));
+
+            initTasks.Add(userRef.Collection("learningRecords").Document("quest")
+                .SetAsync(defaultQuest, SetOptions.MergeAll));
+
+            // 進階紀錄：5 個遊戲 × 3 種難度，先建立好
+            string[] difficulties = { "easy", "medium", "hard" };
+
+            for (int i = 1; i <= 5; i++)
+            {
+                string advancedID = "advanced_" + i.ToString("00");
+
+                foreach (string difficulty in difficulties)
+                {
+                    Dictionary<string, object> defaultAdvancedRecord = new Dictionary<string, object>
+                {
+                    {
+                        "latest", new Dictionary<string, object>
+                        {
+                            { "time", 0f },
+                            { "score", 0 },
+                            { "process", 0 },
+                            { "date", "" }
+                        }
+                    },
+                    { "history", new List<object>() },
+                    {
+                        "best", new Dictionary<string, object>
+                        {
+                            { "time", 0f },
+                            { "score", 0 },
+                            { "process", 0 },
+                            { "date", "" }
+                        }
+                    }
+                };
+
+                    initTasks.Add(userRef.Collection("learningRecords").Document("advanced")
+                        .Collection(advancedID).Document(difficulty)
+                        .SetAsync(defaultAdvancedRecord, SetOptions.MergeAll));
+                }
+            }
+
+            Task.WhenAll(initTasks).ContinueWithOnMainThread(initTask =>
+            {
+                if (initTask.IsCompletedSuccessfully)
+                {
+                    Debug.Log("使用者完整資料已建立 / 補齊完成：" + finalUsername);
+                }
                 else
-                    Debug.LogWarning("新使用者初始化失敗：" + saveTask.Exception);
+                {
+                    Debug.LogWarning("使用者完整資料建立 / 補齊失敗：" + initTask.Exception);
+                }
             });
         });
     }
