@@ -1,26 +1,27 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class HomeUI : MonoBehaviour
 {
-    void Start()
-    {
-        if (FirestoreManager.Instance != null)
-        {
-            FirestoreManager.Instance.LoadAchievementCache();
-        }
-    }
     public void OnClickTraining()
-    {   
-        SceneLoader.Instance.GoToWithLoading(SceneName.Training);
+    {
+        StartCoroutine(LoadSceneDelay("SampleScene"));
     }
 
     public void OnClickCardBattle()
-    {   
-        SceneLoader.Instance.GoToWithLoading(SceneName.CardBattle);
+    {
+        StartCoroutine(LoadSceneDelay("quest-map"));
     }
 
     public void OnClickPlayerHouse()
     {
-        SceneLoader.Instance.GoTo(SceneName.PlayerHouse);
+        StartCoroutine(LoadSceneDelay("PersonalRoom"));
+    }
+
+    private IEnumerator LoadSceneDelay(string sceneName)
+    {
+        yield return new WaitForSeconds(0.4f);
+        SceneManager.LoadScene(sceneName);
     }
 }
