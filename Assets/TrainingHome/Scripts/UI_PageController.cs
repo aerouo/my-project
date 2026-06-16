@@ -417,7 +417,16 @@ public class UI_PageController : MonoBehaviour
         {
             Img_LessonTitle.sprite = icon;
             Img_LessonTitle.gameObject.SetActive(true);
-            Img_LessonTitle.SetNativeSize();
+
+            // 不要用 SetNativeSize，避免不同圖片切換時忽大忽小
+            Img_LessonTitle.preserveAspect = true;
+
+            RectTransform rt = Img_LessonTitle.GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                rt.sizeDelta = new Vector2(600f, 200f); // 3000:1000 = 3:1
+                rt.localScale = Vector3.one;
+            }
 
             if (Txt_LessonTitle != null)
                 Txt_LessonTitle.gameObject.SetActive(false);

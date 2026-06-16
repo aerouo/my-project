@@ -11,6 +11,8 @@ public class FirestoreManager : MonoBehaviour
     // =========================================================
     // 0. 單例與 Firebase 基本設定
     // =========================================================
+    // 這一段負責讓 FirestoreManager 在整個遊戲中只存在一個。
+    // 也會初始化 FirebaseFirestore，並取得目前登入使用者的 UID。
 
     private static FirestoreManager _instance;
     public static FirestoreManager Instance => _instance;
@@ -74,6 +76,8 @@ public class FirestoreManager : MonoBehaviour
     // =========================================================
     // 1. 學習紀錄：共用工具
     // =========================================================
+    // 這一段放共用方法，主要給進階關卡與闖關紀錄使用。
+    // 可以統一建立紀錄格式、更新 latest / history / best。
 
     private Dictionary<string, object> CreateRecord(float timeSeconds, int score, int process)
     {
@@ -203,6 +207,9 @@ public class FirestoreManager : MonoBehaviour
     // 存在 learning / videos
     // 成就與 Learning 顯示都讀這份
     // =========================================================
+    // 這一段負責基礎學習影片的紀錄。
+    // 資料存在 users/{userID}/learning/videos。
+    // 成就判斷與 Learning 頁面都會讀這份資料。
 
     public void SaveBasicVideoRecord(string basicID, float timeSeconds = 0f, int process = 100)
     {

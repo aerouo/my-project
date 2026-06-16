@@ -1,10 +1,7 @@
 fileFormatVersion: 2
-guid: 5e643a97cb52dc24bbea230af11c5914
+guid: ea0b7dd31cb742f4fac190eca58b723e
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: -993155817233147127
-    second: "\u5BC6\u78BC\u6846_0"
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -42,7 +39,7 @@ TextureImporter:
     mipBias: 0
     wrapU: 1
     wrapV: 1
-    wrapW: 1
+    wrapW: 0
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -96,53 +93,27 @@ TextureImporter:
     ignorePlatformSupport: 0
     androidETC2FallbackOverride: 0
     forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: Android
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-  - serializedVersion: 4
-    buildTarget: WebGL
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 1
-    compressionQuality: 50
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    overridden: 0
-    ignorePlatformSupport: 0
-    androidETC2FallbackOverride: 0
-    forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "\u5BC6\u78BC\u6846_0"
+      name: IMG_1710_0
       rect:
         serializedVersion: 2
-        x: 2
-        y: 14
-        width: 3150
-        height: 707
+        x: 1308
+        y: 1645
+        width: 1000
+        height: 600
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
-      tessellationDetail: -1
+      tessellationDetail: 0
       bones: []
-      spriteID: 90b9433db0a9732f0800000000000000
-      internalID: -993155817233147127
+      spriteID: 3c7b9a949fe0f5340962b5bfe2229b7e
+      internalID: 1813902512
       vertices: []
       indices: 
       edges: []
@@ -151,7 +122,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 5e97eb03825dee720800000000000000
+    spriteID: 190e6b54fb7de894a9b96118132154f6
     internalID: 0
     vertices: []
     indices: 
@@ -161,7 +132,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "\u5BC6\u78BC\u6846_0": -993155817233147127
+      IMG_1710_0: 1813902512
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
