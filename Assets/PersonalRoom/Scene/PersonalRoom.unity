@@ -5692,8 +5692,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0757f9b8ed4928141bed0649b1d7a5a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneBGM
-  bgmClip: {fileID: 8300000, guid: 5456fabd7915e964388daa9046f97f15, type: 3}
-  volume: 0.05
+  bgmClip: {fileID: 8300000, guid: 11e51af8419220c47b9f179aa699bf52, type: 3}
+  stopBGM: 0
+  volume: 0.1
 --- !u!1 &93204805
 GameObject:
   m_ObjectHideFlags: 0
@@ -71940,7 +71941,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 344347072, guid: bed24f1d1a592ae4b86cb9b39ebfa2f9, type: 3}
+  m_Sprite: {fileID: -1719611784, guid: bfe664ace70a3214a8cc80e4b43bf52f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1

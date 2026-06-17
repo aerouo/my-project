@@ -903,16 +903,16 @@ public class FirestoreManager : MonoBehaviour
             { "achievement_basic_01_completed", false },
             { "achievement_basic_01_date", "" },
 
-            { "achievement_advanced_01_unlocked", false },
+            /*{ "achievement_advanced_01_unlocked", false },
             { "achievement_advanced_01_completed", false },
             { "achievement_advanced_01_date", "" },
 
             { "achievement_quest_01_unlocked", false },
             { "achievement_quest_01_completed", false },
-            { "achievement_quest_01_date", "" }
+            { "achievement_quest_01_date", "" }*/
         };
 
-            Dictionary<string, object> defaultVideos = new Dictionary<string, object>();
+           /* Dictionary<string, object> defaultVideos = new Dictionary<string, object>();
             Dictionary<string, object> defaultQuizzes = new Dictionary<string, object>();
 
             for (int i = 1; i <= 5; i++)
@@ -955,7 +955,7 @@ public class FirestoreManager : MonoBehaviour
                 { "process", 0 },
                 { "date", "" }
             };
-            }
+            }*/
 
             List<Task> initTasks = new List<Task>();
 
@@ -973,14 +973,14 @@ public class FirestoreManager : MonoBehaviour
             initTasks.Add(userRef.Collection("achievements").Document("data")
                 .SetAsync(defaultAchievements, SetOptions.MergeAll));
 
-            initTasks.Add(userRef.Collection("learning").Document("videos")
+            /*initTasks.Add(userRef.Collection("learning").Document("videos")
                 .SetAsync(defaultVideos, SetOptions.MergeAll));
 
             initTasks.Add(userRef.Collection("learning").Document("quizzes")
                 .SetAsync(defaultQuizzes, SetOptions.MergeAll));
 
             initTasks.Add(userRef.Collection("learningRecords").Document("quest")
-                .SetAsync(defaultQuest, SetOptions.MergeAll));
+                .SetAsync(defaultQuest, SetOptions.MergeAll));*/
 
             // 進階紀錄：5 個遊戲 × 3 種難度，先建立好
             string[] difficulties = { "easy", "medium", "hard" };
@@ -1387,7 +1387,7 @@ public class FirestoreManager : MonoBehaviour
         });
     }
 
-        public void CheckQuestAllClearAchievement(System.Action<bool> onCompleted = null)
+    public void CheckQuestAllClearAchievement(System.Action<bool> onCompleted = null)
     {
         if (!CheckReady()) return;
 
