@@ -531,17 +531,54 @@ public class FirestoreManager : MonoBehaviour
         DocumentReference docRef = db.Collection("users").Document(userID)
             .Collection("learningRecords").Document("quest");
 
-        Dictionary<string, object> updates = new Dictionary<string, object>
-    {
-        { levelID + "_latest", latestRecord }
-    };
-
-        docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
+        docRef.GetSnapshotAsync().ContinueWithOnMainThread(task =>
         {
-            if (saveTask.IsCompletedSuccessfully)
-                Debug.Log("闖關進度儲存成功：" + levelID + " = " + process + "%，只更新 latest，不推進 history");
-            else
-                Debug.LogWarning("闖關進度儲存失敗：" + saveTask.Exception);
+            if (task.IsFaulted || task.IsCanceled)
+            {
+                Debug.LogWarning("讀取闖關進度失敗：" + task.Exception);
+                return;
+            }
+
+            List<object> history = new List<object>();
+
+            if (task.Result.Exists)
+            {
+                Dictionary<string, object> oldData = task.Result.ToDictionary();
+
+                if (oldData.TryGetValue(levelID + "_latest", out object oldLatestObj))
+                {
+                    Dictionary<string, object> oldLatest = ConvertToDictionary(oldLatestObj);
+
+                    // 如果舊 latest 是 100%，代表它是一筆完整紀錄
+                    // 現在要被 50% 蓋掉，所以先推進 history
+                    if (oldLatest != null && GetDictInt(oldLatest, "process") == 100)
+                    {
+                        history.Insert(0, oldLatest);
+                    }
+                }
+
+                if (oldData.TryGetValue(levelID + "_history", out object oldHistoryObj))
+                {
+                    history.AddRange(ConvertToObjectList(oldHistoryObj));
+                }
+            }
+
+            if (history.Count > 5)
+                history.RemoveRange(5, history.Count - 5);
+
+            Dictionary<string, object> updates = new Dictionary<string, object>
+        {
+            { levelID + "_latest", latestRecord },
+            { levelID + "_history", history }
+        };
+
+            docRef.SetAsync(updates, SetOptions.MergeAll).ContinueWithOnMainThread(saveTask =>
+            {
+                if (saveTask.IsCompletedSuccessfully)
+                    Debug.Log("闖關進度儲存成功：" + levelID + " = " + process + "%，若舊 latest 是 100% 已推進 history");
+                else
+                    Debug.LogWarning("闖關進度儲存失敗：" + saveTask.Exception);
+            });
         });
     }
 
@@ -874,18 +911,22 @@ public class FirestoreManager : MonoBehaviour
 
             Dictionary<string, object> userData = new Dictionary<string, object>();
 
+            // 使用者名稱
             if (!task.Result.Exists || !task.Result.ContainsField("username"))
                 userData["username"] = finalUsername;
 
+            // 初始金錢
             if (!task.Result.Exists || !task.Result.ContainsField("coins"))
                 userData["coins"] = 0;
 
+            // 預設擁有衣服
             Dictionary<string, object> defaultItems = new Dictionary<string, object>
         {
             { "Top06", true },
             { "Bottom03", true }
         };
 
+            // 預設穿戴
             Dictionary<string, object> defaultEquipped = new Dictionary<string, object>
         {
             { "top", "Top06" },
@@ -897,65 +938,13 @@ public class FirestoreManager : MonoBehaviour
             { "handItem", "" }
         };
 
+            // 只生成第一個成就
             Dictionary<string, object> defaultAchievements = new Dictionary<string, object>
         {
             { "achievement_basic_01_unlocked", true },
             { "achievement_basic_01_completed", false },
-            { "achievement_basic_01_date", "" },
-
-            /*{ "achievement_advanced_01_unlocked", false },
-            { "achievement_advanced_01_completed", false },
-            { "achievement_advanced_01_date", "" },
-
-            { "achievement_quest_01_unlocked", false },
-            { "achievement_quest_01_completed", false },
-            { "achievement_quest_01_date", "" }*/
+            { "achievement_basic_01_date", "" }
         };
-
-           /* Dictionary<string, object> defaultVideos = new Dictionary<string, object>();
-            Dictionary<string, object> defaultQuizzes = new Dictionary<string, object>();
-
-            for (int i = 1; i <= 5; i++)
-            {
-                string basicID = "basic_" + i.ToString("00");
-
-                defaultVideos[basicID + "_watched"] = false;
-                defaultVideos[basicID + "_process"] = 0;
-                defaultVideos[basicID + "_best_process"] = 0;
-                defaultVideos[basicID + "_date"] = "";
-                defaultVideos[basicID + "_time"] = 0f;
-
-                defaultQuizzes[basicID + "_done"] = false;
-                defaultQuizzes[basicID + "_process"] = 0;
-                defaultQuizzes[basicID + "_date"] = "";
-                defaultQuizzes[basicID + "_time"] = 0f;
-                defaultQuizzes[basicID + "_history"] = new List<object>();
-            }
-
-            Dictionary<string, object> defaultQuest = new Dictionary<string, object>();
-
-            for (int i = 1; i <= 5; i++)
-            {
-                string levelID = "Level" + i;
-
-                defaultQuest[levelID + "_latest"] = new Dictionary<string, object>
-            {
-                { "time", 0f },
-                { "score", 0 },
-                { "process", 0 },
-                { "date", "" }
-            };
-
-                defaultQuest[levelID + "_history"] = new List<object>();
-
-                defaultQuest[levelID + "_best"] = new Dictionary<string, object>
-            {
-                { "time", 0f },
-                { "score", 0 },
-                { "process", 0 },
-                { "date", "" }
-            };
-            }*/
 
             List<Task> initTasks = new List<Task>();
 
@@ -973,62 +962,15 @@ public class FirestoreManager : MonoBehaviour
             initTasks.Add(userRef.Collection("achievements").Document("data")
                 .SetAsync(defaultAchievements, SetOptions.MergeAll));
 
-            /*initTasks.Add(userRef.Collection("learning").Document("videos")
-                .SetAsync(defaultVideos, SetOptions.MergeAll));
-
-            initTasks.Add(userRef.Collection("learning").Document("quizzes")
-                .SetAsync(defaultQuizzes, SetOptions.MergeAll));
-
-            initTasks.Add(userRef.Collection("learningRecords").Document("quest")
-                .SetAsync(defaultQuest, SetOptions.MergeAll));*/
-
-            // 進階紀錄：5 個遊戲 × 3 種難度，先建立好
-            string[] difficulties = { "easy", "medium", "hard" };
-
-            for (int i = 1; i <= 5; i++)
-            {
-                string advancedID = "advanced_" + i.ToString("00");
-
-                foreach (string difficulty in difficulties)
-                {
-                    Dictionary<string, object> defaultAdvancedRecord = new Dictionary<string, object>
-                {
-                    {
-                        "latest", new Dictionary<string, object>
-                        {
-                            { "time", 0f },
-                            { "score", 0 },
-                            { "process", 0 },
-                            { "date", "" }
-                        }
-                    },
-                    { "history", new List<object>() },
-                    {
-                        "best", new Dictionary<string, object>
-                        {
-                            { "time", 0f },
-                            { "score", 0 },
-                            { "process", 0 },
-                            { "date", "" }
-                        }
-                    }
-                };
-
-                    initTasks.Add(userRef.Collection("learningRecords").Document("advanced")
-                        .Collection(advancedID).Document(difficulty)
-                        .SetAsync(defaultAdvancedRecord, SetOptions.MergeAll));
-                }
-            }
-
             Task.WhenAll(initTasks).ContinueWithOnMainThread(initTask =>
             {
                 if (initTask.IsCompletedSuccessfully)
                 {
-                    Debug.Log("使用者完整資料已建立 / 補齊完成：" + finalUsername);
+                    Debug.Log("使用者基本資料已建立 / 補齊完成：" + finalUsername);
                 }
                 else
                 {
-                    Debug.LogWarning("使用者完整資料建立 / 補齊失敗：" + initTask.Exception);
+                    Debug.LogWarning("使用者基本資料建立 / 補齊失敗：" + initTask.Exception);
                 }
             });
         });
